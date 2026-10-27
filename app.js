@@ -538,3 +538,119 @@ window.triggerPushTest = async function() {
     new Notification(notifTitle, notifOptions);
   }
 };
+
+// ==================== 雲端管理工作台 (Cloud Studio) ====================
+let adminAuthenticated = false;
+
+window.openAdminLogin = function() {
+  if (!adminAuthenticated) {
+    const pwd = prompt('請輸入負責人雲端管理金鑰：');
+    if (pwd === 'winner2028' || pwd === 'darry') {
+      adminAuthenticated = true;
+    } else if (pwd !== null) {
+      alert('⚠️ 管理金鑰錯誤，無法存取雲端工作台。');
+      return;
+    } else {
+      return;
+    }
+  }
+  openAdminModal();
+};
+
+window.openAdminModal = function() {
+  const modal = document.getElementById('admin-cloud-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    renderCloudAdminContent();
+  }
+};
+
+window.closeAdminModal = function() {
+  const modal = document.getElementById('admin-cloud-modal');
+  if (modal) modal.style.display = 'none';
+};
+
+window.switchAdminTab = function(tabPaneId) {
+  document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('thurs-tab-pane').style.display = (tabPaneId === 'thurs-tab-pane') ? 'block' : 'none';
+  document.getElementById('weekend-tab-pane').style.display = (tabPaneId === 'weekend-tab-pane') ? 'block' : 'none';
+};
+
+function renderCloudAdminContent() {
+  if (!masterSchedule) return;
+
+  const cutoffEl = document.getElementById('cloud-cutoff-text');
+  if (cutoffEl) cutoffEl.textContent = masterSchedule.cutoff_date || '2026-10-31';
+
+  // 1. 渲染週四問題
+  const thursTbody = document.getElementById('cloud-thurs-tbody');
+  if (thursTbody && masterSchedule.thursday_releases) {
+    thursTbody.innerHTML = masterSchedule.thursday_releases.map((it, idx) => {
+      return `
+        <tr>
+          <td><strong>第 ${it.index} 週</strong></td>
+          <td>${it.release_date} (${it.day})</td>
+          <td style="font-weight: 500;">${it.question || '🔒 [未公開，已在庫房安全隔離]'}</td>
+          <td>${it.is_unlocked ? '<span style="color:#059669; font-weight:700;">✅ 已公開</span>' : '<span style="color:#d97706;">🔒 庫房保護</span>'}</td>
+          <td>
+            <button class="btn btn-sm btn-secondary" onclick="cloudEditQuestion(${idx})">編輯</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // 2. 渲染週末科系
+  const weekendTbody = document.getElementById('cloud-weekend-tbody');
+  if (weekendTbody && masterSchedule.weekend_releases) {
+    weekendTbody.innerHTML = masterSchedule.weekend_releases.map((it, idx) => {
+      return `
+        <tr>
+          <td>第 ${it.slot_num} 格</td>
+          <td>${it.release_date} (${it.day})</td>
+          <td style="font-weight: 700; color: #1e3a8a;">${it.group_name || '🔒 [未公開，已在庫房安全隔離]'}</td>
+          <td>${it.schools_count ? it.schools_count + ' 校' : '--'}</td>
+          <td>
+            <button class="btn btn-sm btn-secondary" onclick="cloudMoveWeekend(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>▲</button>
+            <button class="btn btn-sm btn-secondary" onclick="cloudMoveWeekend(${idx}, 1)" ${idx === masterSchedule.weekend_releases.length - 1 ? 'disabled' : ''}>▼</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+}
+
+window.cloudEditQuestion = function(idx) {
+  const it = masterSchedule.thursday_releases[idx];
+  const newQ = prompt(`編輯第 ${it.index} 週題目：`, it.question || '');
+  if (newQ !== null && newQ.trim() !== '') {
+    it.question = newQ.trim();
+    renderCloudAdminContent();
+    renderWeeklyPush();
+    alert('已在雲端記憶體更新！點擊「下載排程 JSON」即可備份或同步。');
+  }
+};
+
+window.cloudMoveWeekend = function(idx, dir) {
+  const targetIdx = idx + dir;
+  const list = masterSchedule.weekend_releases;
+  if (targetIdx < 0 || targetIdx >= list.length) return;
+
+  const tempName = list[idx].group_name;
+  const tempCount = list[idx].schools_count;
+  list[idx].group_name = list[targetIdx].group_name;
+  list[idx].schools_count = list[targetIdx].schools_count;
+  list[targetIdx].group_name = tempName;
+  list[targetIdx].schools_count = tempCount;
+
+  renderCloudAdminContent();
+};
+
+window.exportAdminSchedule = function() {
+  const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(masterSchedule, null, 2));
+  const dl = document.createElement('a');
+  dl.setAttribute("href", str);
+  dl.setAttribute("download", "master_schedule_cloud.json");
+  dl.click();
+};

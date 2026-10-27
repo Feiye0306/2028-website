@@ -10,6 +10,20 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="學測陪跑日曆">
   <link rel="stylesheet" href="./style.css">
+  <style>
+    /* 負責人雲端管理工作台樣式 */
+    .admin-modal-bg { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.75); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    .admin-window { background: #ffffff; width: 95%; max-width: 800px; height: 90vh; border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .admin-header { background: #1e3a8a; color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .admin-body { padding: 16px; overflow-y: auto; flex: 1; background: #f8fafc; }
+    .admin-tabs { display: flex; gap: 8px; margin-bottom: 14px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+    .admin-tab-btn { background: none; border: none; font-size: 0.95rem; font-weight: 700; color: #64748b; padding: 6px 14px; cursor: pointer; border-radius: 6px; }
+    .admin-tab-btn.active { background: #1e3a8a; color: white; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: white; border-radius: 8px; overflow: hidden; }
+    .admin-table th { background: #f1f5f9; padding: 8px 10px; text-align: left; color: #475569; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
+    .admin-table td { padding: 8px 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+    .admin-table tr:hover td { background: #f8fafc; }
+  </style>
 </head>
 <body>
 
@@ -17,91 +31,14 @@
   <header class="app-header">
     <div style="display: flex; justify-content: space-between; align-items: center; max-width: 680px; margin: 0 auto;">
       <h1 style="font-size: 1.3rem;">📅 2028 學測家長陪跑日曆</h1>
-      <button class="btn btn-sm btn-secondary" onclick="toggleAdminPanel()" style="font-size: 0.75rem; padding: 4px 8px;">
-        ⚙️ 排程控制台
+      <button class="btn btn-sm" onclick="openAdminLogin()" style="background: rgba(255,255,255,0.2); color: #ffffff; font-size: 0.75rem; padding: 3px 8px; border: 1px solid rgba(255,255,255,0.3);">
+        ⚙️ 雲端管理
       </button>
     </div>
     <div class="header-badge">
-      依排程逐週公開（當前基準日：<span id="current-view-date">2026-10-27</span>）
+      依排程逐週公開（預估學測日：2028/01/14）
     </div>
   </header>
-
-  <!-- 負責人專屬排程控制台（預設隱藏） -->
-  <div id="admin-schedule-panel" class="card" style="display: none; max-width: 680px; margin: 12px auto; background: #f8fafc; border: 2px solid #3b82f6;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-      <h3 style="color: #1e40af; font-size: 1.1rem;">⚙️ 負責人排程控制台（公開時間表與模擬）</h3>
-      <button class="btn btn-sm btn-secondary" onclick="toggleAdminPanel()">關閉 ✖</button>
-    </div>
-    
-    <!-- 模擬日期控制 -->
-    <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 12px;">
-      <div style="font-size: 0.9rem; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
-        🕒 模擬家長瀏覽時間（時間旅行測試）：
-      </div>
-      <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-        <input type="date" id="admin-date-picker" style="padding: 6px 10px; border: 1px solid #94a3b8; border-radius: 6px; font-size: 0.9rem;">
-        <button class="btn btn-sm" onclick="applySimulatedDate()">套用模擬日期</button>
-        <button class="btn btn-sm btn-secondary" onclick="resetToRealDate()">重設真實時間</button>
-        <button class="btn btn-sm" style="background: #d97706;" onclick="toggleUnlockAll()">全部強制解鎖預覽</button>
-      </div>
-      <p style="font-size: 0.78rem; color: #64748b; margin-top: 6px;">
-        * 可挑選未來任意日期（如 2027-04-15），即時預覽該日期時家長端看到的已解鎖與鎖定狀態。
-      </p>
-    </div>
-
-    <!-- 快捷按鈕 -->
-    <div style="display: flex; gap: 10px; margin-bottom: 12px;">
-      <button class="btn btn-sm" onclick="exportScheduleJson()">📥 匯出排程資料 (JSON)</button>
-    </div>
-
-    <!-- 排程查詢 Tabs -->
-    <div style="display: flex; gap: 8px; border-bottom: 1px solid #cbd5e1; margin-bottom: 10px;">
-      <button class="btn btn-sm" onclick="document.getElementById('admin-q-section').style.display='block'; document.getElementById('admin-d-section').style.display='none';">
-        每週四【問題公開】時間表（65期）
-      </button>
-      <button class="btn btn-sm btn-secondary" onclick="document.getElementById('admin-q-section').style.display='none'; document.getElementById('admin-d-section').style.display='block';">
-        週末【科系公開】時間表（128格）
-      </button>
-    </div>
-
-    <!-- 1. 問題公開排程表 -->
-    <div id="admin-q-section" style="max-height: 380px; overflow-y: auto; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0;">
-      <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left;">
-        <thead style="background: #f1f5f9; position: sticky; top: 0;">
-          <tr>
-            <th style="padding: 6px 8px;">週次</th>
-            <th style="padding: 6px 8px;">公開日期</th>
-            <th style="padding: 6px 8px;">所屬階段</th>
-            <th style="padding: 6px 8px;">預定公開題目</th>
-            <th style="padding: 6px 8px;">狀態</th>
-            <th style="padding: 6px 8px;">操作</th>
-          </tr>
-        </thead>
-        <tbody id="admin-q-table-body">
-          <!-- 動態載入 -->
-        </tbody>
-      </table>
-    </div>
-
-    <!-- 2. 科系公開排程表 -->
-    <div id="admin-d-section" style="display: none; max-height: 380px; overflow-y: auto; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0;">
-      <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left;">
-        <thead style="background: #f1f5f9; position: sticky; top: 0;">
-          <tr>
-            <th style="padding: 6px 8px;">格次</th>
-            <th style="padding: 6px 8px;">公開日期</th>
-            <th style="padding: 6px 8px;">發布科系群組</th>
-            <th style="padding: 6px 8px;">開設大學</th>
-            <th style="padding: 6px 8px;">狀態</th>
-            <th style="padding: 6px 8px;">操作</th>
-          </tr>
-        </thead>
-        <tbody id="admin-d-table-body">
-          <!-- 動態載入 -->
-        </tbody>
-      </table>
-    </div>
-  </div>
 
   <!-- 導航分頁 -->
   <nav class="nav-tabs">
@@ -130,7 +67,7 @@
 
     <!-- 分頁 1：學測倒數與推播 -->
     <section id="countdown-tab" class="tab-content active">
-      <!-- 倒數卡片（依負責人指示：以 2028/01/14 為準，專注倒數週數） -->
+      <!-- 倒數週數大卡片 -->
       <div class="card countdown-hero" style="padding: 24px 20px;">
         <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">
           距離 2028 學測（預估 2028/01/14）
@@ -208,13 +145,81 @@
       </div>
     </section>
 
-    <!-- 底部版權與數據口徑宣告 -->
+    <!-- 底部宣告 -->
     <footer class="footer-note">
       <p>資料來源：大學甄選入學委員會 115 學年度申請入學校系參採一覽表與教育部大專校院校務資訊公開平台</p>
       <p style="margin-top: 4px;">本站依排程公開時間陸續釋出時程指南與精選科系。</p>
     </footer>
 
   </main>
+
+  <!-- ==================== 負責人專屬雲端排程管理工作台 (Admin Modal) ==================== -->
+  <div id="admin-cloud-modal" class="admin-modal-bg">
+    <div class="admin-window">
+      <div class="admin-header">
+        <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+          ☁️ 負責人雲端排程管理工作台
+          <span style="font-size: 0.75rem; background: #059669; padding: 2px 6px; border-radius: 4px;">雲端同步中</span>
+        </h3>
+        <button class="btn btn-sm btn-secondary" onclick="closeAdminModal()">關閉 ✖</button>
+      </div>
+
+      <div class="admin-body">
+        <!-- 資安防洩密條 -->
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; font-size: 0.85rem; color: #065f46;">
+          <strong>🛡️ 雲端防洩密狀態：</strong>
+          前台目前僅公開解鎖至 <strong id="cloud-cutoff-text">--</strong>。未到期的未來週次題目與答案在公開前台處於完全剝除狀態，外部無法窺探。
+        </div>
+
+        <!-- 雲端操作按鈕列 -->
+        <div style="display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; align-items: center;">
+          <input type="text" id="admin-filter-input" placeholder="🔍 搜尋題目或科系..." style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.88rem; flex: 1;" oninput="filterAdminLists()">
+          <button class="btn btn-sm" onclick="exportAdminSchedule()">📥 下載排程 JSON</button>
+        </div>
+
+        <div class="admin-tabs">
+          <button class="admin-tab-btn active" onclick="switchAdminTab('thurs-tab-pane')">📅 週四【問題排程】(64期)</button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('weekend-tab-pane')">🎓 週末【科系排程】(126格)</button>
+        </div>
+
+        <!-- 1. 週四問題排程清單 -->
+        <div id="thurs-tab-pane">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">週次</th>
+                <th style="width: 110px;">公開日期</th>
+                <th>公開題目（家長關鍵解惑）</th>
+                <th style="width: 100px;">狀態</th>
+                <th style="width: 100px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="cloud-thurs-tbody">
+              <!-- 動態載入 -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 2. 週末科系排程清單 -->
+        <div id="weekend-tab-pane" style="display: none;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">格次</th>
+                <th style="width: 120px;">公開日期</th>
+                <th>發布科系群組</th>
+                <th style="width: 80px;">開設校數</th>
+                <th style="width: 120px;">排序調整</th>
+              </tr>
+            </thead>
+            <tbody id="cloud-weekend-tbody">
+              <!-- 動態載入 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="./app.js"></script>
 </body>
