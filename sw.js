@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kanban-2028-parent-v1';
+const CACHE_NAME = 'kanban-2028-editorial-v3';
 const ASSETS = [
   './',
   './index.html',

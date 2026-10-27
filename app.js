@@ -1,16 +1,15 @@
-// 2028 學測家長陪跑日曆 - 核心邏輯（排程公開版）
+// 2028 學測家長陪跑日曆 - 人文誌極致版 (Editorial Edition)
 let masterSchedule = null;
 let deptDrawData = null;
 let deptLinks = null;
 
-// 當前基準日期（預設真實日期，負責人可在控制台手動覆蓋以模擬特定日期）
-let simulatedDate = new Date(); // 當前真實時間
-let overrideAllUnlocked = false; // 是否強制全部解鎖預覽
-
 let currentThursIndex = 0;
 let deferredPrompt = null;
+let currentAdminTab = 'thurs';
 
-// 初始化
+// 錨定學測預估日：2028 年 1 月 14 日
+const EXAM_DATE = new Date('2028-01-14T09:00:00+08:00');
+
 document.addEventListener('DOMContentLoaded', async () => {
   setupTabs();
   registerServiceWorker();
@@ -18,19 +17,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await loadAllData();
 
-  initCountdown();
+  updateCountdownDisplay();
   applyScheduleFilter();
   renderDeptBrowser();
 
-  // 每秒更新倒數
-  setInterval(updateCountdownDisplay, 1000);
+  // 定時微調週數
+  setInterval(updateCountdownDisplay, 60000);
 });
 
-// 載入資料包（前台僅讀取物理脫敏後的 public_feed.json，杜絕任何未來題目洩密）
+// 載入資料包（物理防洩密：前台僅讀取脫敏 public_feed.json）
 async function loadAllData() {
   try {
     const [schedRes, dddRes, dlRes] = await Promise.all([
-      fetch('./data/public_feed.json').then(r => r.json()),
+      fetch('./data/public_feed.json?v=' + Date.now()).then(r => r.json()),
       fetch('./data/dept_draw_data.json').then(r => r.json()),
       fetch('./data/dept_links.json').then(r => r.json())
     ]);
@@ -38,67 +37,48 @@ async function loadAllData() {
     deptDrawData = dddRes;
     deptLinks = dlRes;
   } catch (err) {
-    console.error('資料載入失敗：', err);
+    console.error('資料載入異常：', err);
   }
 }
 
-// 倒數計時計算（依負責人指示：以 2028/01/14 為準，僅倒數週數）
-const EXAM_DATE = new Date('2028-01-14T09:00:00+08:00');
-
+// 倒數週數計算（純週數展示，去除天時分秒機械感）
 function updateCountdownDisplay() {
-  const now = simulatedDate || new Date();
-  const diff = EXAM_DATE - now;
+  const now = new Date();
+  const diffTime = EXAM_DATE - now;
 
   const weeksNumEl = document.getElementById('weeks-num');
-  const weeksSubEl = document.getElementById('weeks-sub-note');
+  if (!weeksNumEl) return;
 
-  if (diff <= 0) {
-    if (weeksNumEl) weeksNumEl.textContent = '0';
-    if (weeksSubEl) weeksSubEl.textContent = '已迎戰 2028 學測！';
+  if (diffTime <= 0) {
+    weeksNumEl.textContent = '0';
     return;
   }
 
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   const remainWeeks = Math.max(0, Math.ceil(days / 7));
-
-  if (weeksNumEl) weeksNumEl.textContent = remainWeeks;
-  if (weeksSubEl) weeksSubEl.textContent = `距離 2028/01/14 預估學測日尚餘約 ${days} 天`;
-}
-
-function initCountdown() {
-  updateCountdownDisplay();
+  weeksNumEl.textContent = remainWeeks;
 }
 
 // 依據排程日期過濾與渲染
 function applyScheduleFilter() {
-  if (!masterSchedule) return;
+  if (!masterSchedule || !masterSchedule.thursday_releases) return;
 
-  const todayStr = simulatedDate.toISOString().slice(0, 10);
-  const viewDateEl = document.getElementById('current-view-date');
-  if (viewDateEl) viewDateEl.textContent = todayStr;
+  const todayStr = new Date().toISOString().slice(0, 10);
 
-  // 1. 計算週四問題公開狀態
-  const thursdays = masterSchedule.thursday_releases;
-  let latestUnlockedThursIdx = 0;
-
-  thursdays.forEach((item, idx) => {
-    item.is_unlocked = overrideAllUnlocked || (item.release_date <= todayStr);
+  // 找出目前最新已解鎖的週四期數
+  let latestUnlockedIdx = 0;
+  masterSchedule.thursday_releases.forEach((item, idx) => {
     if (item.is_unlocked) {
-      latestUnlockedThursIdx = idx;
+      latestUnlockedIdx = idx;
     }
   });
 
-  currentThursIndex = latestUnlockedThursIdx;
+  currentThursIndex = latestUnlockedIdx;
   renderWeeklyPush();
-
-  // 2. 渲染週末科系發布（未到期遮蔽）
-  renderWeekendReleases(todayStr);
-
-  // 3. 渲染負責人排程後台
-  renderAdminScheduleTables();
+  renderWeekendReleases();
 }
 
-// 每週四推播渲染
+// 渲染當週指南卡片（社論雜誌風）
 function renderWeeklyPush() {
   if (!masterSchedule || !masterSchedule.thursday_releases) return;
 
@@ -106,48 +86,52 @@ function renderWeeklyPush() {
   if (!item) return;
 
   const container = document.getElementById('weekly-push-container');
-  const todayStr = simulatedDate.toISOString().slice(0, 10);
 
-  if (!item.is_unlocked && !overrideAllUnlocked) {
+  if (!item.is_unlocked) {
     container.innerHTML = `
-      <div style="text-align: center; padding: 35px 20px; background: #fef2f2; border: 1px dashed #f87171; border-radius: 12px;">
-        <span style="font-size: 2.2rem;">🔒</span>
-        <h3 style="color: #991b1b; margin: 10px 0 6px;">尚未到達公開時間</h3>
-        <p style="font-size: 0.92rem; color: #7f1d1d;">
-          本期題目與指引預定於 <strong>${item.release_date}（${item.day}）</strong> 正式公開解鎖。
-        </p>
-        <p style="font-size: 0.84rem; color: #94a3b8; margin-top: 8px;">
-          * 家長陪跑採逐步解鎖制，每週四準時釋出對應時程行動指南。
+      <div style="text-align: center; padding: 40px 20px; background: #faf9f6; border: 1px dashed #e8e6df; border-radius: 12px;">
+        <div style="font-size: 2rem; margin-bottom: 8px;">⏳</div>
+        <h3 style="color: var(--text-headline); font-size: 1.1rem; margin-bottom: 6px;">本週指引排程解鎖中</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+          預定於 <strong>${item.release_date}（${item.day}）</strong> 準時發布。<br>
+          每週四釋出一道關鍵解惑，陪伴您與孩子穩健前進。
         </p>
       </div>
     `;
   } else {
     container.innerHTML = `
-      <div class="push-header">
-        <span class="push-tag">📌 ${item.stage}</span>
-        <span style="font-size: 0.82rem; color: var(--text-muted);">${item.release_date} 公開（約剩 ${item.countdown_weeks} 週）</span>
-      </div>
-      <h3 class="push-title">「${item.sample_push}」</h3>
-      
-      <div class="qa-card" style="margin-top: 0; margin-bottom: 12px;">
-        <h4>💡 本週公開・家長關鍵解惑</h4>
-        <p style="font-size: 1rem; color: #92400e;">${item.question}</p>
+      <div class="card-top-meta">
+        <span class="stage-tag">${item.stage}</span>
+        <span style="font-size: 0.82rem; color: var(--text-muted);">${item.release_date} 發布</span>
       </div>
 
-      <div class="action-block">
-        <h4>🎯 本階段・學生適合做什麼</h4>
-        <p>${item.student_task}</p>
+      <h3 class="card-main-title">「${item.sample_push}」</h3>
+
+      <div class="question-highlight-box">
+        <div class="question-label">家長關鍵問答・精選解惑</div>
+        <div class="question-text">${item.question}</div>
       </div>
 
-      <div class="action-block">
-        <h4>☕ 本階段・家長適合做什麼</h4>
-        <p>${item.parent_task}</p>
+      <div class="action-card-grid">
+        <div class="action-row">
+          <div class="action-header">
+            <span>🌱</span> 學生本週節奏
+          </div>
+          <div class="action-desc">${item.student_task}</div>
+        </div>
+
+        <div class="action-row">
+          <div class="action-header">
+            <span>☕</span> 家長陪伴心法
+          </div>
+          <div class="action-desc">${item.parent_task}</div>
+        </div>
       </div>
     `;
   }
 
   document.getElementById('stage-pager-text').textContent = 
-    `第 ${item.index} 週 / 共 ${masterSchedule.thursday_releases.length} 週`;
+    `第 ${item.index} 週 ｜ 倒數 ${item.countdown_weeks} 週`;
 }
 
 // 週次切換
@@ -160,67 +144,53 @@ window.changeThursIndex = function(offset) {
   }
 };
 
-// 週末科系發布渲染（排程解鎖）
-function renderWeekendReleases(todayStr) {
+// 渲染週末科系發布（排程鎖定機制）
+function renderWeekendReleases() {
   if (!masterSchedule || !masterSchedule.weekend_releases) return;
 
   const container = document.getElementById('weekend-releases-list');
   const items = masterSchedule.weekend_releases;
 
-  // 統計已公開數量
-  const unlockedCount = items.filter(it => overrideAllUnlocked || it.release_date <= todayStr).length;
-
-  const headerHtml = `
-    <div style="font-size: 0.86rem; color: var(--text-muted); margin-bottom: 12px; display: flex; justify-content: space-between;">
-      <span>目前已公開：<strong>${unlockedCount}</strong> / ${items.length} 週末格</span>
-      <span>每週六、日依序解鎖</span>
-    </div>
-  `;
-
-  const listHtml = items.map(item => {
-    const isUnlocked = overrideAllUnlocked || (item.release_date <= todayStr);
-
-    if (!isUnlocked) {
+  container.innerHTML = items.map(item => {
+    if (!item.is_unlocked) {
       return `
-        <div class="release-list-item" style="opacity: 0.65; background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+        <div class="release-item" style="opacity: 0.6;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="weekend-badge" style="background: #e2e8f0; color: #64748b; border: none;">
-              🔒 ${item.day}・${item.release_date}
-            </span>
-            <span style="font-size: 0.8rem; color: #94a3b8;">排程鎖定中</span>
+            <span class="release-badge">${item.day} ｜ ${item.release_date}</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">排程鎖定</span>
           </div>
-          <h4 style="color: #64748b; margin-top: 6px; font-size: 0.98rem;">第 ${item.slot_num} 格：即將於 ${item.release_date} 公開</h4>
+          <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-muted); margin-top: 6px;">
+            第 ${item.slot_num} 格：即將於 ${item.release_date} 解鎖
+          </div>
         </div>
       `;
     }
 
     return `
-      <div class="release-list-item" style="background: #ffffff; padding: 14px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-          <span class="weekend-badge">${item.day}・${item.release_date}</span>
-          <span style="font-size: 0.8rem; font-weight: 600; color: #475569;">${item.tag}</span>
+      <div class="release-item">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span class="release-badge" style="background:#eef7f2; color:#1b633e;">${item.day} ｜ ${item.release_date}</span>
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">${item.tag}</span>
         </div>
-        <h3 style="font-size: 1.15rem; color: var(--primary); margin-bottom: 6px;">${item.group_name}</h3>
-        <p style="font-size: 0.92rem; color: #334155; margin-bottom: 8px;">${item.desc}</p>
-        <button class="btn btn-secondary btn-sm" onclick="viewGroupDetail('${item.group_name}')">
-          查看全台 ${item.schools_count} 所開設校系與官方首頁 ➔
+        <div class="release-dept-title">${item.group_name}</div>
+        <p style="font-size: 0.9rem; color: #475569; margin: 4px 0 10px; line-height: 1.5;">${item.desc}</p>
+        <button class="btn btn-outline btn-sm" onclick="viewGroupDetail('${item.group_name}')">
+          查看全台開設校系與官方連結 ➔
         </button>
       </div>
     `;
   }).join('');
-
-  container.innerHTML = headerHtml + listHtml;
 }
 
-// 點擊查看特定科系群詳情
+// 點擊查看特定科系
 window.viewGroupDetail = function(groupName) {
-  switchTab('depts-tab');
+  switchTab('depts-pane');
   const searchInput = document.getElementById('dept-search-input');
   searchInput.value = groupName.replace('特色唯一專輯：全台稀有學系', '');
   filterDepts();
 };
 
-// 600 群科系全量資料庫渲染與搜尋
+// 600 群科系全量資料庫檢索
 function renderDeptBrowser() {
   if (!deptDrawData || !deptDrawData.groups) return;
   filterDepts();
@@ -256,42 +226,43 @@ window.filterDepts = function() {
   if (displayGroups.length === 0) {
     container.innerHTML = `
       <div style="text-align: center; padding: 40px 10px; color: var(--text-muted);">
-        <p style="font-size: 1.1rem;">查無符合的科系或學校</p>
-        <p style="font-size: 0.85rem; margin-top: 6px;">可嘗試清除篩選條件，或以「資訊」、「電機」、「財金」等簡稱搜尋</p>
+        <p style="font-size: 1rem;">查無符合的科系或學校</p>
       </div>
     `;
     return;
   }
 
   container.innerHTML = `
-    <div style="font-size: 0.86rem; color: var(--text-muted); margin-bottom: 12px; display: flex; justify-content: space-between;">
-      <span>找到 ${filtered.length} 個科系群（共展示前 ${displayGroups.length} 群）</span>
-      <span>資料底本：115 學年度個人申請</span>
+    <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; display: flex; justify-content: space-between;">
+      <span>找到 ${filtered.length} 個科系群（展示前 ${displayGroups.length} 群）</span>
+      <span>115 學年度底本</span>
     </div>
     ${displayGroups.map(group => {
       const groupItems = group.items.map(it => {
         const linkKey = `${it.school}|${it.dept}`;
         const linkInfo = deptLinks && deptLinks.links ? deptLinks.links[linkKey] : null;
 
-        let linkBadge = `<span class="subjects-pill">未登錄網址</span>`;
+        let linkBadge = `<span style="font-size: 0.78rem; color:#94a3b8;">未登錄</span>`;
         if (linkInfo) {
           if (linkInfo.type === 'dept') {
-            linkBadge = `<a href="${linkInfo.url}" target="_blank" rel="noopener" class="link-btn link-dept">
+            linkBadge = `<a href="${linkInfo.url}" target="_blank" rel="noopener" class="link-badge link-dept-green">
               🏛️ 官方首頁 ↗
             </a>`;
           } else if (linkInfo.type === 'rule') {
-            linkBadge = `<a href="${linkInfo.url}" target="_blank" rel="noopener" class="link-btn link-rule">
+            linkBadge = `<a href="${linkInfo.url}" target="_blank" rel="noopener" class="link-badge link-rule-amber">
               📋 [分則頁] ↗
             </a>`;
           }
         }
 
         return `
-          <div class="dept-item-row">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #f1f0eb;">
             <div>
-              <div class="school-name">${it.school}</div>
-              <div class="dept-name">${it.dept}</div>
-              <span class="subjects-pill">參採：${it.subjects || '無學測參採'}</span>
+              <div style="font-weight: 700; font-size: 0.92rem; color: var(--text-headline);">${it.school}</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted);">${it.dept}</div>
+              <span style="font-size: 0.76rem; background: #faf9f6; border: 1px solid #f0eee8; padding: 2px 6px; border-radius: 4px; color: #64748b; margin-top: 3px; display: inline-block;">
+                參採：${it.subjects || '無學測參採'}
+              </span>
             </div>
             <div>
               ${linkBadge}
@@ -301,12 +272,12 @@ window.filterDepts = function() {
       }).join('');
 
       return `
-        <div class="card" style="margin-bottom: 14px; border-left: 4px solid var(--primary);">
+        <div class="editorial-card" style="margin-bottom: 14px;">
           <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
-            <h3 style="color: var(--primary); font-size: 1.1rem;">${group.name}</h3>
-            <span style="font-size: 0.82rem; color: var(--text-muted);">${group.schools} 校・${group.programs} 系組</span>
+            <h3 style="color: var(--text-headline); font-size: 1.08rem; font-weight: 800;">${group.name}</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">${group.schools} 校・${group.programs} 系組</span>
           </div>
-          <div style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
+          <div style="max-height: 260px; overflow-y: auto; padding-right: 4px;">
             ${groupItems}
           </div>
         </div>
@@ -317,7 +288,7 @@ window.filterDepts = function() {
 
 // 快速考科過濾
 window.toggleSubjectFilter = function(btn, subject) {
-  const allBtns = document.querySelectorAll('.filter-tags .tag-btn');
+  const allBtns = document.querySelectorAll('.filter-chip-row .filter-chip');
   if (window.selectedSubject === subject) {
     window.selectedSubject = '';
     btn.classList.remove('active');
@@ -329,9 +300,9 @@ window.toggleSubjectFilter = function(btn, subject) {
   filterDepts();
 };
 
-// 導航 Tab 切換
+// 導航切換
 function setupTabs() {
-  const tabs = document.querySelectorAll('.nav-btn');
+  const tabs = document.querySelectorAll('.pill-btn');
   tabs.forEach(btn => {
     btn.addEventListener('click', () => {
       const targetId = btn.dataset.tab;
@@ -341,129 +312,141 @@ function setupTabs() {
 }
 
 window.switchTab = function(targetTabId) {
-  document.querySelectorAll('.nav-btn').forEach(b => {
+  document.querySelectorAll('.pill-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.tab === targetTabId);
   });
-  document.querySelectorAll('.tab-content').forEach(c => {
+  document.querySelectorAll('.tab-pane').forEach(c => {
     c.classList.toggle('active', c.id === targetTabId);
   });
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// ==================== 負責人專屬排程控制台功能 ====================
+// ==================== 雲端管理工作台 ====================
+let adminAuthenticated = false;
 
-window.toggleAdminPanel = function() {
-  const panel = document.getElementById('admin-schedule-panel');
-  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-};
-
-window.applySimulatedDate = function() {
-  const inputVal = document.getElementById('admin-date-picker').value;
-  if (inputVal) {
-    simulatedDate = new Date(inputVal + 'T12:00:00+08:00');
-    overrideAllUnlocked = false;
-    applyScheduleFilter();
-    updateCountdownDisplay();
-    alert(`已切換模擬日期至：${inputVal}`);
+window.openAdminLogin = function() {
+  if (!adminAuthenticated) {
+    const pwd = prompt('請輸入負責人雲端管理金鑰：');
+    if (pwd === 'winner2028' || pwd === 'darry') {
+      adminAuthenticated = true;
+    } else if (pwd !== null) {
+      alert('⚠️ 管理金鑰錯誤。');
+      return;
+    } else {
+      return;
+    }
+  }
+  const modal = document.getElementById('admin-cloud-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    renderAdminContent();
   }
 };
 
-window.resetToRealDate = function() {
-  simulatedDate = new Date();
-  overrideAllUnlocked = false;
-  document.getElementById('admin-date-picker').value = '';
-  applyScheduleFilter();
-  updateCountdownDisplay();
-  alert('已重設為真實當前時間！');
+window.closeAdminModal = function() {
+  const modal = document.getElementById('admin-cloud-modal');
+  if (modal) modal.style.display = 'none';
 };
 
-window.toggleUnlockAll = function() {
-  overrideAllUnlocked = !overrideAllUnlocked;
-  applyScheduleFilter();
-  alert(overrideAllUnlocked ? '已切換為：全部強制解鎖預覽' : '已恢復為：依日期逐步解鎖');
+window.switchAdminTab = function(type) {
+  currentAdminTab = type;
+  document.getElementById('tab-btn-thurs').classList.toggle('active', type === 'thurs');
+  document.getElementById('tab-btn-weekend').classList.toggle('active', type === 'weekend');
+  renderAdminContent();
 };
 
-function renderAdminScheduleTables() {
+function renderAdminContent() {
   if (!masterSchedule) return;
+  const contentEl = document.getElementById('cloud-admin-content');
+  const cutoffEl = document.getElementById('cloud-cutoff-text');
+  if (cutoffEl) cutoffEl.textContent = masterSchedule.cutoff_date || '2026-10-31';
 
-  // 1. 問題公開排程表
-  const qContainer = document.getElementById('admin-q-table-body');
-  if (qContainer) {
-    qContainer.innerHTML = masterSchedule.thursday_releases.map((it, idx) => {
-      return `
-        <tr>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;">${it.index}</td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;"><strong>${it.release_date}</strong></td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;">${it.stage}</td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; max-width: 280px; font-size: 0.85rem;">${it.question}</td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;">${it.is_unlocked ? '✅ 已解鎖' : '🔒 排程中'}</td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;">
-            <button class="btn btn-sm btn-secondary" onclick="editThursItem(${idx})">調整</button>
-          </td>
-        </tr>
-      `;
-    }).join('');
-  }
-
-  // 2. 科系公開排程表
-  const dContainer = document.getElementById('admin-d-table-body');
-  if (dContainer) {
-    dContainer.innerHTML = masterSchedule.weekend_releases.map((it, idx) => {
-      const todayStr = simulatedDate.toISOString().slice(0, 10);
-      const isUn = overrideAllUnlocked || (it.release_date <= todayStr);
-      return `
-        <tr>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;">${it.slot_num}</td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;">${it.release_date} (${it.day})</td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;"><strong>${it.group_name}</strong></td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;">${it.schools_count} 校</td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;">${isUn ? '✅ 已解鎖' : '🔒 排程中'}</td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;">
-            <button class="btn btn-sm btn-secondary" onclick="editWeekendItem(${idx})">調整</button>
-          </td>
-        </tr>
-      `;
-    }).join('');
+  if (currentAdminTab === 'thurs') {
+    contentEl.innerHTML = `
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th style="width: 50px;">週次</th>
+            <th style="width: 110px;">公開日期</th>
+            <th>公開題目（家長關鍵解惑）</th>
+            <th style="width: 80px;">狀態</th>
+            <th style="width: 70px;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${masterSchedule.thursday_releases.map((it, idx) => `
+            <tr>
+              <td>第 ${it.index} 週</td>
+              <td>${it.release_date}</td>
+              <td>${it.question || '🔒 [未公開・庫房保護]'}</td>
+              <td>${it.is_unlocked ? '✅ 已解鎖' : '🔒 隔離中'}</td>
+              <td><button class="btn btn-outline btn-sm" onclick="editThursQ(${idx})">編輯</button></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } else {
+    contentEl.innerHTML = `
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th style="width: 50px;">格次</th>
+            <th style="width: 120px;">公開日期</th>
+            <th>發布科系群組</th>
+            <th style="width: 90px;">排序調整</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${masterSchedule.weekend_releases.map((it, idx) => `
+            <tr>
+              <td>第 ${it.slot_num} 格</td>
+              <td>${it.release_date} (${it.day})</td>
+              <td><strong>${it.group_name || '🔒 [未公開・庫房保護]'}</strong></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="moveWeekendOrder(${idx}, -1)">▲</button>
+                <button class="btn btn-outline btn-sm" onclick="moveWeekendOrder(${idx}, 1)">▼</button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
   }
 }
 
-// 調整單筆週四項目
-window.editThursItem = function(idx) {
-  const item = masterSchedule.thursday_releases[idx];
-  const newDate = prompt(`調整第 ${item.index} 週公開日期 (目前: ${item.release_date})：`, item.release_date);
-  if (newDate) {
-    item.release_date = newDate;
-    const newQ = prompt(`調整公開題目：`, item.question);
-    if (newQ) item.question = newQ;
-    applyScheduleFilter();
+window.editThursQ = function(idx) {
+  const it = masterSchedule.thursday_releases[idx];
+  const newQ = prompt(`編輯第 ${it.index} 週題目：`, it.question || '');
+  if (newQ) {
+    it.question = newQ;
+    renderAdminContent();
+    renderWeeklyPush();
   }
 };
 
-// 調整單筆週末項目
-window.editWeekendItem = function(idx) {
-  const item = masterSchedule.weekend_releases[idx];
-  const newDate = prompt(`調整第 ${item.slot_num} 格公開日期 (目前: ${item.release_date})：`, item.release_date);
-  if (newDate) item.release_date = newDate;
-  const newDept = prompt(`調整發布科系群組名稱 (目前: ${item.group_name})：`, item.group_name);
-  if (newDept) item.group_name = newDept;
-  applyScheduleFilter();
+window.moveWeekendOrder = function(idx, dir) {
+  const targetIdx = idx + dir;
+  const list = masterSchedule.weekend_releases;
+  if (targetIdx < 0 || targetIdx >= list.length) return;
+  const temp = list[idx].group_name;
+  list[idx].group_name = list[targetIdx].group_name;
+  list[targetIdx].group_name = temp;
+  renderAdminContent();
 };
 
-// 匯出當前調整後的排程
-window.exportScheduleJson = function() {
+window.exportAdminSchedule = function() {
   const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(masterSchedule, null, 2));
-  const dlAnchor = document.createElement('a');
-  dlAnchor.setAttribute("href", str);
-  dlAnchor.setAttribute("download", "master_schedule_custom.json");
-  dlAnchor.click();
+  const dl = document.createElement('a');
+  dl.setAttribute("href", str);
+  dl.setAttribute("download", "master_schedule.json");
+  dl.click();
 };
 
-// PWA 與通知
+// PWA 註冊與通知
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(err => {
-      console.log('SW error:', err);
-    });
+    navigator.serviceWorker.register('./sw.js?v=20280114').catch(e => console.log('SW error:', e));
   }
 }
 
@@ -472,7 +455,7 @@ function setupPwaBanner() {
     e.preventDefault();
     deferredPrompt = e;
     const banner = document.getElementById('pwa-install-banner');
-    if (banner) banner.style.display = 'flex';
+    if (banner) banner.style.display = 'block';
   });
 }
 
@@ -488,169 +471,28 @@ window.installPwa = function() {
   }
 };
 
-// PWA 訂閱與推播通知測試
 window.triggerPushTest = async function() {
   if (!('Notification' in window)) {
-    alert('⚠️ 您的瀏覽器目前不支援 Web Notification 通知功能。');
+    alert('⚠️ 您的瀏覽器不支援通知功能。');
     return;
   }
-
-  // 1. 檢查並請求通知權限
   let permission = Notification.permission;
   if (permission === 'default') {
     permission = await Notification.requestPermission();
   }
-
-  if (permission === 'denied') {
-    alert('⚠️ 通知權限已被封鎖。\n請點擊網址列左側的「鎖頭」或「網站設定」圖示，將「通知」改為「允許」後再試一次！');
-    return;
-  }
-
   if (permission === 'granted') {
-    const currentItem = masterSchedule && masterSchedule.thursday_releases 
-      ? masterSchedule.thursday_releases[currentThursIndex] 
-      : null;
-
-    const notifTitle = '🔔 2028 學測家長陪跑日曆';
-    const notifOptions = {
-      body: currentItem && currentItem.question 
-        ? `【${currentItem.stage.split('（')[0]}】${currentItem.question}` 
-        : '每週四倒數指南已更新，點擊查看本週家長關鍵解惑！',
-      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%231e3a8a"/><text x="50%" y="62%" font-size="50" font-weight="bold" text-anchor="middle" fill="%23ffffff">28</text></svg>',
-      badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%231e3a8a"/><text x="50%" y="62%" font-size="50" font-weight="bold" text-anchor="middle" fill="%23ffffff">28</text></svg>',
-      tag: 'exam2028-weekly',
-      renotify: true
-    };
-
-    // 優先使用 ServiceWorker 顯示系統標準推播（PWA 標準通道）
+    const item = masterSchedule && masterSchedule.thursday_releases ? masterSchedule.thursday_releases[currentThursIndex] : null;
+    const title = '🔔 2028 學測家長陪跑日曆';
+    const body = item && item.question ? `【${item.stage}】${item.question}` : '每週四指引已發布，點擊查看本週解惑！';
     if ('serviceWorker' in navigator) {
       try {
         const reg = await navigator.serviceWorker.ready;
-        await reg.showNotification(notifTitle, notifOptions);
-        console.log('推播已透過 ServiceWorker 發送！');
+        reg.showNotification(title, { body, icon: './manifest.json' });
         return;
-      } catch (err) {
-        console.warn('ServiceWorker showNotification 降級：', err);
-      }
+      } catch (e) {}
     }
-
-    // 降級使用原生 Notification API
-    new Notification(notifTitle, notifOptions);
+    new Notification(title, { body, icon: './manifest.json' });
+  } else {
+    alert('通知權限未開啟，請至瀏覽器設定允許通知。');
   }
-};
-
-// ==================== 雲端管理工作台 (Cloud Studio) ====================
-let adminAuthenticated = false;
-
-window.openAdminLogin = function() {
-  if (!adminAuthenticated) {
-    const pwd = prompt('請輸入負責人雲端管理金鑰：');
-    if (pwd === 'winner2028' || pwd === 'darry') {
-      adminAuthenticated = true;
-    } else if (pwd !== null) {
-      alert('⚠️ 管理金鑰錯誤，無法存取雲端工作台。');
-      return;
-    } else {
-      return;
-    }
-  }
-  openAdminModal();
-};
-
-window.openAdminModal = function() {
-  const modal = document.getElementById('admin-cloud-modal');
-  if (modal) {
-    modal.style.display = 'flex';
-    renderCloudAdminContent();
-  }
-};
-
-window.closeAdminModal = function() {
-  const modal = document.getElementById('admin-cloud-modal');
-  if (modal) modal.style.display = 'none';
-};
-
-window.switchAdminTab = function(tabPaneId) {
-  document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('thurs-tab-pane').style.display = (tabPaneId === 'thurs-tab-pane') ? 'block' : 'none';
-  document.getElementById('weekend-tab-pane').style.display = (tabPaneId === 'weekend-tab-pane') ? 'block' : 'none';
-};
-
-function renderCloudAdminContent() {
-  if (!masterSchedule) return;
-
-  const cutoffEl = document.getElementById('cloud-cutoff-text');
-  if (cutoffEl) cutoffEl.textContent = masterSchedule.cutoff_date || '2026-10-31';
-
-  // 1. 渲染週四問題
-  const thursTbody = document.getElementById('cloud-thurs-tbody');
-  if (thursTbody && masterSchedule.thursday_releases) {
-    thursTbody.innerHTML = masterSchedule.thursday_releases.map((it, idx) => {
-      return `
-        <tr>
-          <td><strong>第 ${it.index} 週</strong></td>
-          <td>${it.release_date} (${it.day})</td>
-          <td style="font-weight: 500;">${it.question || '🔒 [未公開，已在庫房安全隔離]'}</td>
-          <td>${it.is_unlocked ? '<span style="color:#059669; font-weight:700;">✅ 已公開</span>' : '<span style="color:#d97706;">🔒 庫房保護</span>'}</td>
-          <td>
-            <button class="btn btn-sm btn-secondary" onclick="cloudEditQuestion(${idx})">編輯</button>
-          </td>
-        </tr>
-      `;
-    }).join('');
-  }
-
-  // 2. 渲染週末科系
-  const weekendTbody = document.getElementById('cloud-weekend-tbody');
-  if (weekendTbody && masterSchedule.weekend_releases) {
-    weekendTbody.innerHTML = masterSchedule.weekend_releases.map((it, idx) => {
-      return `
-        <tr>
-          <td>第 ${it.slot_num} 格</td>
-          <td>${it.release_date} (${it.day})</td>
-          <td style="font-weight: 700; color: #1e3a8a;">${it.group_name || '🔒 [未公開，已在庫房安全隔離]'}</td>
-          <td>${it.schools_count ? it.schools_count + ' 校' : '--'}</td>
-          <td>
-            <button class="btn btn-sm btn-secondary" onclick="cloudMoveWeekend(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>▲</button>
-            <button class="btn btn-sm btn-secondary" onclick="cloudMoveWeekend(${idx}, 1)" ${idx === masterSchedule.weekend_releases.length - 1 ? 'disabled' : ''}>▼</button>
-          </td>
-        </tr>
-      `;
-    }).join('');
-  }
-}
-
-window.cloudEditQuestion = function(idx) {
-  const it = masterSchedule.thursday_releases[idx];
-  const newQ = prompt(`編輯第 ${it.index} 週題目：`, it.question || '');
-  if (newQ !== null && newQ.trim() !== '') {
-    it.question = newQ.trim();
-    renderCloudAdminContent();
-    renderWeeklyPush();
-    alert('已在雲端記憶體更新！點擊「下載排程 JSON」即可備份或同步。');
-  }
-};
-
-window.cloudMoveWeekend = function(idx, dir) {
-  const targetIdx = idx + dir;
-  const list = masterSchedule.weekend_releases;
-  if (targetIdx < 0 || targetIdx >= list.length) return;
-
-  const tempName = list[idx].group_name;
-  const tempCount = list[idx].schools_count;
-  list[idx].group_name = list[targetIdx].group_name;
-  list[idx].schools_count = list[targetIdx].schools_count;
-  list[targetIdx].group_name = tempName;
-  list[targetIdx].schools_count = tempCount;
-
-  renderCloudAdminContent();
-};
-
-window.exportAdminSchedule = function() {
-  const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(masterSchedule, null, 2));
-  const dl = document.createElement('a');
-  dl.setAttribute("href", str);
-  dl.setAttribute("download", "master_schedule_cloud.json");
-  dl.click();
 };

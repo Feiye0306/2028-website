@@ -3,140 +3,141 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>2028 學測家長陪跑日曆 ｜ 倒數・推播・科系全覽</title>
+  <title>2028 學測家長陪跑日曆 ｜ 陪伴孩子每週走穩一步</title>
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#1e3a8a">
+  <meta name="theme-color" content="#f8f7f4">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="學測陪跑日曆">
-  <link rel="stylesheet" href="./style.css">
-  <style>
-    /* 負責人雲端管理工作台樣式 */
-    .admin-modal-bg { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.75); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-    .admin-window { background: #ffffff; width: 95%; max-width: 800px; height: 90vh; border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-    .admin-header { background: #1e3a8a; color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; }
-    .admin-body { padding: 16px; overflow-y: auto; flex: 1; background: #f8fafc; }
-    .admin-tabs { display: flex; gap: 8px; margin-bottom: 14px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
-    .admin-tab-btn { background: none; border: none; font-size: 0.95rem; font-weight: 700; color: #64748b; padding: 6px 14px; cursor: pointer; border-radius: 6px; }
-    .admin-tab-btn.active { background: #1e3a8a; color: white; }
-    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: white; border-radius: 8px; overflow: hidden; }
-    .admin-table th { background: #f1f5f9; padding: 8px 10px; text-align: left; color: #475569; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
-    .admin-table td { padding: 8px 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
-    .admin-table tr:hover td { background: #f8fafc; }
-  </style>
+  <link rel="stylesheet" href="./style.css?v=20280114">
 </head>
 <body>
 
-  <!-- 頂部 Header -->
-  <header class="app-header">
-    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 680px; margin: 0 auto;">
-      <h1 style="font-size: 1.3rem;">📅 2028 學測家長陪跑日曆</h1>
-      <button class="btn btn-sm" onclick="openAdminLogin()" style="background: rgba(255,255,255,0.2); color: #ffffff; font-size: 0.75rem; padding: 3px 8px; border: 1px solid rgba(255,255,255,0.3);">
-        ⚙️ 雲端管理
-      </button>
-    </div>
-    <div class="header-badge">
-      依排程逐週公開（預估學測日：2028/01/14）
+  <!-- 人文誌頂部 Header -->
+  <header class="editorial-header">
+    <div class="header-inner">
+      <div style="text-align: left;">
+        <div class="brand-kicker">2028 PARENT COMPANION</div>
+        <h1 class="brand-title">學測家長陪跑日曆</h1>
+      </div>
+      <div>
+        <button class="admin-pill-btn" onclick="openAdminLogin()">⚙️ 排程管理</button>
+      </div>
     </div>
   </header>
 
-  <!-- 導航分頁 -->
-  <nav class="nav-tabs">
-    <button class="nav-btn active" data-tab="countdown-tab">
-      🕒 倒數與推播
-    </button>
-    <button class="nav-btn" data-tab="weekend-tab">
-      🎓 週末科系發布
-    </button>
-    <button class="nav-btn" data-tab="depts-tab">
-      🔍 科系資料庫
-    </button>
-  </nav>
+  <!-- 簡約膠囊導航列 -->
+  <div class="nav-container">
+    <nav class="nav-pills">
+      <button class="pill-btn active" data-tab="countdown-pane">
+        🌱 本週指引
+      </button>
+      <button class="pill-btn" data-tab="weekend-pane">
+        🎓 週末看系
+      </button>
+      <button class="pill-btn" data-tab="depts-pane">
+        🔍 校系總覽
+      </button>
+    </nav>
+  </div>
 
-  <!-- 主容器 -->
+  <!-- 主內容容器 -->
   <main class="container">
 
-    <!-- PWA 安裝橫幅 -->
-    <div id="pwa-install-banner" class="pwa-banner" style="display: none;">
-      <div>
-        <strong>📱 加到手機桌面</strong>
-        <p>將陪跑日曆安裝為 App，每週四準時接收推播！</p>
+    <!-- PWA 手機安裝橫幅 -->
+    <div id="pwa-install-banner" class="editorial-card" style="display: none; padding: 14px 18px; background: #fffcf8; border-color: #f2e3d0; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+        <div style="font-size: 0.88rem; color: #7c4a27;">
+          <strong>📱 加到手機桌面</strong>
+          <div style="font-size: 0.8rem; color: #a1704e;">安裝成專屬日曆，每週四準時接收推播</div>
+        </div>
+        <button class="btn btn-sm" onclick="installPwa()" style="background: #c26732;">加到主畫面</button>
       </div>
-      <button class="btn btn-sm" onclick="installPwa()">立刻安裝</button>
     </div>
 
-    <!-- 分頁 1：學測倒數與推播 -->
-    <section id="countdown-tab" class="tab-content active">
-      <!-- 倒數週數大卡片 -->
-      <div class="card countdown-hero" style="padding: 24px 20px;">
-        <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">
-          距離 2028 學測（預估 2028/01/14）
+    <!-- ==================== 分頁 1：倒數週數與本週指引 ==================== -->
+    <section id="countdown-pane" class="tab-pane active">
+
+      <!-- 倒數週數主卡片（只留純週數・極致大氣・零機械感） -->
+      <div class="countdown-focus-card">
+        <div class="countdown-subhead">距離 2028 學測</div>
+        
+        <div class="countdown-hero-block">
+          <span class="countdown-word-prefix">倒數</span>
+          <span id="weeks-num" class="countdown-big-num">64</span>
+          <span class="countdown-word-suffix">週</span>
         </div>
-        <div style="display: flex; align-items: baseline; justify-content: center; gap: 8px; margin: 10px 0;">
-          <span style="font-size: 1.4rem; font-weight: 700; color: var(--primary);">倒數</span>
-          <span id="weeks-num" style="font-size: 3.8rem; font-weight: 900; color: var(--primary); line-height: 1; letter-spacing: -1px;">--</span>
-          <span style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">週</span>
+
+        <div>
+          <span class="countdown-badge-date">
+            📅 預估學測日 2028.01.14
+          </span>
         </div>
-        <div id="weeks-sub-note" style="font-size: 0.88rem; color: #475569; font-weight: 500; margin-top: 6px;">
-          計算中...
-        </div>
-        <div class="countdown-footnote" style="margin-top: 10px; border-top: 1px dashed #e2e8f0; padding-top: 8px;">
-          * 註：學測預估日抓 2028/01/14。每週四推播當週行動指引，陪孩子穩健迎戰。
+
+        <div class="countdown-footer-quote">
+          「陪伴孩子，每週走穩一步。我們用時間的節奏，換取心中的從容。」
         </div>
       </div>
 
-      <!-- 每週四推播卡片 -->
-      <div class="card push-preview-card">
-        <div class="week-selector-bar">
-          <button class="btn btn-secondary btn-sm" onclick="changeThursIndex(-1)">◀ 前一週</button>
-          <span id="stage-pager-text" style="font-size: 0.86rem; font-weight: 700; color: var(--primary);">載入中...</span>
-          <button class="btn btn-secondary btn-sm" onclick="changeThursIndex(1)">後一週 ▶</button>
+      <!-- 本週指引卡片 -->
+      <div class="editorial-card">
+        <!-- 週次切換器 -->
+        <div class="timeline-stepper">
+          <button class="btn-stepper" onclick="changeThursIndex(-1)">◀ 前一週</button>
+          <span id="stage-pager-text" class="stepper-label">載入中...</span>
+          <button class="btn-stepper" onclick="changeThursIndex(1)">後一週 ▶</button>
         </div>
 
+        <!-- 動態載入當週推播內容 -->
         <div id="weekly-push-container">
-          <p style="text-align: center; color: var(--text-muted); padding: 20px;">載入推播內容中...</p>
+          <p style="text-align: center; color: var(--text-muted); padding: 30px;">正在載入本週指引...</p>
         </div>
 
-        <div style="margin-top: 14px; text-align: center;">
-          <button class="btn btn-secondary btn-sm" onclick="triggerPushTest()">
-            🔔 模擬每週四推播通知
+        <div style="text-align: center; margin-top: 20px; border-top: 1px solid #f1f0eb; padding-top: 16px;">
+          <button class="btn btn-outline btn-sm" onclick="triggerPushTest()">
+            🔔 開啟每週四手機推播通知
           </button>
         </div>
       </div>
+
     </section>
 
-    <!-- 分頁 2：週末科系發布 -->
-    <section id="weekend-tab" class="tab-content">
-      <div class="card" style="border-left: 4px solid var(--primary-light);">
-        <h2 style="font-size: 1.15rem; color: var(--primary); margin-bottom: 6px;">週末科系發布（600 群精選）</h2>
+    <!-- ==================== 分頁 2：週末科系發布 ==================== -->
+    <section id="weekend-pane" class="tab-pane">
+      <div class="editorial-card" style="margin-bottom: 14px;">
+        <h2 style="font-size: 1.18rem; color: var(--text-headline); font-weight: 800; margin-bottom: 4px;">
+          週末看系（600 群精選）
+        </h2>
         <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
-          每週六、日精選一個科系群全台發布，依排程日期依序解鎖。歷史已發布內容可隨時點擊回看。
+          每逢週六、週日解鎖一系。不盲目追求填鴨，陪孩子慢慢看懂未來的路。
         </p>
       </div>
 
-      <div class="card">
+      <div class="editorial-card">
         <div id="weekend-releases-list">
-          <p style="text-align: center; color: var(--text-muted); padding: 20px;">載入週末精選中...</p>
+          <p style="text-align: center; color: var(--text-muted); padding: 30px;">正在整理精選科系...</p>
         </div>
       </div>
     </section>
 
-    <!-- 分頁 3：科系資料庫全量搜尋 -->
-    <section id="depts-tab" class="tab-content">
-      <div class="card">
-        <h2 style="font-size: 1.15rem; color: var(--primary); margin-bottom: 8px;">校系全量檢索（2,178 系組）</h2>
-        <input type="text" id="dept-search-input" class="search-box" placeholder="輸入大學、科系名稱（例如：臺大、電機、資管、法學...）" oninput="filterDepts()">
+    <!-- ==================== 分頁 3：校系總覽檢索 ==================== -->
+    <section id="depts-pane" class="tab-pane">
+      <div class="editorial-card">
+        <h2 style="font-size: 1.18rem; color: var(--text-headline); font-weight: 800; margin-bottom: 10px;">
+          校系全量檢索（2,178 系組）
+        </h2>
+        <input type="text" id="dept-search-input" class="editorial-input" placeholder="輸入大學或科系關鍵字（如：臺大、資工、企管...）" oninput="filterDepts()">
         
-        <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
-          依學測參採科目快篩：
+        <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;">
+          學測參採科目快速篩選：
         </div>
-        <div class="filter-tags">
-          <button class="tag-btn" onclick="toggleSubjectFilter(this, '國文')">國文</button>
-          <button class="tag-btn" onclick="toggleSubjectFilter(this, '英文')">英文</button>
-          <button class="tag-btn" onclick="toggleSubjectFilter(this, '數A')">數A</button>
-          <button class="tag-btn" onclick="toggleSubjectFilter(this, '數B')">數B</button>
-          <button class="tag-btn" onclick="toggleSubjectFilter(this, '社會')">社會</button>
-          <button class="tag-btn" onclick="toggleSubjectFilter(this, '自然')">自然</button>
+        <div class="filter-chip-row">
+          <button class="filter-chip" onclick="toggleSubjectFilter(this, '國文')">國文</button>
+          <button class="filter-chip" onclick="toggleSubjectFilter(this, '英文')">英文</button>
+          <button class="filter-chip" onclick="toggleSubjectFilter(this, '數A')">數A</button>
+          <button class="filter-chip" onclick="toggleSubjectFilter(this, '數B')">數B</button>
+          <button class="filter-chip" onclick="toggleSubjectFilter(this, '社會')">社會</button>
+          <button class="filter-chip" onclick="toggleSubjectFilter(this, '自然')">自然</button>
         </div>
       </div>
 
@@ -145,82 +146,44 @@
       </div>
     </section>
 
-    <!-- 底部宣告 -->
-    <footer class="footer-note">
-      <p>資料來源：大學甄選入學委員會 115 學年度申請入學校系參採一覽表與教育部大專校院校務資訊公開平台</p>
-      <p style="margin-top: 4px;">本站依排程公開時間陸續釋出時程指南與精選科系。</p>
+    <!-- 底部聲明 -->
+    <footer class="editorial-footer">
+      <p>資料底本：大學甄選入學委員會 115 學年度申請入學一覽表 ＆ 教育部校務資訊公開平臺</p>
+      <p style="margin-top: 4px;">本站每週依排程解鎖指南；未公開題目在庫房安全隔離。</p>
     </footer>
 
   </main>
 
-  <!-- ==================== 負責人專屬雲端排程管理工作台 (Admin Modal) ==================== -->
-  <div id="admin-cloud-modal" class="admin-modal-bg">
-    <div class="admin-window">
-      <div class="admin-header">
-        <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-          ☁️ 負責人雲端排程管理工作台
-          <span style="font-size: 0.75rem; background: #059669; padding: 2px 6px; border-radius: 4px;">雲端同步中</span>
-        </h3>
-        <button class="btn btn-sm btn-secondary" onclick="closeAdminModal()">關閉 ✖</button>
+  <!-- ==================== 雲端管理工作台彈窗 ==================== -->
+  <div id="admin-cloud-modal" class="modal-backdrop">
+    <div style="background: #ffffff; width: 92%; max-width: 720px; max-height: 85vh; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+      <div style="padding: 16px 20px; border-bottom: 1px solid #e8e6df; display: flex; justify-content: space-between; align-items: center; background: #faf9f6;">
+        <h3 style="font-size: 1.1rem; color: var(--text-headline); font-weight: 800;">⚙️ 雲端排程管理工作台</h3>
+        <button class="btn btn-outline btn-sm" onclick="closeAdminModal()">關閉 ✖</button>
       </div>
 
-      <div class="admin-body">
-        <!-- 資安防洩密條 -->
-        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; font-size: 0.85rem; color: #065f46;">
-          <strong>🛡️ 雲端防洩密狀態：</strong>
-          前台目前僅公開解鎖至 <strong id="cloud-cutoff-text">--</strong>。未到期的未來週次題目與答案在公開前台處於完全剝除狀態，外部無法窺探。
+      <div style="padding: 18px 20px; overflow-y: auto; flex: 1;">
+        <div style="background: #edf7f0; border: 1px solid #cce8d4; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; font-size: 0.85rem; color: #1b633e;">
+          <strong>🛡️ 物理防洩密模式中：</strong>
+          前台目前僅公開至 <strong id="cloud-cutoff-text">--</strong>，未到期的未來週次題目在庫房徹底隔離。
         </div>
 
-        <!-- 雲端操作按鈕列 -->
-        <div style="display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; align-items: center;">
-          <input type="text" id="admin-filter-input" placeholder="🔍 搜尋題目或科系..." style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.88rem; flex: 1;" oninput="filterAdminLists()">
-          <button class="btn btn-sm" onclick="exportAdminSchedule()">📥 下載排程 JSON</button>
+        <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+          <button class="btn btn-sm" onclick="exportAdminSchedule()">📥 備份排程 JSON</button>
         </div>
 
-        <div class="admin-tabs">
-          <button class="admin-tab-btn active" onclick="switchAdminTab('thurs-tab-pane')">📅 週四【問題排程】(64期)</button>
-          <button class="admin-tab-btn" onclick="switchAdminTab('weekend-tab-pane')">🎓 週末【科系排程】(126格)</button>
+        <div style="display: flex; gap: 6px; border-bottom: 1px solid #e8e6df; margin-bottom: 12px; padding-bottom: 6px;">
+          <button class="pill-btn active" id="tab-btn-thurs" onclick="switchAdminTab('thurs')">📅 週四【問題排程】</button>
+          <button class="pill-btn" id="tab-btn-weekend" onclick="switchAdminTab('weekend')">🎓 週末【科系排程】</button>
         </div>
 
-        <!-- 1. 週四問題排程清單 -->
-        <div id="thurs-tab-pane">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th style="width: 50px;">週次</th>
-                <th style="width: 110px;">公開日期</th>
-                <th>公開題目（家長關鍵解惑）</th>
-                <th style="width: 100px;">狀態</th>
-                <th style="width: 100px;">操作</th>
-              </tr>
-            </thead>
-            <tbody id="cloud-thurs-tbody">
-              <!-- 動態載入 -->
-            </tbody>
-          </table>
-        </div>
-
-        <!-- 2. 週末科系排程清單 -->
-        <div id="weekend-tab-pane" style="display: none;">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th style="width: 50px;">格次</th>
-                <th style="width: 120px;">公開日期</th>
-                <th>發布科系群組</th>
-                <th style="width: 80px;">開設校數</th>
-                <th style="width: 120px;">排序調整</th>
-              </tr>
-            </thead>
-            <tbody id="cloud-weekend-tbody">
-              <!-- 動態載入 -->
-            </tbody>
-          </table>
+        <div id="cloud-admin-content">
+          <!-- 動態載入表格 -->
         </div>
       </div>
     </div>
   </div>
 
-  <script src="./app.js"></script>
+  <script src="./app.js?v=20280114"></script>
 </body>
 </html>
