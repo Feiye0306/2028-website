@@ -15,9 +15,93 @@
 
   <!-- 頂部 Header -->
   <header class="app-header">
-    <h1>📅 2028 學測家長陪跑日曆</h1>
-    <div class="header-badge">非官方試作版・家長查詢專用（底本：115 學年度）</div>
+    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 680px; margin: 0 auto;">
+      <h1 style="font-size: 1.3rem;">📅 2028 學測家長陪跑日曆</h1>
+      <button class="btn btn-sm btn-secondary" onclick="toggleAdminPanel()" style="font-size: 0.75rem; padding: 4px 8px;">
+        ⚙️ 排程控制台
+      </button>
+    </div>
+    <div class="header-badge">
+      依排程逐週公開（當前基準日：<span id="current-view-date">2026-10-27</span>）
+    </div>
   </header>
+
+  <!-- 負責人專屬排程控制台（預設隱藏） -->
+  <div id="admin-schedule-panel" class="card" style="display: none; max-width: 680px; margin: 12px auto; background: #f8fafc; border: 2px solid #3b82f6;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <h3 style="color: #1e40af; font-size: 1.1rem;">⚙️ 負責人排程控制台（公開時間表與模擬）</h3>
+      <button class="btn btn-sm btn-secondary" onclick="toggleAdminPanel()">關閉 ✖</button>
+    </div>
+    
+    <!-- 模擬日期控制 -->
+    <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 12px;">
+      <div style="font-size: 0.9rem; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+        🕒 模擬家長瀏覽時間（時間旅行測試）：
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+        <input type="date" id="admin-date-picker" style="padding: 6px 10px; border: 1px solid #94a3b8; border-radius: 6px; font-size: 0.9rem;">
+        <button class="btn btn-sm" onclick="applySimulatedDate()">套用模擬日期</button>
+        <button class="btn btn-sm btn-secondary" onclick="resetToRealDate()">重設真實時間</button>
+        <button class="btn btn-sm" style="background: #d97706;" onclick="toggleUnlockAll()">全部強制解鎖預覽</button>
+      </div>
+      <p style="font-size: 0.78rem; color: #64748b; margin-top: 6px;">
+        * 可挑選未來任意日期（如 2027-04-15），即時預覽該日期時家長端看到的已解鎖與鎖定狀態。
+      </p>
+    </div>
+
+    <!-- 快捷按鈕 -->
+    <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+      <button class="btn btn-sm" onclick="exportScheduleJson()">📥 匯出排程資料 (JSON)</button>
+    </div>
+
+    <!-- 排程查詢 Tabs -->
+    <div style="display: flex; gap: 8px; border-bottom: 1px solid #cbd5e1; margin-bottom: 10px;">
+      <button class="btn btn-sm" onclick="document.getElementById('admin-q-section').style.display='block'; document.getElementById('admin-d-section').style.display='none';">
+        每週四【問題公開】時間表（65期）
+      </button>
+      <button class="btn btn-sm btn-secondary" onclick="document.getElementById('admin-q-section').style.display='none'; document.getElementById('admin-d-section').style.display='block';">
+        週末【科系公開】時間表（128格）
+      </button>
+    </div>
+
+    <!-- 1. 問題公開排程表 -->
+    <div id="admin-q-section" style="max-height: 380px; overflow-y: auto; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left;">
+        <thead style="background: #f1f5f9; position: sticky; top: 0;">
+          <tr>
+            <th style="padding: 6px 8px;">週次</th>
+            <th style="padding: 6px 8px;">公開日期</th>
+            <th style="padding: 6px 8px;">所屬階段</th>
+            <th style="padding: 6px 8px;">預定公開題目</th>
+            <th style="padding: 6px 8px;">狀態</th>
+            <th style="padding: 6px 8px;">操作</th>
+          </tr>
+        </thead>
+        <tbody id="admin-q-table-body">
+          <!-- 動態載入 -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 2. 科系公開排程表 -->
+    <div id="admin-d-section" style="display: none; max-height: 380px; overflow-y: auto; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left;">
+        <thead style="background: #f1f5f9; position: sticky; top: 0;">
+          <tr>
+            <th style="padding: 6px 8px;">格次</th>
+            <th style="padding: 6px 8px;">公開日期</th>
+            <th style="padding: 6px 8px;">發布科系群組</th>
+            <th style="padding: 6px 8px;">開設大學</th>
+            <th style="padding: 6px 8px;">狀態</th>
+            <th style="padding: 6px 8px;">操作</th>
+          </tr>
+        </thead>
+        <tbody id="admin-d-table-body">
+          <!-- 動態載入 -->
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <!-- 導航分頁 -->
   <nav class="nav-tabs">
@@ -25,7 +109,7 @@
       🕒 倒數與推播
     </button>
     <button class="nav-btn" data-tab="weekend-tab">
-      🎓 週末科系精選
+      🎓 週末科系發布
     </button>
     <button class="nav-btn" data-tab="depts-tab">
       🔍 科系資料庫
@@ -71,16 +155,16 @@
           </div>
         </div>
         <div class="countdown-footnote">
-          * 註：117 學年度考試確切日期依大考中心公告為準，此處以歷年 1 月常規時程推估。
+          * 註：依歷年 1 月節奏推估。家長陪跑依排程每週四準時釋出最新指南。
         </div>
       </div>
 
       <!-- 每週四推播卡片 -->
       <div class="card push-preview-card">
         <div class="week-selector-bar">
-          <button class="btn btn-secondary btn-sm" onclick="changeStage(-1)">◀ 上一階段</button>
-          <span id="stage-pager-text" style="font-size: 0.86rem; font-weight: 700; color: var(--primary);">階段 1 / 8</span>
-          <button class="btn btn-secondary btn-sm" onclick="changeStage(1)">下一階段 ▶</button>
+          <button class="btn btn-secondary btn-sm" onclick="changeThursIndex(-1)">◀ 前一週</button>
+          <span id="stage-pager-text" style="font-size: 0.86rem; font-weight: 700; color: var(--primary);">載入中...</span>
+          <button class="btn btn-secondary btn-sm" onclick="changeThursIndex(1)">後一週 ▶</button>
         </div>
 
         <div id="weekly-push-container">
@@ -100,7 +184,7 @@
       <div class="card" style="border-left: 4px solid var(--primary-light);">
         <h2 style="font-size: 1.15rem; color: var(--primary); margin-bottom: 6px;">週末科系發布（600 群精選）</h2>
         <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
-          每週六、日精選一個科系群全台發布，幫助家長與孩子在學測前逐步掌握多元方向。歷史列表累積已發布精選，可隨時點擊回看。
+          每週六、日精選一個科系群全台發布，依排程日期依序解鎖。歷史已發布內容可隨時點擊回看。
         </p>
       </div>
 
@@ -138,7 +222,7 @@
     <!-- 底部版權與數據口徑宣告 -->
     <footer class="footer-note">
       <p>資料來源：大學甄選入學委員會 115 學年度申請入學校系參採一覽表與教育部大專校院校務資訊公開平台</p>
-      <p style="margin-top: 4px;">本站僅供家長陪跑查詢試作；正式發布上線前需經負責人審核裁決。</p>
+      <p style="margin-top: 4px;">本站依排程公開時間陸續釋出時程指南與精選科系。</p>
     </footer>
 
   </main>
