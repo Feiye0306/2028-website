@@ -488,18 +488,53 @@ window.installPwa = function() {
   }
 };
 
-window.triggerPushTest = function() {
+// PWA 訂閱與推播通知測試
+window.triggerPushTest = async function() {
   if (!('Notification' in window)) {
-    alert('瀏覽器不支援通知');
+    alert('⚠️ 您的瀏覽器目前不支援 Web Notification 通知功能。');
     return;
   }
-  Notification.requestPermission().then(p => {
-    if (p === 'granted') {
-      const it = masterSchedule.thursday_releases[currentThursIndex];
-      new Notification('🔔 2028 學測家長推播', {
-        body: it ? `【${it.stage}】${it.question}` : '本週最新時程指南已發布！',
-        icon: './manifest.json'
-      });
+
+  // 1. 檢查並請求通知權限
+  let permission = Notification.permission;
+  if (permission === 'default') {
+    permission = await Notification.requestPermission();
+  }
+
+  if (permission === 'denied') {
+    alert('⚠️ 通知權限已被封鎖。\n請點擊網址列左側的「鎖頭」或「網站設定」圖示，將「通知」改為「允許」後再試一次！');
+    return;
+  }
+
+  if (permission === 'granted') {
+    const currentItem = masterSchedule && masterSchedule.thursday_releases 
+      ? masterSchedule.thursday_releases[currentThursIndex] 
+      : null;
+
+    const notifTitle = '🔔 2028 學測家長陪跑日曆';
+    const notifOptions = {
+      body: currentItem && currentItem.question 
+        ? `【${currentItem.stage.split('（')[0]}】${currentItem.question}` 
+        : '每週四倒數指南已更新，點擊查看本週家長關鍵解惑！',
+      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%231e3a8a"/><text x="50%" y="62%" font-size="50" font-weight="bold" text-anchor="middle" fill="%23ffffff">28</text></svg>',
+      badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%231e3a8a"/><text x="50%" y="62%" font-size="50" font-weight="bold" text-anchor="middle" fill="%23ffffff">28</text></svg>',
+      tag: 'exam2028-weekly',
+      renotify: true
+    };
+
+    // 優先使用 ServiceWorker 顯示系統標準推播（PWA 標準通道）
+    if ('serviceWorker' in navigator) {
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        await reg.showNotification(notifTitle, notifOptions);
+        console.log('推播已透過 ServiceWorker 發送！');
+        return;
+      } catch (err) {
+        console.warn('ServiceWorker showNotification 降級：', err);
+      }
     }
-  });
+
+    // 降級使用原生 Notification API
+    new Notification(notifTitle, notifOptions);
+  }
 };
