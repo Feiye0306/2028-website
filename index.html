@@ -130,32 +130,21 @@
 
     <!-- 分頁 1：學測倒數與推播 -->
     <section id="countdown-tab" class="tab-content active">
-      <!-- 倒數卡片 -->
-      <div class="card countdown-hero">
-        <div class="countdown-title">
-          <span>距離 2028 學測（2028/01/21 預估日）</span>
-          <span id="calc-weeks-badge" class="stage-badge">計算中...</span>
+      <!-- 倒數卡片（依負責人指示：以 2028/01/14 為準，專注倒數週數） -->
+      <div class="card countdown-hero" style="padding: 24px 20px;">
+        <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">
+          距離 2028 學測（預估 2028/01/14）
         </div>
-        <div class="countdown-timer">
-          <div class="timer-box">
-            <div id="days-num" class="timer-num">--</div>
-            <div class="timer-label">天</div>
-          </div>
-          <div class="timer-box">
-            <div id="hours-num" class="timer-num">--</div>
-            <div class="timer-label">時</div>
-          </div>
-          <div class="timer-box">
-            <div id="mins-num" class="timer-num">--</div>
-            <div class="timer-label">分</div>
-          </div>
-          <div class="timer-box">
-            <div id="secs-num" class="timer-num">--</div>
-            <div class="timer-label">秒</div>
-          </div>
+        <div style="display: flex; align-items: baseline; justify-content: center; gap: 8px; margin: 10px 0;">
+          <span style="font-size: 1.4rem; font-weight: 700; color: var(--primary);">倒數</span>
+          <span id="weeks-num" style="font-size: 3.8rem; font-weight: 900; color: var(--primary); line-height: 1; letter-spacing: -1px;">--</span>
+          <span style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">週</span>
         </div>
-        <div class="countdown-footnote">
-          * 註：依歷年 1 月節奏推估。家長陪跑依排程每週四準時釋出最新指南。
+        <div id="weeks-sub-note" style="font-size: 0.88rem; color: #475569; font-weight: 500; margin-top: 6px;">
+          計算中...
+        </div>
+        <div class="countdown-footnote" style="margin-top: 10px; border-top: 1px dashed #e2e8f0; padding-top: 8px;">
+          * 註：學測預估日抓 2028/01/14。每週四推播當週行動指引，陪孩子穩健迎戰。
         </div>
       </div>
 

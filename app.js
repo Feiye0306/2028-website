@@ -42,34 +42,27 @@ async function loadAllData() {
   }
 }
 
-// 倒數計時計算
-const EXAM_DATE = new Date('2028-01-21T09:00:00+08:00');
+// 倒數計時計算（依負責人指示：以 2028/01/14 為準，僅倒數週數）
+const EXAM_DATE = new Date('2028-01-14T09:00:00+08:00');
 
 function updateCountdownDisplay() {
   const now = simulatedDate || new Date();
   const diff = EXAM_DATE - now;
 
+  const weeksNumEl = document.getElementById('weeks-num');
+  const weeksSubEl = document.getElementById('weeks-sub-note');
+
   if (diff <= 0) {
-    document.getElementById('days-num').textContent = '0';
-    document.getElementById('hours-num').textContent = '00';
-    document.getElementById('mins-num').textContent = '00';
-    document.getElementById('secs-num').textContent = '00';
-    document.getElementById('calc-weeks-badge').textContent = '已迎戰學測！';
+    if (weeksNumEl) weeksNumEl.textContent = '0';
+    if (weeksSubEl) weeksSubEl.textContent = '已迎戰 2028 學測！';
     return;
   }
 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const mins = Math.floor((diff / (1000 * 60)) % 60);
-  const secs = Math.floor((diff / 1000) % 60);
+  const remainWeeks = Math.max(0, Math.ceil(days / 7));
 
-  const remainWeeks = Math.ceil(days / 7);
-
-  document.getElementById('days-num').textContent = days;
-  document.getElementById('hours-num').textContent = String(hours).padStart(2, '0');
-  document.getElementById('mins-num').textContent = String(mins).padStart(2, '0');
-  document.getElementById('secs-num').textContent = String(secs).padStart(2, '0');
-  document.getElementById('calc-weeks-badge').textContent = `約剩 ${remainWeeks} 週`;
+  if (weeksNumEl) weeksNumEl.textContent = remainWeeks;
+  if (weeksSubEl) weeksSubEl.textContent = `距離 2028/01/14 預估學測日尚餘約 ${days} 天`;
 }
 
 function initCountdown() {
