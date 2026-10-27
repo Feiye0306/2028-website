@@ -1,0 +1,1356 @@
+{
+  "generated_at": "2026-10-27 23:48:30",
+  "cutoff_date": "2026-10-31",
+  "exam_date": "2028-01-14",
+  "stats": {
+    "total_thursdays": 64,
+    "unlocked_thursdays": 1,
+    "total_weekends": 126,
+    "unlocked_weekends": 1
+  },
+  "thursday_releases": [
+    {
+      "id": "thurs-1",
+      "index": 1,
+      "release_date": "2026-10-29",
+      "day": "週四",
+      "countdown_weeks": 63,
+      "stage": "第 0 階段・暖身期（高二上，五階段之前）",
+      "question": "#2 高二開始準備學測會太早嗎？總複習應該從什麼時候開始？高二下才開始來得及嗎？",
+      "student_task": "把正在學的學校進度學紮實（高二課程就是學測範圍的一半）；英文單字每天少量、用零碎時間累積，先求不斷線",
+      "parent_task": "陪孩子聊一次方向——喜歡什麼、討厭什麼，先把選項打開，不下結論；這個階段最有價值的動作是穩住節奏，不是加壓",
+      "sample_push": "距離學測約 60 週——聽起來很遠，但有一件事這個學期沒做就補不回來：學習歷程檔案。",
+      "is_unlocked": true
+    },
+    {
+      "id": "thurs-2",
+      "index": 2,
+      "release_date": "2026-11-05",
+      "day": "週四",
+      "countdown_weeks": 62,
+      "stage": "第 0 階段・暖身期（高二上，五階段之前）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-3",
+      "index": 3,
+      "release_date": "2026-11-12",
+      "day": "週四",
+      "countdown_weeks": 61,
+      "stage": "第 0 階段・暖身期（高二上，五階段之前）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-4",
+      "index": 4,
+      "release_date": "2026-11-19",
+      "day": "週四",
+      "countdown_weeks": 60,
+      "stage": "第 0 階段・暖身期（高二上，五階段之前）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-5",
+      "index": 5,
+      "release_date": "2026-11-26",
+      "day": "週四",
+      "countdown_weeks": 59,
+      "stage": "第 0 階段・暖身期（高二上，五階段之前）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-6",
+      "index": 6,
+      "release_date": "2026-12-03",
+      "day": "週四",
+      "countdown_weeks": 58,
+      "stage": "第 0 階段・暖身期（高二上，五階段之前）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-7",
+      "index": 7,
+      "release_date": "2026-12-10",
+      "day": "週四",
+      "countdown_weeks": 57,
+      "stage": "階段一・高二下「打底」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-8",
+      "index": 8,
+      "release_date": "2026-12-17",
+      "day": "週四",
+      "countdown_weeks": 56,
+      "stage": "階段一・高二下「打底」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-9",
+      "index": 9,
+      "release_date": "2026-12-24",
+      "day": "週四",
+      "countdown_weeks": 55,
+      "stage": "階段一・高二下「打底」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-10",
+      "index": 10,
+      "release_date": "2026-12-31",
+      "day": "週四",
+      "countdown_weeks": 54,
+      "stage": "階段一・高二下「打底」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-11",
+      "index": 11,
+      "release_date": "2027-01-07",
+      "day": "週四",
+      "countdown_weeks": 53,
+      "stage": "階段一・高二下「打底」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-12",
+      "index": 12,
+      "release_date": "2027-01-14",
+      "day": "週四",
+      "countdown_weeks": 52,
+      "stage": "階段一・高二下「打底」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-13",
+      "index": 13,
+      "release_date": "2027-01-21",
+      "day": "週四",
+      "countdown_weeks": 51,
+      "stage": "階段一・高二下「打底」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-14",
+      "index": 14,
+      "release_date": "2027-01-28",
+      "day": "週四",
+      "countdown_weeks": 50,
+      "stage": "階段一・高二下「打底」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-15",
+      "index": 15,
+      "release_date": "2027-02-04",
+      "day": "週四",
+      "countdown_weeks": 49,
+      "stage": "階段二・暑假「總複習」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-16",
+      "index": 16,
+      "release_date": "2027-02-11",
+      "day": "週四",
+      "countdown_weeks": 48,
+      "stage": "階段二・暑假「總複習」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-17",
+      "index": 17,
+      "release_date": "2027-02-18",
+      "day": "週四",
+      "countdown_weeks": 47,
+      "stage": "階段二・暑假「總複習」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-18",
+      "index": 18,
+      "release_date": "2027-02-25",
+      "day": "週四",
+      "countdown_weeks": 46,
+      "stage": "階段二・暑假「總複習」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-19",
+      "index": 19,
+      "release_date": "2027-03-04",
+      "day": "週四",
+      "countdown_weeks": 45,
+      "stage": "階段二・暑假「總複習」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-20",
+      "index": 20,
+      "release_date": "2027-03-11",
+      "day": "週四",
+      "countdown_weeks": 44,
+      "stage": "階段二・暑假「總複習」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-21",
+      "index": 21,
+      "release_date": "2027-03-18",
+      "day": "週四",
+      "countdown_weeks": 43,
+      "stage": "階段二・暑假「總複習」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-22",
+      "index": 22,
+      "release_date": "2027-03-25",
+      "day": "週四",
+      "countdown_weeks": 42,
+      "stage": "階段二・暑假「總複習」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-23",
+      "index": 23,
+      "release_date": "2027-04-01",
+      "day": "週四",
+      "countdown_weeks": 41,
+      "stage": "階段三・高三上「衝刺」前段（模考啟動＋制度全開）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-24",
+      "index": 24,
+      "release_date": "2027-04-08",
+      "day": "週四",
+      "countdown_weeks": 40,
+      "stage": "階段三・高三上「衝刺」前段（模考啟動＋制度全開）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-25",
+      "index": 25,
+      "release_date": "2027-04-15",
+      "day": "週四",
+      "countdown_weeks": 39,
+      "stage": "階段三・高三上「衝刺」前段（模考啟動＋制度全開）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-26",
+      "index": 26,
+      "release_date": "2027-04-22",
+      "day": "週四",
+      "countdown_weeks": 38,
+      "stage": "階段三・高三上「衝刺」前段（模考啟動＋制度全開）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-27",
+      "index": 27,
+      "release_date": "2027-04-29",
+      "day": "週四",
+      "countdown_weeks": 37,
+      "stage": "階段三・高三上「衝刺」前段（模考啟動＋制度全開）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-28",
+      "index": 28,
+      "release_date": "2027-05-06",
+      "day": "週四",
+      "countdown_weeks": 36,
+      "stage": "階段三・高三上「衝刺」前段（模考啟動＋制度全開）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-29",
+      "index": 29,
+      "release_date": "2027-05-13",
+      "day": "週四",
+      "countdown_weeks": 35,
+      "stage": "階段三・高三上「衝刺」前段（模考啟動＋制度全開）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-30",
+      "index": 30,
+      "release_date": "2027-05-20",
+      "day": "週四",
+      "countdown_weeks": 34,
+      "stage": "階段三・高三上「衝刺」前段（模考啟動＋制度全開）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-31",
+      "index": 31,
+      "release_date": "2027-05-27",
+      "day": "週四",
+      "countdown_weeks": 33,
+      "stage": "階段四・倒數 100 天（衝刺中段）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-32",
+      "index": 32,
+      "release_date": "2027-06-03",
+      "day": "週四",
+      "countdown_weeks": 32,
+      "stage": "階段四・倒數 100 天（衝刺中段）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-33",
+      "index": 33,
+      "release_date": "2027-06-10",
+      "day": "週四",
+      "countdown_weeks": 31,
+      "stage": "階段四・倒數 100 天（衝刺中段）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-34",
+      "index": 34,
+      "release_date": "2027-06-17",
+      "day": "週四",
+      "countdown_weeks": 30,
+      "stage": "階段四・倒數 100 天（衝刺中段）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-35",
+      "index": 35,
+      "release_date": "2027-06-24",
+      "day": "週四",
+      "countdown_weeks": 29,
+      "stage": "階段四・倒數 100 天（衝刺中段）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-36",
+      "index": 36,
+      "release_date": "2027-07-01",
+      "day": "週四",
+      "countdown_weeks": 28,
+      "stage": "階段四・倒數 100 天（衝刺中段）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-37",
+      "index": 37,
+      "release_date": "2027-07-08",
+      "day": "週四",
+      "countdown_weeks": 27,
+      "stage": "階段四・倒數 100 天（衝刺中段）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-38",
+      "index": 38,
+      "release_date": "2027-07-15",
+      "day": "週四",
+      "countdown_weeks": 26,
+      "stage": "階段五・最後 30 天（衝刺收尾）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-39",
+      "index": 39,
+      "release_date": "2027-07-22",
+      "day": "週四",
+      "countdown_weeks": 25,
+      "stage": "階段五・最後 30 天（衝刺收尾）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-40",
+      "index": 40,
+      "release_date": "2027-07-29",
+      "day": "週四",
+      "countdown_weeks": 24,
+      "stage": "階段五・最後 30 天（衝刺收尾）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-41",
+      "index": 41,
+      "release_date": "2027-08-05",
+      "day": "週四",
+      "countdown_weeks": 23,
+      "stage": "階段五・最後 30 天（衝刺收尾）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-42",
+      "index": 42,
+      "release_date": "2027-08-12",
+      "day": "週四",
+      "countdown_weeks": 22,
+      "stage": "階段五・最後 30 天（衝刺收尾）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-43",
+      "index": 43,
+      "release_date": "2027-08-19",
+      "day": "週四",
+      "countdown_weeks": 21,
+      "stage": "階段五・最後 30 天（衝刺收尾）",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-44",
+      "index": 44,
+      "release_date": "2027-08-26",
+      "day": "週四",
+      "countdown_weeks": 20,
+      "stage": "階段六・學測「應試」當週",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-45",
+      "index": 45,
+      "release_date": "2027-09-02",
+      "day": "週四",
+      "countdown_weeks": 19,
+      "stage": "階段六・學測「應試」當週",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-46",
+      "index": 46,
+      "release_date": "2027-09-09",
+      "day": "週四",
+      "countdown_weeks": 18,
+      "stage": "階段六・學測「應試」當週",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-47",
+      "index": 47,
+      "release_date": "2027-09-16",
+      "day": "週四",
+      "countdown_weeks": 17,
+      "stage": "階段六・學測「應試」當週",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-48",
+      "index": 48,
+      "release_date": "2027-09-23",
+      "day": "週四",
+      "countdown_weeks": 16,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-49",
+      "index": 49,
+      "release_date": "2027-09-30",
+      "day": "週四",
+      "countdown_weeks": 15,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-50",
+      "index": 50,
+      "release_date": "2027-10-07",
+      "day": "週四",
+      "countdown_weeks": 14,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-51",
+      "index": 51,
+      "release_date": "2027-10-14",
+      "day": "週四",
+      "countdown_weeks": 13,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-52",
+      "index": 52,
+      "release_date": "2027-10-21",
+      "day": "週四",
+      "countdown_weeks": 12,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-53",
+      "index": 53,
+      "release_date": "2027-10-28",
+      "day": "週四",
+      "countdown_weeks": 11,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-54",
+      "index": 54,
+      "release_date": "2027-11-04",
+      "day": "週四",
+      "countdown_weeks": 10,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-55",
+      "index": 55,
+      "release_date": "2027-11-11",
+      "day": "週四",
+      "countdown_weeks": 9,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-56",
+      "index": 56,
+      "release_date": "2027-11-18",
+      "day": "週四",
+      "countdown_weeks": 8,
+      "stage": "階段六・學測「應試」當週",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-57",
+      "index": 57,
+      "release_date": "2027-11-25",
+      "day": "週四",
+      "countdown_weeks": 7,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-58",
+      "index": 58,
+      "release_date": "2027-12-02",
+      "day": "週四",
+      "countdown_weeks": 6,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-59",
+      "index": 59,
+      "release_date": "2027-12-09",
+      "day": "週四",
+      "countdown_weeks": 5,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-60",
+      "index": 60,
+      "release_date": "2027-12-16",
+      "day": "週四",
+      "countdown_weeks": 4,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-61",
+      "index": 61,
+      "release_date": "2027-12-23",
+      "day": "週四",
+      "countdown_weeks": 3,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-62",
+      "index": 62,
+      "release_date": "2027-12-30",
+      "day": "週四",
+      "countdown_weeks": 2,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-63",
+      "index": 63,
+      "release_date": "2028-01-06",
+      "day": "週四",
+      "countdown_weeks": 1,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    },
+    {
+      "id": "thurs-64",
+      "index": 64,
+      "release_date": "2028-01-13",
+      "day": "週四",
+      "countdown_weeks": 0,
+      "stage": "階段七・考後「申請落點」",
+      "is_unlocked": false
+    }
+  ],
+  "weekend_releases": [
+    {
+      "slot_num": 1,
+      "release_date": "2026-10-31",
+      "day": "週六",
+      "group_name": "資訊工程學系",
+      "schools_count": 41,
+      "programs_count": 103,
+      "tag": "41校開設・核心大系",
+      "desc": "全國共 41 所大學開設，包含 103 個系組。",
+      "is_unlocked": true
+    },
+    {
+      "slot_num": 2,
+      "release_date": "2026-11-01",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 3,
+      "release_date": "2026-11-07",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 4,
+      "release_date": "2026-11-08",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 5,
+      "release_date": "2026-11-14",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 6,
+      "release_date": "2026-11-15",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 7,
+      "release_date": "2026-11-21",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 8,
+      "release_date": "2026-11-22",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 9,
+      "release_date": "2026-11-28",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 10,
+      "release_date": "2026-11-29",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 11,
+      "release_date": "2026-12-05",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 12,
+      "release_date": "2026-12-06",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 13,
+      "release_date": "2026-12-12",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 14,
+      "release_date": "2026-12-13",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 15,
+      "release_date": "2026-12-19",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 16,
+      "release_date": "2026-12-20",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 17,
+      "release_date": "2026-12-26",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 18,
+      "release_date": "2026-12-27",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 19,
+      "release_date": "2027-01-02",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 20,
+      "release_date": "2027-01-03",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 21,
+      "release_date": "2027-01-09",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 22,
+      "release_date": "2027-01-10",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 23,
+      "release_date": "2027-01-16",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 24,
+      "release_date": "2027-01-17",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 25,
+      "release_date": "2027-01-23",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 26,
+      "release_date": "2027-01-24",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 27,
+      "release_date": "2027-01-30",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 28,
+      "release_date": "2027-01-31",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 29,
+      "release_date": "2027-02-06",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 30,
+      "release_date": "2027-02-07",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 31,
+      "release_date": "2027-02-13",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 32,
+      "release_date": "2027-02-14",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 33,
+      "release_date": "2027-02-20",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 34,
+      "release_date": "2027-02-21",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 35,
+      "release_date": "2027-02-27",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 36,
+      "release_date": "2027-02-28",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 37,
+      "release_date": "2027-03-06",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 38,
+      "release_date": "2027-03-07",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 39,
+      "release_date": "2027-03-13",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 40,
+      "release_date": "2027-03-14",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 41,
+      "release_date": "2027-03-20",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 42,
+      "release_date": "2027-03-21",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 43,
+      "release_date": "2027-03-27",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 44,
+      "release_date": "2027-03-28",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 45,
+      "release_date": "2027-04-03",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 46,
+      "release_date": "2027-04-04",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 47,
+      "release_date": "2027-04-10",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 48,
+      "release_date": "2027-04-11",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 49,
+      "release_date": "2027-04-17",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 50,
+      "release_date": "2027-04-18",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 51,
+      "release_date": "2027-04-24",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 52,
+      "release_date": "2027-04-25",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 53,
+      "release_date": "2027-05-01",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 54,
+      "release_date": "2027-05-02",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 55,
+      "release_date": "2027-05-08",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 56,
+      "release_date": "2027-05-09",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 57,
+      "release_date": "2027-05-15",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 58,
+      "release_date": "2027-05-16",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 59,
+      "release_date": "2027-05-22",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 60,
+      "release_date": "2027-05-23",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 61,
+      "release_date": "2027-05-29",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 62,
+      "release_date": "2027-05-30",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 63,
+      "release_date": "2027-06-05",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 64,
+      "release_date": "2027-06-06",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 65,
+      "release_date": "2027-06-12",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 66,
+      "release_date": "2027-06-13",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 67,
+      "release_date": "2027-06-19",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 68,
+      "release_date": "2027-06-20",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 69,
+      "release_date": "2027-06-26",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 70,
+      "release_date": "2027-06-27",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 71,
+      "release_date": "2027-07-03",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 72,
+      "release_date": "2027-07-04",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 73,
+      "release_date": "2027-07-10",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 74,
+      "release_date": "2027-07-11",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 75,
+      "release_date": "2027-07-17",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 76,
+      "release_date": "2027-07-18",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 77,
+      "release_date": "2027-07-24",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 78,
+      "release_date": "2027-07-25",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 79,
+      "release_date": "2027-07-31",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 80,
+      "release_date": "2027-08-01",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 81,
+      "release_date": "2027-08-07",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 82,
+      "release_date": "2027-08-08",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 83,
+      "release_date": "2027-08-14",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 84,
+      "release_date": "2027-08-15",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 85,
+      "release_date": "2027-08-21",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 86,
+      "release_date": "2027-08-22",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 87,
+      "release_date": "2027-08-28",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 88,
+      "release_date": "2027-08-29",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 89,
+      "release_date": "2027-09-04",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 90,
+      "release_date": "2027-09-05",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 91,
+      "release_date": "2027-09-11",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 92,
+      "release_date": "2027-09-12",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 93,
+      "release_date": "2027-09-18",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 94,
+      "release_date": "2027-09-19",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 95,
+      "release_date": "2027-09-25",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 96,
+      "release_date": "2027-09-26",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 97,
+      "release_date": "2027-10-02",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 98,
+      "release_date": "2027-10-03",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 99,
+      "release_date": "2027-10-09",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 100,
+      "release_date": "2027-10-10",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 101,
+      "release_date": "2027-10-16",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 102,
+      "release_date": "2027-10-17",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 103,
+      "release_date": "2027-10-23",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 104,
+      "release_date": "2027-10-24",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 105,
+      "release_date": "2027-10-30",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 106,
+      "release_date": "2027-10-31",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 107,
+      "release_date": "2027-11-06",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 108,
+      "release_date": "2027-11-07",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 109,
+      "release_date": "2027-11-13",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 110,
+      "release_date": "2027-11-14",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 111,
+      "release_date": "2027-11-20",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 112,
+      "release_date": "2027-11-21",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 113,
+      "release_date": "2027-11-27",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 114,
+      "release_date": "2027-11-28",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 115,
+      "release_date": "2027-12-04",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 116,
+      "release_date": "2027-12-05",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 117,
+      "release_date": "2027-12-11",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 118,
+      "release_date": "2027-12-12",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 119,
+      "release_date": "2027-12-18",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 120,
+      "release_date": "2027-12-19",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 121,
+      "release_date": "2027-12-25",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 122,
+      "release_date": "2027-12-26",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 123,
+      "release_date": "2028-01-01",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 124,
+      "release_date": "2028-01-02",
+      "day": "週日",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 125,
+      "release_date": "2028-01-08",
+      "day": "週六",
+      "is_unlocked": false
+    },
+    {
+      "slot_num": 126,
+      "release_date": "2028-01-09",
+      "day": "週日",
+      "is_unlocked": false
+    }
+  ]
+}

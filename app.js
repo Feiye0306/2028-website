@@ -26,11 +26,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   setInterval(updateCountdownDisplay, 1000);
 });
 
-// 載入資料包
+// 載入資料包（前台僅讀取物理脫敏後的 public_feed.json，杜絕任何未來題目洩密）
 async function loadAllData() {
   try {
     const [schedRes, dddRes, dlRes] = await Promise.all([
-      fetch('./data/master_schedule.json').then(r => r.json()),
+      fetch('./data/public_feed.json').then(r => r.json()),
       fetch('./data/dept_draw_data.json').then(r => r.json()),
       fetch('./data/dept_links.json').then(r => r.json())
     ]);
