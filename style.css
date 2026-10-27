@@ -1,0 +1,456 @@
+/* 2028 學測家長陪跑日曆 - 視覺與排版 */
+:root {
+  --primary: #1e3a8a;       /* 沉穩深藍 */
+  --primary-light: #3b82f6; /* 明亮天藍 */
+  --accent: #d97706;        /* 溫潤琥珀橘 */
+  --accent-light: #fef3c7;  /* 琥珀淡底 */
+  --bg: #f8fafc;            /* 柔和護眼米灰 */
+  --card-bg: #ffffff;
+  --text-main: #1e293b;     /* 深炭灰 */
+  --text-muted: #64748b;    /* 輔助灰 */
+  --border: #e2e8f0;
+  --success: #059669;
+  --warning: #d97706;
+  --radius: 14px;
+  --shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-main);
+  line-height: 1.6;
+  padding-bottom: 70px;
+}
+
+/* 頂部 Header */
+.app-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
+  color: #ffffff;
+  padding: 24px 20px 20px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(30, 58, 138, 0.15);
+}
+
+.app-header h1 {
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.header-badge {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  background: rgba(255, 255, 255, 0.18);
+  padding: 3px 10px;
+  border-radius: 20px;
+  color: #e2e8f0;
+}
+
+/* 導航分頁 Tabs */
+.nav-tabs {
+  display: flex;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.nav-btn {
+  flex: 1;
+  padding: 14px 10px;
+  border: none;
+  background: none;
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.nav-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: #f1f5f9;
+}
+
+/* 主容器 */
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* 卡片通用 */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+
+/* 倒數計時大卡片 */
+.countdown-hero {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #cbd5e1;
+  text-align: center;
+}
+
+.countdown-title {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.countdown-timer {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 14px 0 10px;
+}
+
+.timer-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-width: 68px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.timer-num {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1.1;
+}
+
+.timer-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.countdown-footnote {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* 階段與週數進度條 */
+.stage-indicator {
+  margin-top: 14px;
+  background: #f1f5f9;
+  padding: 10px 14px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stage-badge {
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* 每週四推播卡片 */
+.push-preview-card {
+  border-left: 5px solid var(--accent);
+}
+
+.push-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.push-tag {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.push-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.action-block {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  border: 1px solid #f1f5f9;
+}
+
+.action-block h4 {
+  font-size: 0.9rem;
+  color: var(--primary);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.action-block p {
+  font-size: 0.92rem;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.qa-card {
+  background: #fffbeb;
+  border: 1px dashed #f59e0b;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 12px;
+}
+
+.qa-card h4 {
+  font-size: 0.9rem;
+  color: #b45309;
+  margin-bottom: 4px;
+}
+
+.qa-card p {
+  font-size: 0.92rem;
+  color: #78350f;
+  font-weight: 600;
+}
+
+/* 週次切換器 */
+.week-selector-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 14px 0 10px;
+  gap: 10px;
+}
+
+.btn {
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: var(--text-main);
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+}
+
+/* 週末科系發布 */
+.weekend-badge {
+  background: #eff6ff;
+  color: var(--primary);
+  border: 1px solid #bfdbfe;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.release-list-item {
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.release-list-item:last-child {
+  border-bottom: none;
+}
+
+/* 連結標籤：官方首頁 vs 分則頁 */
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.link-dept {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.link-dept:hover {
+  background: #d1fae5;
+}
+
+.link-rule {
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+}
+
+.link-rule:hover {
+  background: #ffedd5;
+}
+
+/* 搜尋與篩選列 */
+.search-box {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  outline: none;
+  background: #ffffff;
+}
+
+.search-box:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+}
+
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.tag-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tag-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+/* 校系列表與詳情 */
+.dept-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.dept-item-row:last-child {
+  border-bottom: none;
+}
+
+.school-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.dept-name {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.subjects-pill {
+  font-size: 0.78rem;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #475569;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+/* 底部宣告與紅線遵守 */
+.footer-note {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  padding: 24px 16px 12px;
+  line-height: 1.6;
+}
+
+.pwa-banner {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pwa-banner p {
+  font-size: 0.86rem;
+  color: #1e40af;
+}
+
+/* 隱藏區塊 */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
