@@ -53,9 +53,11 @@ async function handleGateStateTransition(open) {
   const unlockedArea = document.getElementById('unlocked-content-area');
 
   if (!open) {
+    document.body.classList.add('is-locked');
     if (lockedCard) lockedCard.style.display = 'block';
     if (unlockedArea) unlockedArea.style.display = 'none';
   } else {
+    document.body.classList.remove('is-locked');
     if (lockedCard) lockedCard.style.display = 'none';
     if (unlockedArea) {
       unlockedArea.style.display = 'block';

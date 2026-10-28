@@ -9,11 +9,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="學測陪跑日曆">
-  <link rel="stylesheet" href="./style.css?v=2028-clean-welcome">
+  <link rel="stylesheet" href="./style.css?v=2028-pure-welcome">
 </head>
-<body>
+<body class="is-locked">
 
-  <!-- 人文誌頂部 Header（純淨大氣・絕無任何後台雜訊） -->
+  <!-- 人文誌頂部 Header（解鎖後才呈現） -->
   <header class="editorial-header">
     <div class="header-inner">
       <div style="text-align: left;">
@@ -26,7 +26,14 @@
   <!-- 主內容容器 -->
   <main class="container">
 
-    <!-- 倒數週數主卡片（永遠可見，穩定陪伴焦點） -->
+    <!-- 說明會現場歡迎卡片（乾淨極簡・無任何 UI・無倒數・無陪跑字樣・鎖定時唯一呈現） -->
+    <div id="gate-locked-card" class="welcome-screen">
+      <div class="welcome-card">
+        <h1 class="welcome-title">感謝您來參加贏家的說明會</h1>
+      </div>
+    </div>
+
+    <!-- 倒數週數主卡片（解鎖後呈現） -->
     <div class="countdown-focus-card">
       <div class="countdown-subhead">距離 2028 學測</div>
       
@@ -45,18 +52,6 @@
       <div class="countdown-footer-quote">
         「陪伴孩子，每週走穩一步。我們用時間的節奏，換取心中的從容。」
       </div>
-    </div>
-
-    <!-- 說明會現場歡迎卡片（乾淨極簡・無機械字樣・未開放時唯一展示） -->
-    <div id="gate-locked-card" class="editorial-card" style="display: none; text-align: center; padding: 42px 24px; border-left: 4px solid var(--accent-warm); margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
-      <div style="font-size: 2.2rem; margin-bottom: 14px;">🌱</div>
-      <h2 style="font-size: 1.45rem; font-weight: 900; color: var(--text-headline); margin-bottom: 12px; letter-spacing: 0.5px;">
-        感謝您來參加贏家的說明會
-      </h2>
-      <p style="font-size: 0.96rem; color: #57534e; line-height: 1.7; max-width: 380px; margin: 0 auto;">
-        陪伴孩子，每週走穩一步。<br>
-        本陪跑日曆將於講座尾聲為大家啟動，帶領孩子從容迎向 2028 學測。
-      </p>
     </div>
 
     <!-- 開放後內容包裝區（當 gate.open == true 時自動平滑展示） -->
@@ -148,6 +143,7 @@
             <div id="weekend-history-list"></div>
           </div>
         </div>
+
       </section>
 
     </div>
@@ -160,6 +156,6 @@
 
   </main>
 
-  <script src="./app.js?v=2028-clean-welcome"></script>
+  <script src="./app.js?v=2028-pure-welcome"></script>
 </body>
 </html>

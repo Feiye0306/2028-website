@@ -32,6 +32,65 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* 鎖定全屏純淨狀態（說明會未開放時，無任何 UI、無倒數、無陪跑，極致純淨） */
+body.is-locked {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  padding-bottom: 24px;
+  background-color: var(--bg-canvas);
+}
+
+body.is-locked .editorial-header,
+body.is-locked .countdown-focus-card,
+body.is-locked .editorial-footer,
+body.is-locked #unlocked-content-area {
+  display: none !important;
+}
+
+body.is-locked .container {
+  max-width: 480px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body.is-locked #gate-locked-card {
+  display: block !important;
+  width: 100%;
+}
+
+.welcome-screen {
+  width: 100%;
+}
+
+.welcome-card {
+  width: 100%;
+  text-align: center;
+  padding: 56px 24px;
+  background: var(--card-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-delicate);
+  box-shadow: var(--shadow-subtle);
+}
+
+.welcome-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--text-headline);
+  letter-spacing: 0.6px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 解鎖狀態下隱藏歡迎卡片 */
+body:not(.is-locked) #gate-locked-card {
+  display: none !important;
+}
+
 /* 頂部人文誌氣質 Header */
 .editorial-header {
   background: #ffffff;
