@@ -1,11 +1,11 @@
-// 2028 學測家長陪跑日曆 - 人文誌極致版 (當下焦點 ＆ 歷史收合)
+// 2028 學測家長陪跑日曆 - 人文誌極致版 (雙焦點：本週指引 ＆ 週末看系)
 let feedData = null;
 let deptDrawData = null;
 let deptLinks = null;
 
-// 正在檢視的週四項目（預設為當下最新一期）
 let activeThursItem = null;
 let deferredPrompt = null;
+let isDetailExpanded = false;
 
 // 錨定學測預估日：2028 年 1 月 14 日
 const EXAM_DATE = new Date('2028-01-14T09:00:00+08:00');
@@ -19,9 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   updateCountdownDisplay();
   renderCurrentContent();
-  renderDeptBrowser();
 
-  // 定時微調週數
   setInterval(updateCountdownDisplay, 60000);
 });
 
@@ -45,7 +43,7 @@ async function loadAllData() {
   }
 }
 
-// 倒數週數計算（純週數展示，去除天時分秒機械感）
+// 倒數週數計算（純週數展示）
 function updateCountdownDisplay() {
   const now = new Date();
   const diffTime = EXAM_DATE - now;
@@ -63,7 +61,7 @@ function updateCountdownDisplay() {
   weeksNumEl.textContent = remainWeeks;
 }
 
-// 渲染當下內容（只看當下，不顯示未來未解鎖的一整排列表）
+// 渲染當下內容（只看當下發布，未發布不出現，歷史折疊）
 function renderCurrentContent() {
   if (!feedData) return;
 
@@ -159,12 +157,10 @@ window.viewHistoryThurs = function(weekIndex) {
   if (target) {
     activeThursItem = target;
     renderWeeklyPushCard(activeThursItem);
-    // 捲動回卡片頂部
     document.getElementById('weekly-push-container').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 };
 
-// 切換回到當下最新一週
 window.resetToCurrentThurs = function() {
   if (feedData && feedData.current_thursday) {
     activeThursItem = feedData.current_thursday;
@@ -172,7 +168,6 @@ window.resetToCurrentThurs = function() {
   }
 };
 
-// 折疊/展開歷史週次
 window.toggleThursHistory = function() {
   const c = document.getElementById('thurs-history-drawer');
   const btn = document.getElementById('toggle-thurs-history-btn');
@@ -185,7 +180,7 @@ window.toggleThursHistory = function() {
   }
 };
 
-// 2. 渲染「週末看系」（只顯示當下最新發布，歷史預設折疊，未來絕不顯示）
+// 2. 渲染「週末看系」（只顯示當下最新發布，歷史折疊，原位展開校系）
 function renderWeekendFocus() {
   const currentDept = feedData ? feedData.current_weekend : null;
   const historyDepts = feedData ? feedData.history_weekends : [];
@@ -194,7 +189,7 @@ function renderWeekendFocus() {
   const historyWrapper = document.getElementById('weekend-history-wrapper');
   const historyListContainer = document.getElementById('weekend-history-list');
 
-  // A. 當下最新焦點科系
+  // A. 當下焦點科系大卡片
   if (!currentDept) {
     focusContainer.innerHTML = `
       <div style="text-align: center; padding: 30px 20px; color: var(--text-muted);">
@@ -213,13 +208,19 @@ function renderWeekendFocus() {
       <p style="font-size: 0.95rem; color: #475569; margin-bottom: 16px; line-height: 1.6;">
         ${currentDept.desc}
       </p>
-      <button class="btn btn-sm" onclick="viewGroupDetail('${currentDept.group_name}')" style="background: var(--text-headline);">
-        查看全台開設校系與官方網站 ➔
-      </button>
+      <div>
+        <button class="btn btn-sm" id="btn-expand-schools" onclick="toggleSchoolsList('${currentDept.group_name}')" style="background: var(--text-headline);">
+          展開全台開設校系與官方網站 ▼
+        </button>
+      </div>
+
+      <!-- 原位展開的校系列表（手風琴式，不跳頁） -->
+      <div id="dept-inline-schools" style="display: none; margin-top: 18px; border-top: 1px dashed var(--border-delicate); padding-top: 14px; max-height: 380px; overflow-y: auto;">
+      </div>
     `;
   }
 
-  // B. 歷史科系（折疊收起）
+  // B. 歷史科系折疊區
   if (!historyDepts || historyDepts.length === 0) {
     historyWrapper.style.display = 'none';
   } else {
@@ -234,8 +235,8 @@ function renderWeekendFocus() {
             <div style="font-size: 0.96rem; font-weight: 800; color: var(--text-headline); margin-top: 2px;">${dept.group_name}</div>
             <div style="font-size: 0.82rem; color: #64748b;">${dept.schools_count} 所大學開設</div>
           </div>
-          <button class="btn btn-outline btn-sm" onclick="viewGroupDetail('${dept.group_name}')">
-            查校系 ➔
+          <button class="btn btn-outline btn-sm" onclick="showHistoryDeptDetail('${dept.group_name}')">
+            看內容 ➔
           </button>
         </div>
       `;
@@ -243,7 +244,103 @@ function renderWeekendFocus() {
   }
 }
 
-// 折疊/展開歷史科系
+// 原位展開校系列表
+window.toggleSchoolsList = function(groupName) {
+  const container = document.getElementById('dept-inline-schools');
+  const btn = document.getElementById('btn-expand-schools');
+  if (!container || !btn) return;
+
+  if (container.style.display === 'block') {
+    container.style.display = 'none';
+    btn.textContent = '展開全台開設校系與官方網站 ▼';
+  } else {
+    container.style.display = 'block';
+    btn.textContent = '收合開設校系列表 ▲';
+    renderInlineSchools(groupName, container);
+  }
+};
+
+function renderInlineSchools(groupName, container) {
+  if (!deptDrawData || !deptDrawData.groups) {
+    container.innerHTML = '<p style="text-align:center; padding:10px; color:var(--text-muted);">正在載入校系資料...</p>';
+    return;
+  }
+
+  const cleanName = groupName.replace('特色唯一專輯：全台稀有學系', '').trim();
+  const matched = deptDrawData.groups.find(g => g.name === cleanName || g.name.includes(cleanName));
+
+  if (!matched || !matched.items) {
+    container.innerHTML = '<p style="text-align:center; padding:10px; color:var(--text-muted);">此科系群之詳細校系資料整理中。</p>';
+    return;
+  }
+
+  container.innerHTML = `
+    <div style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between;">
+      <span>全台共 ${matched.schools} 所大學開設（${matched.programs} 系組）</span>
+      <span>115 學年度</span>
+    </div>
+    ${matched.items.map(it => {
+      const linkKey = `${it.school}|${it.dept}`;
+      const linkInfo = deptLinks && deptLinks.links ? deptLinks.links[linkKey] : null;
+
+      let linkBadge = `<span style="font-size: 0.78rem; color:#94a3b8;">未登錄</span>`;
+      if (linkInfo) {
+        if (linkInfo.type === 'dept') {
+          linkBadge = `<a href="${linkInfo.url}" target="_blank" rel="noopener" class="link-badge link-dept-green">
+            🏛️ 官方首頁 ↗
+          </a>`;
+        } else if (linkInfo.type === 'rule') {
+          linkBadge = `<a href="${linkInfo.url}" target="_blank" rel="noopener" class="link-badge link-rule-amber">
+            📋 [分則頁] ↗
+          </a>`;
+        }
+      }
+
+      return `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #f1f0eb;">
+          <div>
+            <div style="font-weight: 700; font-size: 0.92rem; color: var(--text-headline);">${it.school}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">${it.dept}</div>
+            <span style="font-size: 0.76rem; background: #faf9f6; border: 1px solid #f0eee8; padding: 2px 6px; border-radius: 4px; color: #64748b; margin-top: 3px; display: inline-block;">
+              參採：${it.subjects || '無學測參採'}
+            </span>
+          </div>
+          <div>${linkBadge}</div>
+        </div>
+      `;
+    }).join('')}
+  `;
+}
+
+// 回看歷史科系（替換至焦點大卡片展示）
+window.showHistoryDeptDetail = function(groupName) {
+  const historyDepts = feedData ? feedData.history_weekends : [];
+  const target = historyDepts.find(d => d.group_name === groupName);
+  if (target) {
+    const focusContainer = document.getElementById('weekend-focus-card');
+    focusContainer.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span class="release-badge" style="background:#f3f0e8; color:#5c5249;">${target.day} ｜ ${target.release_date} (歷史期數)</span>
+        <button class="btn btn-outline btn-sm" onclick="renderWeekendFocus()" style="font-size: 0.78rem; padding: 2px 8px;">回當週末焦點</button>
+      </div>
+      <h3 style="font-size: 1.4rem; font-weight: 900; color: var(--text-headline); margin: 6px 0 8px;">
+        ${target.group_name}
+      </h3>
+      <p style="font-size: 0.95rem; color: #475569; margin-bottom: 16px; line-height: 1.6;">
+        ${target.desc}
+      </p>
+      <div>
+        <button class="btn btn-sm" id="btn-expand-schools" onclick="toggleSchoolsList('${target.group_name}')" style="background: var(--text-headline);">
+          展開全台開設校系與官方網站 ▼
+        </button>
+      </div>
+      <div id="dept-inline-schools" style="display: none; margin-top: 18px; border-top: 1px dashed var(--border-delicate); padding-top: 14px; max-height: 380px; overflow-y: auto;">
+      </div>
+    `;
+    focusContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+};
+
 window.toggleWeekendHistory = function() {
   const c = document.getElementById('weekend-history-drawer');
   const btn = document.getElementById('toggle-weekend-history-btn');
@@ -256,125 +353,7 @@ window.toggleWeekendHistory = function() {
   }
 };
 
-// 點擊查看特定科系全台名單
-window.viewGroupDetail = function(groupName) {
-  switchTab('depts-pane');
-  const searchInput = document.getElementById('dept-search-input');
-  searchInput.value = groupName.replace('特色唯一專輯：全台稀有學系', '');
-  filterDepts();
-};
-
-// 600 群科系全量資料庫檢索
-function renderDeptBrowser() {
-  if (!deptDrawData || !deptDrawData.groups) return;
-  filterDepts();
-}
-
-window.filterDepts = function() {
-  if (!deptDrawData || !deptDrawData.groups) return;
-
-  const keyword = (document.getElementById('dept-search-input').value || '').trim().toLowerCase();
-  const activeSubject = window.selectedSubject || '';
-
-  const container = document.getElementById('dept-browser-list');
-
-  const filtered = deptDrawData.groups.filter(group => {
-    const matchGroup = group.name.toLowerCase().includes(keyword);
-    const matchItems = group.items.some(it => 
-      it.school.toLowerCase().includes(keyword) || 
-      it.dept.toLowerCase().includes(keyword)
-    );
-    const matchKeyword = !keyword || matchGroup || matchItems;
-
-    let matchSub = true;
-    if (activeSubject) {
-      matchSub = group.items.some(it => it.subjects && it.subjects.includes(activeSubject));
-    }
-
-    return matchKeyword && matchSub;
-  });
-
-  const displayLimit = 25;
-  const displayGroups = filtered.slice(0, displayLimit);
-
-  if (displayGroups.length === 0) {
-    container.innerHTML = `
-      <div style="text-align: center; padding: 40px 10px; color: var(--text-muted);">
-        <p style="font-size: 1rem;">查無符合的科系或學校</p>
-      </div>
-    `;
-    return;
-  }
-
-  container.innerHTML = `
-    <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; display: flex; justify-content: space-between;">
-      <span>找到 ${filtered.length} 個科系群（展示前 ${displayGroups.length} 群）</span>
-      <span>115 學年度底本</span>
-    </div>
-    ${displayGroups.map(group => {
-      const groupItems = group.items.map(it => {
-        const linkKey = `${it.school}|${it.dept}`;
-        const linkInfo = deptLinks && deptLinks.links ? deptLinks.links[linkKey] : null;
-
-        let linkBadge = `<span style="font-size: 0.78rem; color:#94a3b8;">未登錄</span>`;
-        if (linkInfo) {
-          if (linkInfo.type === 'dept') {
-            linkBadge = `<a href="${linkInfo.url}" target="_blank" rel="noopener" class="link-badge link-dept-green">
-              🏛️ 官方首頁 ↗
-            </a>`;
-          } else if (linkInfo.type === 'rule') {
-            linkBadge = `<a href="${linkInfo.url}" target="_blank" rel="noopener" class="link-badge link-rule-amber">
-              📋 [分則頁] ↗
-            </a>`;
-          }
-        }
-
-        return `
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #f1f0eb;">
-            <div>
-              <div style="font-weight: 700; font-size: 0.92rem; color: var(--text-headline);">${it.school}</div>
-              <div style="font-size: 0.85rem; color: var(--text-muted);">${it.dept}</div>
-              <span style="font-size: 0.76rem; background: #faf9f6; border: 1px solid #f0eee8; padding: 2px 6px; border-radius: 4px; color: #64748b; margin-top: 3px; display: inline-block;">
-                參採：${it.subjects || '無學測參採'}
-              </span>
-            </div>
-            <div>
-              ${linkBadge}
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      return `
-        <div class="editorial-card" style="margin-bottom: 14px;">
-          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
-            <h3 style="color: var(--text-headline); font-size: 1.08rem; font-weight: 800;">${group.name}</h3>
-            <span style="font-size: 0.8rem; color: var(--text-muted);">${group.schools} 校・${group.programs} 系組</span>
-          </div>
-          <div style="max-height: 260px; overflow-y: auto; padding-right: 4px;">
-            ${groupItems}
-          </div>
-        </div>
-      `;
-    }).join('')}
-  `;
-}
-
-// 快速考科過濾
-window.toggleSubjectFilter = function(btn, subject) {
-  const allBtns = document.querySelectorAll('.filter-chip-row .filter-chip');
-  if (window.selectedSubject === subject) {
-    window.selectedSubject = '';
-    btn.classList.remove('active');
-  } else {
-    allBtns.forEach(b => b.classList.remove('active'));
-    window.selectedSubject = subject;
-    btn.classList.add('active');
-  }
-  filterDepts();
-};
-
-// 導航分頁切換
+// 導航分頁切換（極簡雙頁面：本週指引 ｜ 週末看系）
 function setupTabs() {
   const tabs = document.querySelectorAll('.pill-btn');
   tabs.forEach(btn => {
@@ -395,10 +374,10 @@ window.switchTab = function(targetTabId) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// PWA 註冊與推播通知測試
+// PWA 註冊與通知
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=20280114-clean').catch(e => console.log('SW error:', e));
+    navigator.serviceWorker.register('./sw.js?v=20280114-clean2').catch(e => console.log('SW error:', e));
   }
 }
 

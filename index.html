@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="學測陪跑日曆">
-  <link rel="stylesheet" href="./style.css?v=20280114-clean">
+  <link rel="stylesheet" href="./style.css?v=20280114-clean2">
 </head>
 <body>
 
@@ -23,7 +23,7 @@
     </div>
   </header>
 
-  <!-- 簡約膠囊導航列 -->
+  <!-- 簡約膠囊導航列（極致雙焦點：本週指引 ｜ 週末看系） -->
   <div class="nav-container">
     <nav class="nav-pills">
       <button class="pill-btn active" data-tab="countdown-pane">
@@ -31,9 +31,6 @@
       </button>
       <button class="pill-btn" data-tab="weekend-pane">
         🎓 週末看系
-      </button>
-      <button class="pill-btn" data-tab="depts-pane">
-        🔍 校系總覽
       </button>
     </nav>
   </div>
@@ -76,7 +73,7 @@
         </div>
       </div>
 
-      <!-- 本週指引卡片（只看當下） -->
+      <!-- 本週指引卡片（只看當下焦點） -->
       <div class="editorial-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f1f0eb; padding-bottom: 10px;">
           <span id="current-week-title" style="font-size: 0.95rem; font-weight: 800; color: var(--text-headline);">
@@ -145,32 +142,6 @@
       </div>
     </section>
 
-    <!-- ==================== 分頁 3：校系總覽檢索 ==================== -->
-    <section id="depts-pane" class="tab-pane">
-      <div class="editorial-card">
-        <h2 style="font-size: 1.18rem; color: var(--text-headline); font-weight: 800; margin-bottom: 10px;">
-          校系全量檢索（2,178 系組）
-        </h2>
-        <input type="text" id="dept-search-input" class="editorial-input" placeholder="輸入大學或科系關鍵字（如：臺大、資工、企管...）" oninput="filterDepts()">
-        
-        <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;">
-          學測參採科目快速篩選：
-        </div>
-        <div class="filter-chip-row">
-          <button class="filter-chip" onclick="toggleSubjectFilter(this, '國文')">國文</button>
-          <button class="filter-chip" onclick="toggleSubjectFilter(this, '英文')">英文</button>
-          <button class="filter-chip" onclick="toggleSubjectFilter(this, '數A')">數A</button>
-          <button class="filter-chip" onclick="toggleSubjectFilter(this, '數B')">數B</button>
-          <button class="filter-chip" onclick="toggleSubjectFilter(this, '社會')">社會</button>
-          <button class="filter-chip" onclick="toggleSubjectFilter(this, '自然')">自然</button>
-        </div>
-      </div>
-
-      <div id="dept-browser-list">
-        <!-- 動態渲染 -->
-      </div>
-    </section>
-
     <!-- 底部聲明 -->
     <footer class="editorial-footer">
       <p>資料底本：大學甄選入學委員會 115 學年度申請入學一覽表 ＆ 教育部校務資訊公開平臺</p>
@@ -179,6 +150,6 @@
 
   </main>
 
-  <script src="./app.js?v=20280114-clean"></script>
+  <script src="./app.js?v=20280114-clean2"></script>
 </body>
 </html>
