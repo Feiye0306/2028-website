@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>2028 學測家長陪跑日曆 ｜ 全台 2,178 大學系組全收錄</title>
+  <title>2028 學測家長陪跑日曆</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#f8f7f4">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="學測陪跑日曆">
-  <link rel="stylesheet" href="./style.css?v=20280114-clean3">
+  <link rel="stylesheet" href="./style.css?v=2028-v2-clean">
 </head>
 <body>
 
-  <!-- 人文誌頂部 Header -->
+  <!-- 人文誌頂部 Header（純淨大氣・絕無任何後台雜訊） -->
   <header class="editorial-header">
     <div class="header-inner">
       <div style="text-align: left;">
@@ -51,13 +51,13 @@
     <div id="gate-locked-card" class="editorial-card" style="display: none; text-align: center; padding: 36px 20px; border-left: 4px solid var(--accent-warm); margin-bottom: 20px;">
       <div style="font-size: 2.2rem; margin-bottom: 12px;">🌱</div>
       <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-headline); margin-bottom: 8px;">
-        說明會導聆中・科系查詢將於尾聲正式開放
+        說明會導聆中・即將於尾聲正式開放
       </h2>
       <p style="font-size: 0.92rem; color: #475569; line-height: 1.6; max-width: 380px; margin: 0 auto;">
-        陪伴孩子每週走穩一步。請先跟隨現場講者導聆，本頁面將在說明會尾聲<strong>自動解鎖</strong>，無需重新整理即可查詢全台 2,178 校系與每週指引。
+        陪伴孩子每週走穩一步。請先跟隨現場講者導聆，本頁面將在說明會尾聲<strong>自動開啟</strong>，每週與您分享最精準的時程指引與精選科系深度解析。
       </p>
       <div style="margin-top: 18px; font-size: 0.78rem; color: #94a3b8;">
-        ⏳ 系統即時連線中，將在現場宣布時自動開啟...
+        ⏳ 系統即時連線中，現場宣布時將自動解鎖...
       </div>
     </div>
 
@@ -75,17 +75,14 @@
         </div>
       </div>
 
-      <!-- 三大核心膠囊導航列 -->
+      <!-- 兩大核心膠囊導航列（依週程慢慢揭露・不填鴨） -->
       <div class="nav-container">
         <nav class="nav-pills">
           <button class="pill-btn active" data-tab="countdown-pane">
             🌱 本週指引
           </button>
           <button class="pill-btn" data-tab="weekend-pane">
-            🎓 週末主打
-          </button>
-          <button class="pill-btn" data-tab="search-pane">
-            🔍 全台校系檢索
+            🎓 週末精選
           </button>
         </nav>
       </div>
@@ -103,9 +100,9 @@
             </button>
           </div>
 
-          <!-- 動態載入當週推播內容 -->
-          <div id="weekly-push-container">
-            <p style="text-align: center; color: var(--text-muted); padding: 30px;">正在載入本週指引...</p>
+          <!-- 動態載入當週指引內容 -->
+          <div id="current-thurs-content">
+            <p style="text-align: center; color: var(--text-muted); padding: 30px;">正在整理本週最新指引...</p>
           </div>
 
           <!-- 歷史週次回顧折疊區 -->
@@ -124,28 +121,28 @@
 
       </section>
 
-      <!-- ==================== 分頁 2：週末主打看系 ==================== -->
+      <!-- ==================== 分頁 2：週末精選（只看當下焦點，歷史折疊收合，慢慢揭露） ==================== -->
       <section id="weekend-pane" class="tab-pane">
         <div class="editorial-card" style="margin-bottom: 14px;">
           <div class="brand-kicker">WEEKEND FOCUS</div>
           <h2 style="font-size: 1.22rem; color: var(--text-headline); font-weight: 800; margin-bottom: 4px;">
-            週末主打看系（全台 2,178 系組全收錄）
+            週末精選
           </h2>
           <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
-            每週末精選主打深度解析。全台 2,178 個系組均可在此探究，陪孩子慢慢看懂未來。
+            每週末精選科系深度解析。陪孩子慢慢看懂未來，找到真正適合的方向。
           </p>
         </div>
 
-        <!-- 當下焦點科系大卡片 -->
+        <!-- 當下焦點科系（大卡片獨佔） -->
         <div class="editorial-card" id="weekend-focus-card" style="border-left: 4px solid var(--accent-warm);">
-          <p style="text-align: center; color: var(--text-muted); padding: 30px;">正在載入本週末科系...</p>
+          <p style="text-align: center; color: var(--text-muted); padding: 30px;">正在整理精選科系...</p>
         </div>
 
         <!-- 歷史已發布科系折疊區 -->
         <div id="weekend-history-wrapper" class="editorial-card" style="display: none; padding: 14px 18px;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 0.9rem; font-weight: 800; color: var(--text-headline);">
-              📜 過往已主打科系 (<span id="weekend-history-count">0</span> 系)
+              📜 過往已發布科系 (<span id="weekend-history-count">0</span> 系)
             </span>
             <button id="toggle-weekend-history-btn" class="btn btn-outline btn-sm" onclick="toggleWeekendHistory()">展開過往科系 ▼</button>
           </div>
@@ -155,44 +152,16 @@
         </div>
       </section>
 
-      <!-- ==================== 分頁 3：全台 2,178 校系完整檢索 ==================== -->
-      <section id="search-pane" class="tab-pane">
-        <div class="editorial-card" style="margin-bottom: 14px;">
-          <div class="brand-kicker">ALL 2,178 DEPARTMENTS DIRECTORY</div>
-          <h2 style="font-size: 1.22rem; color: var(--text-headline); font-weight: 800; margin-bottom: 4px;">
-            全台 2,178 校系完整檢索
-          </h2>
-          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px;">
-            可輸入「大學名稱（如：臺灣大學、成大）」、「學系名稱（如：資工、電機、中文、醫學）」或「參採科目」，直連各系官方首頁與甄選會簡章分則。
-          </p>
-
-          <div style="position: relative;">
-            <input type="text" id="dept-search-input" placeholder="輸入大學、學系或科目關鍵字搜尋..." 
-                   oninput="handleDeptSearch()"
-                   style="width: 100%; padding: 12px 16px; border-radius: 10px; border: 1.5px solid #dcd8cf; font-size: 0.95rem; background: #fffcf8; outline: none; box-sizing: border-box;">
-          </div>
-
-          <div id="search-stats" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; display: flex; justify-content: space-between;">
-            <span>全台共收錄 2,178 個系組</span>
-            <span id="search-result-count">顯示前 50 筆</span>
-          </div>
-        </div>
-
-        <div class="editorial-card" id="search-results-container" style="padding: 10px 18px; max-height: 520px; overflow-y: auto;">
-          <p style="text-align: center; color: var(--text-muted); padding: 30px;">正在載入校系資料庫...</p>
-        </div>
-      </section>
-
     </div>
 
-    <!-- 底部聲明 -->
+    <!-- 底部聲明（語言親切・絕無生硬「底本」） -->
     <footer class="editorial-footer">
-      <p>資料底本：大學甄選入學委員會 115 學年度申請入學一覽表 ＆ 教育部校務資訊公開平臺</p>
-      <p style="margin-top: 4px;">本站依排程釋出時程指南；全台 2,178 校系官方網站 100% 直連查證。</p>
+      <p>資料來源：大學甄選入學委員會 115 學年度申請入學簡章 ＆ 教育部校務資訊公開平臺</p>
+      <p style="margin-top: 4px;">本站依時程每週釋出陪跑指南；與家長一同從容應對。</p>
     </footer>
 
   </main>
 
-  <script src="./app.js?v=20280114-clean3"></script>
+  <script src="./app.js?v=2028-v2-clean"></script>
 </body>
 </html>
