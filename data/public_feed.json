@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-28 12:34:48",
+  "generated_at": "2026-10-28 13:22:35",
   "cutoff_date": "2026-10-31",
   "exam_date": "2028-01-14",
   "current_thursday": {
@@ -22,8 +22,8 @@
     "group_name": "資訊工程學系",
     "schools_count": 41,
     "programs_count": 103,
-    "tag": "41校開設・核心大系",
-    "desc": "全國共 41 所大學開設，包含 103 個系組。"
+    "tag": "41校開設・全台熱門",
+    "desc": "全國共 41 所大學開設（涵蓋 103 個系組），提供多元適性發展路徑。"
   },
   "history_weekends": []
 }
