@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>2028 學測陪跑 ｜ 雲端排程中控台</title>
+  <style>
+    :root {
+      --primary: #1c2536;
+      --accent: #c26732;
+      --bg: #f8f7f4;
+      --card: #ffffff;
+      --border: #e8e6df;
+      --text: #1c2536;
+      --muted: #64748b;
+      --success: #059669;
+      --danger: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; line-height: 1.5; padding-bottom: 90px; }
+    
+    .top-header {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .top-header h1 { font-size: 1.18rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; }
+    .top-header p { font-size: 0.82rem; color: var(--muted); margin-top: 3px; }
+
+    .btn {
+      background: var(--primary); color: white; border: none; padding: 8px 16px;
+      border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;
+    }
+    .btn:hover { opacity: 0.9; }
+    .btn-success { background: var(--success); }
+    .btn-danger { background: var(--danger); }
+    .btn-secondary { background: #edeae2; color: var(--text); }
+    .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+
+    .auth-banner {
+      background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;
+      padding: 12px 14px; margin-bottom: 14px; font-size: 0.86rem; color: #1e40af;
+    }
+
+    .tab-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .tab-btn {
+      flex: 1; padding: 10px; border: 1px solid var(--border); background: var(--card);
+      border-radius: 8px; font-size: 0.88rem; font-weight: 700; color: var(--muted); cursor: pointer; text-align: center;
+    }
+    .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+    .slot-item {
+      padding: 12px 10px; border-bottom: 1px solid #f1f0eb; display: flex;
+      justify-content: space-between; align-items: center; gap: 8px;
+    }
+    .slot-item:last-child { border-bottom: none; }
+    .slot-num { font-size: 0.92rem; font-weight: 800; color: var(--accent); min-width: 65px; }
+    .slot-info { flex: 1; overflow: hidden; }
+    .slot-title { font-size: 0.96rem; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .slot-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .slot-actions { display: flex; gap: 5px; flex-shrink: 0; }
+
+    /* 置換科系彈窗 */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.55); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    .modal-box { background: white; border-radius: 14px; width: 92%; max-width: 500px; max-height: 82vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+
+    /* 浮動儲存吧 */
+    .bottom-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px); border-top: 1px solid var(--border); padding: 12px 16px;
+      display: flex; justify-content: space-between; align-items: center; z-index: 900;
+    }
+    .badge-dirty { background: #fef3c7; color: #b45309; padding: 4px 8px; border-radius: 6px; font-size: 0.76rem; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <div class="top-header">
+    <div>
+      <h1>☁️ 2028 學測陪跑 ｜ 雲端排程中控台</h1>
+      <p>隨時在手機線上自由調換「尚未發布的科系與題目」，即時生效且家長前台物理防洩密！</p>
+    </div>
+  </div>
+
+  <!-- 授權狀態條（Token 僅存於手機 LocalStorage，不硬編碼在代碼） -->
+  <div class="auth-banner" id="auth-box">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+      <div>
+        <strong>🔑 雲端管理狀態：</strong>
+        <span id="auth-status-text">載入中...</span>
+      </div>
+      <button class="btn btn-sm btn-secondary" onclick="configureToken()">設定 / 變更 Token</button>
+    </div>
+    <div style="font-size: 0.78rem; color: #475569; margin-top: 5px;">
+      🔒 說明：Token 僅安全存於此裝置的瀏覽器，用以讀取私密排程庫並更新前台。只要設定一次，日後手機一開即可直接排程！
+    </div>
+  </div>
+
+  <!-- 分頁切換 -->
+  <div class="tab-row">
+    <button class="tab-btn active" id="btn-tab-w" onclick="switchTab('w')">
+      🎓 尚未發布的週末科系 (<span id="unreleased-w-count">0</span>)
+    </button>
+    <button class="tab-btn" id="btn-tab-q" onclick="switchTab('q')">
+      🌱 尚未發布的週四題目 (<span id="unreleased-q-count">0</span>)
+    </button>
+  </div>
+
+  <!-- 週末科系未發布清單 -->
+  <div id="pane-w" class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f1f0eb; padding-bottom: 8px; gap: 8px;">
+      <span style="font-size: 0.85rem; font-weight: 700; color: #475569;">
+        👇 未來科系排程（點擊 ▲/▼ 調換順序，或置換其他科系）：
+      </span>
+      <input type="text" id="filter-dept-input" placeholder="🔍 快速篩選..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; width: 110px;" oninput="renderUnreleasedWeekends()">
+    </div>
+    <div id="unreleased-weekend-list">
+      載入中...
+    </div>
+  </div>
+
+  <!-- 週四題目未發布清單 -->
+  <div id="pane-q" class="card" style="display: none;">
+    <div style="margin-bottom: 12px; border-bottom: 1px solid #f1f0eb; padding-bottom: 8px;">
+      <span style="font-size: 0.85rem; font-weight: 700; color: #475569;">
+        👇 未來週次題目（點擊編輯題目可線上修改文案）：
+      </span>
+    </div>
+    <div id="unreleased-thurs-list">
+      載入題目中...
+    </div>
+  </div>
+
+  <!-- 底部吸底儲存條 -->
+  <div class="bottom-bar">
+    <div>
+      <span id="dirty-status" class="badge-dirty" style="display: none;">⚠️ 排程已更動未儲存</span>
+      <span id="sync-info" style="font-size: 0.8rem; color: var(--muted); margin-left: 6px;">全端雲端連線</span>
+    </div>
+    <button class="btn btn-success" id="btn-cloud-save" onclick="saveToGitHubCloud()">
+      ☁️ 雲端儲存並發布
+    </button>
+  </div>
+
+  <!-- 置換科系 Modal -->
+  <div id="replace-modal" class="modal-overlay">
+    <div class="modal-box">
+      <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #faf9f6;">
+        <h3 id="modal-title" style="font-size: 0.98rem; color: var(--primary);">置換科系</h3>
+        <button class="btn btn-sm btn-secondary" onclick="closeModal()">✖ 關閉</button>
+      </div>
+      <div style="padding: 12px 16px; flex: 1; overflow-y: auto;">
+        <input type="text" id="modal-dept-search" placeholder="輸入科系名稱關鍵字搜尋 (例如: 資訊, 醫學, 法律)..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.88rem; margin-bottom: 10px;" oninput="filterModalDepts()">
+        <div id="modal-dept-items" style="max-height: 320px; overflow-y: auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const GITHUB_OWNER = 'Feiye0306';
+    const PRIVATE_REPO = 'kanban-flow';
+    const PUBLIC_REPO = '2028-website';
+    const PRIVATE_SCHEDULE_PATH = 'handover/2028-website/master_schedule.json';
+    const PUBLIC_FEED_PATH = 'data/public_feed.json';
+
+    let masterData = null;
+    let privateFileSha = null;
+    let publicFeedSha = null;
+    let allGroups = [];
+    let currentSlotIdx = -1;
+    let isDirty = false;
+    let userToken = localStorage.getItem('gh_admin_token') || '';
+
+    // UTF-8 安全 Base64 編解碼
+    function utf8ToBase64(str) {
+      return window.btoa(unescape(encodeURIComponent(str)));
+    }
+    function base64ToUtf8(str) {
+      return decodeURIComponent(escape(window.atob(str)));
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      checkAuthStatus();
+      await loadData();
+      renderUnreleasedWeekends();
+      renderUnreleasedThursdays();
+    });
+
+    function checkAuthStatus() {
+      const statusText = document.getElementById('auth-status-text');
+      if (userToken) {
+        statusText.innerHTML = '<span style="color:#059669; font-weight:700;">✅ 已連線授權（隨時可雲端儲存）</span>';
+      } else {
+        statusText.innerHTML = '<span style="color:#dc2626; font-weight:700;">⚠️ 尚未輸入 Token（請點右側按鈕填入）</span>';
+      }
+    }
+
+    window.configureToken = async function() {
+      const token = prompt('請輸入您的 GitHub Personal Access Token (需有 repo 讀寫權限)：', userToken);
+      if (token !== null) {
+        userToken = token.trim();
+        localStorage.setItem('gh_admin_token', userToken);
+        checkAuthStatus();
+        if (userToken) {
+          await loadData();
+          renderUnreleasedWeekends();
+          renderUnreleasedThursdays();
+        }
+      }
+    };
+
+    function markDirty() {
+      isDirty = true;
+      document.getElementById('dirty-status').style.display = 'inline-block';
+    }
+
+    async function loadData() {
+      const containerW = document.getElementById('unreleased-weekend-list');
+      const containerQ = document.getElementById('unreleased-thurs-list');
+
+      try {
+        // 1. 載入全國全部科系組群（用於置換彈窗）
+        try {
+          const groupsRes = await fetch('./data/dept_draw_data.json');
+          if (groupsRes.ok) {
+            const gd = await groupsRes.json();
+            allGroups = gd.groups || [];
+          }
+        } catch(e) {
+          console.warn('無法載入 dept_draw_data', e);
+        }
+
+        // 2. 如果有 Token，直接走 GitHub API 從私有庫 kanban-flow 讀取完整排程
+        if (userToken) {
+          try {
+            const apiRes = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${PRIVATE_REPO}/contents/${PRIVATE_SCHEDULE_PATH}?t=${Date.now()}`, {
+              headers: {
+                'Authorization': `token ${userToken}`,
+                'Accept': 'application/vnd.github.v3+json'
+              }
+            });
+
+            if (apiRes.ok) {
+              const fileData = await apiRes.json();
+              privateFileSha = fileData.sha;
+              const contentStr = base64ToUtf8(fileData.content.replace(/\s/g, ''));
+              masterData = JSON.parse(contentStr);
+              document.getElementById('sync-info').textContent = '已同步私密排程庫 (64週/126系)';
+              return;
+            } else {
+              console.warn('私有庫讀取失敗：', apiRes.status);
+            }
+          } catch(err) {
+            console.error('GitHub API 載入失敗：', err);
+          }
+        }
+
+        // 3. 若無 Token 或私有庫存取失敗，嘗試載入本地快照
+        containerW.innerHTML = '<div style="padding:20px; text-align:center; color:#dc2626;">🔑 尚未授權：請點擊上方「設定 / 變更 Token」，輸入 Token 即可載入完整 126 個排程科系！</div>';
+        containerQ.innerHTML = '<div style="padding:20px; text-align:center; color:#dc2626;">🔑 尚未授權：請先設定 Token 以讀取完整 64 週題目！</div>';
+
+      } catch (err) {
+        containerW.innerHTML = `<div style="padding:15px; color:#dc2626;">載入失敗：${err.message}</div>`;
+      }
+    }
+
+    function switchTab(type) {
+      document.getElementById('btn-tab-w').classList.toggle('active', type === 'w');
+      document.getElementById('btn-tab-q').classList.toggle('active', type === 'q');
+      document.getElementById('pane-w').style.display = type === 'w' ? 'block' : 'none';
+      document.getElementById('pane-q').style.display = type === 'q' ? 'block' : 'none';
+    }
+
+    // 渲染「尚未發布」的週末科系
+    function renderUnreleasedWeekends() {
+      if (!masterData || !masterData.weekend_releases) return;
+      const container = document.getElementById('unreleased-weekend-list');
+      const search = (document.getElementById('filter-dept-input').value || '').trim().toLowerCase();
+
+      // 第 0 格代表當前已發布（不可在此任意下調，避免破壞當前發布）；第 1 格以後皆為「尚未發布池」
+      const list = masterData.weekend_releases;
+      const unreleased = list.slice(1);
+      document.getElementById('unreleased-w-count').textContent = unreleased.length;
+
+      let html = '';
+      unreleased.forEach((it, unreleasedIdx) => {
+        const realIdx = unreleasedIdx + 1; // 在全體 list 中的 index
+        if (search && !it.group_name.toLowerCase().includes(search)) return;
+
+        html += `
+          <div class="slot-item">
+            <div class="slot-num">第 ${it.slot_num} 格</div>
+            <div class="slot-info">
+              <div class="slot-title">${it.group_name}</div>
+              <div class="slot-sub">${it.release_date || '待定'} (${it.day || '六'}) ｜ ${it.schools_count || 0} 校開設 ｜ ${it.tag || '科系特色'}</div>
+            </div>
+            <div class="slot-actions">
+              <button class="btn btn-sm btn-secondary" onclick="moveWeekend(${realIdx}, -1)" ${unreleasedIdx === 0 ? 'disabled style="opacity:0.4;"' : ''}>▲ 上移</button>
+              <button class="btn btn-sm btn-secondary" onclick="moveWeekend(${realIdx}, 1)" ${unreleasedIdx === unreleased.length - 1 ? 'disabled style="opacity:0.4;"' : ''}>▼ 下移</button>
+              <button class="btn btn-sm btn-secondary" onclick="openReplaceModal(${realIdx})">置換</button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html || '<div style="padding:16px; text-align:center; color:#94a3b8;">無符合條件的科系</div>';
+    }
+
+    // 渲染「尚未發布」的週四題目
+    function renderUnreleasedThursdays() {
+      if (!masterData || !masterData.thursday_releases) return;
+      const container = document.getElementById('unreleased-thurs-list');
+      const list = masterData.thursday_releases;
+      const unreleased = list.slice(1);
+      document.getElementById('unreleased-q-count').textContent = unreleased.length;
+
+      let html = '';
+      unreleased.forEach((it, unreleasedIdx) => {
+        const realIdx = unreleasedIdx + 1;
+        html += `
+          <div class="slot-item">
+            <div class="slot-num">第 ${it.index} 週</div>
+            <div class="slot-info">
+              <div class="slot-title">${it.question}</div>
+              <div class="slot-sub">${it.release_date || ''} (${it.day || '四'}) ｜ 倒數 ${it.countdown_weeks} 週 ｜ ${it.stage || ''}</div>
+            </div>
+            <div class="slot-actions">
+              <button class="btn btn-sm btn-secondary" onclick="editThursQ(${realIdx})">編輯題目</button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html || '<div style="padding:16px; text-align:center; color:#94a3b8;">無尚未發布題目</div>';
+    }
+
+    // 調換科系順序
+    window.moveWeekend = function(realIdx, dir) {
+      const targetIdx = realIdx + dir;
+      const list = masterData.weekend_releases;
+      if (targetIdx <= 0 || targetIdx >= list.length) return; // 不移動第 0 格焦點
+
+      // 交換內容但保留 slot_num 與 release_date 序位
+      const tempGroup = list[realIdx].group_name;
+      const tempSchools = list[realIdx].schools_count;
+      const tempPrograms = list[realIdx].programs_count;
+      const tempTag = list[realIdx].tag;
+      const tempDesc = list[realIdx].desc;
+
+      list[realIdx].group_name = list[targetIdx].group_name;
+      list[realIdx].schools_count = list[targetIdx].schools_count;
+      list[realIdx].programs_count = list[targetIdx].programs_count;
+      list[realIdx].tag = list[targetIdx].tag;
+      list[realIdx].desc = list[targetIdx].desc;
+
+      list[targetIdx].group_name = tempGroup;
+      list[targetIdx].schools_count = tempSchools;
+      list[targetIdx].programs_count = tempPrograms;
+      list[targetIdx].tag = tempTag;
+      list[targetIdx].desc = tempDesc;
+
+      markDirty();
+      renderUnreleasedWeekends();
+    };
+
+    // 置換彈窗
+    window.openReplaceModal = function(realIdx) {
+      currentSlotIdx = realIdx;
+      const it = masterData.weekend_releases[realIdx];
+      document.getElementById('modal-title').textContent = `置換第 ${it.slot_num} 格 (${it.group_name})`;
+      document.getElementById('modal-dept-search').value = '';
+      filterModalDepts();
+      document.getElementById('replace-modal').style.display = 'flex';
+    };
+
+    window.closeModal = function() {
+      document.getElementById('replace-modal').style.display = 'none';
+    };
+
+    window.filterModalDepts = function() {
+      const search = (document.getElementById('modal-dept-search').value || '').trim().toLowerCase();
+      const container = document.getElementById('modal-dept-items');
+      const filtered = allGroups.filter(g => g.name.toLowerCase().includes(search));
+
+      container.innerHTML = filtered.slice(0, 30).map(g => {
+        return `
+          <div style="padding: 10px 8px; border-bottom: 1px solid #f1f0eb; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="selectDept('${g.name}', ${g.schools}, ${g.programs})">
+            <div>
+              <strong style="color: var(--primary); font-size: 0.95rem;">${g.name}</strong>
+              <div style="font-size: 0.78rem; color: var(--muted);">${g.schools} 校開設 ｜ ${g.programs} 系組</div>
+            </div>
+            <button class="btn btn-sm btn-secondary">選用 ➔</button>
+          </div>
+        `;
+      }).join('');
+    };
+
+    window.selectDept = function(name, schools, programs) {
+      if (currentSlotIdx > 0) {
+        const it = masterData.weekend_releases[currentSlotIdx];
+        it.group_name = name;
+        it.schools_count = schools;
+        it.programs_count = programs;
+        it.tag = `${schools}校開設・焦點特色`;
+        it.desc = `全國共 ${schools} 所大學開設，包含 ${programs} 個系組。`;
+        closeModal();
+        markDirty();
+        renderUnreleasedWeekends();
+      }
+    };
+
+    // 編輯週四題目文案
+    window.editThursQ = function(realIdx) {
+      const it = masterData.thursday_releases[realIdx];
+      const newQ = prompt(`編輯第 ${it.index} 週題目：`, it.question);
+      if (newQ !== null && newQ.trim() !== '') {
+        it.question = newQ.trim();
+        markDirty();
+        renderUnreleasedThursdays();
+      }
+    };
+
+    // ==================== 純雲端儲存 (GitHub REST API 同步更新私密庫與前台) ====================
+    window.saveToGitHubCloud = async function() {
+      if (!userToken) {
+        alert('請先輸入 GitHub Token，即可開啟直接雲端儲存！');
+        configureToken();
+        if (!userToken) return;
+      }
+
+      if (!masterData) {
+        alert('排程資料尚未載入完成，請稍候再試。');
+        return;
+      }
+
+      const saveBtn = document.getElementById('btn-cloud-save');
+      saveBtn.textContent = '⏳ 正在上傳至 GitHub 雲端...';
+      saveBtn.disabled = true;
+
+      try {
+        // 1. 同步保存回私有庫 kanban-flow/handover/2028-website/master_schedule.json
+        masterData.updated_at = new Date().toISOString().split('T')[0];
+        
+        // 先取得 kanban-flow 該檔案最新 SHA
+        const masterGetUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${PRIVATE_REPO}/contents/${PRIVATE_SCHEDULE_PATH}`;
+        const masterGetRes = await fetch(masterGetUrl, {
+          headers: { 'Authorization': 'token ' + userToken }
+        });
+        if (!masterGetRes.ok) {
+          throw new Error('無法存取私密庫 kanban-flow，請確認 Token 權限具備 repo 存取！');
+        }
+        const masterFileInfo = await masterGetRes.json();
+        
+        // PUT 更新私密庫 master_schedule.json
+        const masterBase64 = utf8ToBase64(JSON.stringify(masterData, null, 2));
+        const masterPutRes = await fetch(masterGetUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'token ' + userToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'chore: 負責人線上更新排程順序 (master_schedule.json)',
+            content: masterBase64,
+            sha: masterFileInfo.sha
+          })
+        });
+
+        if (!masterPutRes.ok) {
+          const errData = await masterPutRes.json();
+          throw new Error('更新私密庫排程失敗：' + (errData.message || ''));
+        }
+
+        // 2. 脫敏組裝 public_feed.json（僅已發布內容，絕不洩密）
+        const published_w = masterData.weekend_releases[0];
+        const published_q = masterData.thursday_releases[0];
+        const publicFeedPayload = {
+          generated_at: new Date().toISOString(),
+          cutoff_date: "2026-10-31",
+          exam_date: "2028-01-14",
+          current_thursday: published_q,
+          history_thursdays: [],
+          current_weekend: published_w,
+          history_weekends: []
+        };
+
+        // 取得公開庫 2028-website 的 public_feed.json SHA
+        const feedGetUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${PUBLIC_REPO}/contents/${PUBLIC_FEED_PATH}`;
+        const feedGetRes = await fetch(feedGetUrl, {
+          headers: { 'Authorization': 'token ' + userToken }
+        });
+        if (!feedGetRes.ok) {
+          throw new Error('無法取得 2028-website 檔案資訊，請確認 Token 權限。');
+        }
+        const feedFileInfo = await feedGetRes.json();
+
+        // PUT 更新 2028-website 的 public_feed.json
+        const feedBase64 = utf8ToBase64(JSON.stringify(publicFeedPayload, null, 2));
+        const feedPutRes = await fetch(feedGetUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'token ' + userToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'chore: 負責人雲端同步前台公開 feed (public_feed.json)',
+            content: feedBase64,
+            sha: feedFileInfo.sha
+          })
+        });
+
+        if (!feedPutRes.ok) {
+          const errData = await feedPutRes.json();
+          throw new Error('更新前台 public_feed 失敗：' + (errData.message || ''));
+        }
+
+        isDirty = false;
+        document.getElementById('dirty-status').style.display = 'none';
+        alert('🎉 雲端儲存成功！\n\n1. 私密全量排程已安全存入雲端庫。\n2. 前台公開資料已同步更新，GitHub Pages 將在 30 秒內全網生效！');
+      } catch (err) {
+        alert('⚠️ 雲端儲存失敗：\n' + err.message);
+      } finally {
+        saveBtn.textContent = '☁️ 雲端儲存並發布';
+        saveBtn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>
