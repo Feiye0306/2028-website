@@ -1,11 +1,11 @@
-// 2028 學測家長陪跑日曆 - 人文誌極致版 (Editorial Edition)
-let masterSchedule = null;
+// 2028 學測家長陪跑日曆 - 人文誌極致版 (當下焦點 ＆ 歷史收合)
+let feedData = null;
 let deptDrawData = null;
 let deptLinks = null;
 
-let currentThursIndex = 0;
+// 正在檢視的週四項目（預設為當下最新一期）
+let activeThursItem = null;
 let deferredPrompt = null;
-let currentAdminTab = 'thurs';
 
 // 錨定學測預估日：2028 年 1 月 14 日
 const EXAM_DATE = new Date('2028-01-14T09:00:00+08:00');
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
 
   updateCountdownDisplay();
-  applyScheduleFilter();
+  renderCurrentContent();
   renderDeptBrowser();
 
   // 定時微調週數
@@ -28,14 +28,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 // 載入資料包（物理防洩密：前台僅讀取脫敏 public_feed.json）
 async function loadAllData() {
   try {
-    const [schedRes, dddRes, dlRes] = await Promise.all([
+    const [feedRes, dddRes, dlRes] = await Promise.all([
       fetch('./data/public_feed.json?v=' + Date.now()).then(r => r.json()),
       fetch('./data/dept_draw_data.json').then(r => r.json()),
       fetch('./data/dept_links.json').then(r => r.json())
     ]);
-    masterSchedule = schedRes;
+    feedData = feedRes;
     deptDrawData = dddRes;
     deptLinks = dlRes;
+
+    if (feedData) {
+      activeThursItem = feedData.current_thursday;
+    }
   } catch (err) {
     console.error('資料載入異常：', err);
   }
@@ -59,130 +63,200 @@ function updateCountdownDisplay() {
   weeksNumEl.textContent = remainWeeks;
 }
 
-// 依據排程日期過濾與渲染
-function applyScheduleFilter() {
-  if (!masterSchedule || !masterSchedule.thursday_releases) return;
+// 渲染當下內容（只看當下，不顯示未來未解鎖的一整排列表）
+function renderCurrentContent() {
+  if (!feedData) return;
 
-  const todayStr = new Date().toISOString().slice(0, 10);
-
-  // 找出目前最新已解鎖的週四期數
-  let latestUnlockedIdx = 0;
-  masterSchedule.thursday_releases.forEach((item, idx) => {
-    if (item.is_unlocked) {
-      latestUnlockedIdx = idx;
-    }
-  });
-
-  currentThursIndex = latestUnlockedIdx;
-  renderWeeklyPush();
-  renderWeekendReleases();
+  renderWeeklyPushCard(activeThursItem);
+  renderHistoryThursdays();
+  renderWeekendFocus();
 }
 
-// 渲染當週指南卡片（社論雜誌風）
-function renderWeeklyPush() {
-  if (!masterSchedule || !masterSchedule.thursday_releases) return;
-
-  const item = masterSchedule.thursday_releases[currentThursIndex];
-  if (!item) return;
-
+// 1. 渲染「本週指引」（當下焦點）
+function renderWeeklyPushCard(item) {
   const container = document.getElementById('weekly-push-container');
+  if (!container) return;
 
-  if (!item.is_unlocked) {
+  if (!item) {
     container.innerHTML = `
-      <div style="text-align: center; padding: 40px 20px; background: #faf9f6; border: 1px dashed #e8e6df; border-radius: 12px;">
-        <div style="font-size: 2rem; margin-bottom: 8px;">⏳</div>
-        <h3 style="color: var(--text-headline); font-size: 1.1rem; margin-bottom: 6px;">本週指引排程解鎖中</h3>
-        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
-          預定於 <strong>${item.release_date}（${item.day}）</strong> 準時發布。<br>
-          每週四釋出一道關鍵解惑，陪伴您與孩子穩健前進。
-        </p>
+      <div style="text-align: center; padding: 30px 20px; color: var(--text-muted);">
+        暫無最新指引
       </div>
     `;
-  } else {
-    container.innerHTML = `
-      <div class="card-top-meta">
-        <span class="stage-tag">${item.stage}</span>
-        <span style="font-size: 0.82rem; color: var(--text-muted);">${item.release_date} 發布</span>
-      </div>
-
-      <h3 class="card-main-title">「${item.sample_push}」</h3>
-
-      <div class="question-highlight-box">
-        <div class="question-label">家長關鍵問答・精選解惑</div>
-        <div class="question-text">${item.question}</div>
-      </div>
-
-      <div class="action-card-grid">
-        <div class="action-row">
-          <div class="action-header">
-            <span>🌱</span> 學生本週節奏
-          </div>
-          <div class="action-desc">${item.student_task}</div>
-        </div>
-
-        <div class="action-row">
-          <div class="action-header">
-            <span>☕</span> 家長陪伴心法
-          </div>
-          <div class="action-desc">${item.parent_task}</div>
-        </div>
-      </div>
-    `;
+    return;
   }
 
-  document.getElementById('stage-pager-text').textContent = 
-    `第 ${item.index} 週 ｜ 倒數 ${item.countdown_weeks} 週`;
+  container.innerHTML = `
+    <div class="card-top-meta">
+      <span class="stage-tag">${item.stage}</span>
+      <span style="font-size: 0.82rem; color: var(--text-muted);">${item.release_date} 發布</span>
+    </div>
+
+    <h3 class="card-main-title">「${item.sample_push}」</h3>
+
+    <div class="question-highlight-box">
+      <div class="question-label">家長關鍵問答・精選解惑</div>
+      <div class="question-text">${item.question}</div>
+    </div>
+
+    <div class="action-card-grid">
+      <div class="action-row">
+        <div class="action-header">
+          <span>🌱</span> 學生本週節奏
+        </div>
+        <div class="action-desc">${item.student_task}</div>
+      </div>
+
+      <div class="action-row">
+        <div class="action-header">
+          <span>☕</span> 家長陪伴心法
+        </div>
+        <div class="action-desc">${item.parent_task}</div>
+      </div>
+    </div>
+  `;
+
+  const titleEl = document.getElementById('current-week-title');
+  if (titleEl) {
+    titleEl.textContent = `第 ${item.index} 週 ｜ 倒數 ${item.countdown_weeks} 週`;
+  }
 }
 
-// 週次切換
-window.changeThursIndex = function(offset) {
-  if (!masterSchedule || !masterSchedule.thursday_releases) return;
-  const newIndex = currentThursIndex + offset;
-  if (newIndex >= 0 && newIndex < masterSchedule.thursday_releases.length) {
-    currentThursIndex = newIndex;
-    renderWeeklyPush();
+// 渲染「歷史週次回看」（預設折疊收起）
+function renderHistoryThursdays() {
+  const historyList = feedData ? feedData.history_thursdays : [];
+  const container = document.getElementById('thurs-history-container');
+  const wrapper = document.getElementById('thurs-history-wrapper');
+
+  if (!container || !wrapper) return;
+
+  if (!historyList || historyList.length === 0) {
+    wrapper.style.display = 'none';
+    return;
   }
-};
 
-// 渲染週末科系發布（排程鎖定機制）
-function renderWeekendReleases() {
-  if (!masterSchedule || !masterSchedule.weekend_releases) return;
+  wrapper.style.display = 'block';
+  document.getElementById('thurs-history-count').textContent = historyList.length;
 
-  const container = document.getElementById('weekend-releases-list');
-  const items = masterSchedule.weekend_releases;
-
-  container.innerHTML = items.map(item => {
-    if (!item.is_unlocked) {
-      return `
-        <div class="release-item" style="opacity: 0.6;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="release-badge">${item.day} ｜ ${item.release_date}</span>
-            <span style="font-size: 0.8rem; color: var(--text-muted);">排程鎖定</span>
-          </div>
-          <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-muted); margin-top: 6px;">
-            第 ${item.slot_num} 格：即將於 ${item.release_date} 解鎖
-          </div>
-        </div>
-      `;
-    }
-
+  container.innerHTML = historyList.slice().reverse().map(it => {
     return `
-      <div class="release-item">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span class="release-badge" style="background:#eef7f2; color:#1b633e;">${item.day} ｜ ${item.release_date}</span>
-          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">${item.tag}</span>
+      <div class="history-item-row" onclick="viewHistoryThurs(${it.index})" style="padding: 10px 12px; border-bottom: 1px solid #f1f0eb; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-headline);">第 ${it.index} 週 (${it.release_date})</span>
+          <div style="font-size: 0.85rem; color: #475569; margin-top: 2px;">${it.question}</div>
         </div>
-        <div class="release-dept-title">${item.group_name}</div>
-        <p style="font-size: 0.9rem; color: #475569; margin: 4px 0 10px; line-height: 1.5;">${item.desc}</p>
-        <button class="btn btn-outline btn-sm" onclick="viewGroupDetail('${item.group_name}')">
-          查看全台開設校系與官方連結 ➔
-        </button>
+        <span style="font-size: 0.8rem; color: var(--accent-warm); font-weight: 600;">回看 ➔</span>
       </div>
     `;
   }).join('');
 }
 
-// 點擊查看特定科系
+// 點擊回看過往某一週
+window.viewHistoryThurs = function(weekIndex) {
+  if (!feedData) return;
+  const all = [feedData.current_thursday, ...(feedData.history_thursdays || [])].filter(Boolean);
+  const target = all.find(it => it.index === weekIndex);
+  if (target) {
+    activeThursItem = target;
+    renderWeeklyPushCard(activeThursItem);
+    // 捲動回卡片頂部
+    document.getElementById('weekly-push-container').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+};
+
+// 切換回到當下最新一週
+window.resetToCurrentThurs = function() {
+  if (feedData && feedData.current_thursday) {
+    activeThursItem = feedData.current_thursday;
+    renderWeeklyPushCard(activeThursItem);
+  }
+};
+
+// 折疊/展開歷史週次
+window.toggleThursHistory = function() {
+  const c = document.getElementById('thurs-history-drawer');
+  const btn = document.getElementById('toggle-thurs-history-btn');
+  if (c.style.display === 'none' || c.style.display === '') {
+    c.style.display = 'block';
+    btn.textContent = '收合過往指引 ▲';
+  } else {
+    c.style.display = 'none';
+    btn.textContent = '展開過往指引 ▼';
+  }
+};
+
+// 2. 渲染「週末看系」（只顯示當下最新發布，歷史預設折疊，未來絕不顯示）
+function renderWeekendFocus() {
+  const currentDept = feedData ? feedData.current_weekend : null;
+  const historyDepts = feedData ? feedData.history_weekends : [];
+
+  const focusContainer = document.getElementById('weekend-focus-card');
+  const historyWrapper = document.getElementById('weekend-history-wrapper');
+  const historyListContainer = document.getElementById('weekend-history-list');
+
+  // A. 當下最新焦點科系
+  if (!currentDept) {
+    focusContainer.innerHTML = `
+      <div style="text-align: center; padding: 30px 20px; color: var(--text-muted);">
+        <p style="font-size: 1rem;">🌱 首期週末科系即將發布，敬請期待！</p>
+      </div>
+    `;
+  } else {
+    focusContainer.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span class="release-badge" style="background:#eef7f2; color:#1b633e;">${currentDept.day} ｜ ${currentDept.release_date}</span>
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-warm);">${currentDept.tag}</span>
+      </div>
+      <h3 style="font-size: 1.4rem; font-weight: 900; color: var(--text-headline); margin: 6px 0 8px;">
+        ${currentDept.group_name}
+      </h3>
+      <p style="font-size: 0.95rem; color: #475569; margin-bottom: 16px; line-height: 1.6;">
+        ${currentDept.desc}
+      </p>
+      <button class="btn btn-sm" onclick="viewGroupDetail('${currentDept.group_name}')" style="background: var(--text-headline);">
+        查看全台開設校系與官方網站 ➔
+      </button>
+    `;
+  }
+
+  // B. 歷史科系（折疊收起）
+  if (!historyDepts || historyDepts.length === 0) {
+    historyWrapper.style.display = 'none';
+  } else {
+    historyWrapper.style.display = 'block';
+    document.getElementById('weekend-history-count').textContent = historyDepts.length;
+
+    historyListContainer.innerHTML = historyDepts.slice().reverse().map(dept => {
+      return `
+        <div style="padding: 12px 14px; border-bottom: 1px solid #f1f0eb; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">${dept.release_date} (${dept.day})</span>
+            <div style="font-size: 0.96rem; font-weight: 800; color: var(--text-headline); margin-top: 2px;">${dept.group_name}</div>
+            <div style="font-size: 0.82rem; color: #64748b;">${dept.schools_count} 所大學開設</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="viewGroupDetail('${dept.group_name}')">
+            查校系 ➔
+          </button>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+// 折疊/展開歷史科系
+window.toggleWeekendHistory = function() {
+  const c = document.getElementById('weekend-history-drawer');
+  const btn = document.getElementById('toggle-weekend-history-btn');
+  if (c.style.display === 'none' || c.style.display === '') {
+    c.style.display = 'block';
+    btn.textContent = '收合過往科系 ▲';
+  } else {
+    c.style.display = 'none';
+    btn.textContent = '展開過往科系 ▼';
+  }
+};
+
+// 點擊查看特定科系全台名單
 window.viewGroupDetail = function(groupName) {
   switchTab('depts-pane');
   const searchInput = document.getElementById('dept-search-input');
@@ -300,7 +374,7 @@ window.toggleSubjectFilter = function(btn, subject) {
   filterDepts();
 };
 
-// 導航切換
+// 導航分頁切換
 function setupTabs() {
   const tabs = document.querySelectorAll('.pill-btn');
   tabs.forEach(btn => {
@@ -321,132 +395,10 @@ window.switchTab = function(targetTabId) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// ==================== 雲端管理工作台 ====================
-let adminAuthenticated = false;
-
-window.openAdminLogin = function() {
-  if (!adminAuthenticated) {
-    const pwd = prompt('請輸入負責人雲端管理金鑰：');
-    if (pwd === 'winner2028' || pwd === 'darry') {
-      adminAuthenticated = true;
-    } else if (pwd !== null) {
-      alert('⚠️ 管理金鑰錯誤。');
-      return;
-    } else {
-      return;
-    }
-  }
-  const modal = document.getElementById('admin-cloud-modal');
-  if (modal) {
-    modal.style.display = 'flex';
-    renderAdminContent();
-  }
-};
-
-window.closeAdminModal = function() {
-  const modal = document.getElementById('admin-cloud-modal');
-  if (modal) modal.style.display = 'none';
-};
-
-window.switchAdminTab = function(type) {
-  currentAdminTab = type;
-  document.getElementById('tab-btn-thurs').classList.toggle('active', type === 'thurs');
-  document.getElementById('tab-btn-weekend').classList.toggle('active', type === 'weekend');
-  renderAdminContent();
-};
-
-function renderAdminContent() {
-  if (!masterSchedule) return;
-  const contentEl = document.getElementById('cloud-admin-content');
-  const cutoffEl = document.getElementById('cloud-cutoff-text');
-  if (cutoffEl) cutoffEl.textContent = masterSchedule.cutoff_date || '2026-10-31';
-
-  if (currentAdminTab === 'thurs') {
-    contentEl.innerHTML = `
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th style="width: 50px;">週次</th>
-            <th style="width: 110px;">公開日期</th>
-            <th>公開題目（家長關鍵解惑）</th>
-            <th style="width: 80px;">狀態</th>
-            <th style="width: 70px;">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${masterSchedule.thursday_releases.map((it, idx) => `
-            <tr>
-              <td>第 ${it.index} 週</td>
-              <td>${it.release_date}</td>
-              <td>${it.question || '🔒 [未公開・庫房保護]'}</td>
-              <td>${it.is_unlocked ? '✅ 已解鎖' : '🔒 隔離中'}</td>
-              <td><button class="btn btn-outline btn-sm" onclick="editThursQ(${idx})">編輯</button></td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `;
-  } else {
-    contentEl.innerHTML = `
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th style="width: 50px;">格次</th>
-            <th style="width: 120px;">公開日期</th>
-            <th>發布科系群組</th>
-            <th style="width: 90px;">排序調整</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${masterSchedule.weekend_releases.map((it, idx) => `
-            <tr>
-              <td>第 ${it.slot_num} 格</td>
-              <td>${it.release_date} (${it.day})</td>
-              <td><strong>${it.group_name || '🔒 [未公開・庫房保護]'}</strong></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="moveWeekendOrder(${idx}, -1)">▲</button>
-                <button class="btn btn-outline btn-sm" onclick="moveWeekendOrder(${idx}, 1)">▼</button>
-              </td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `;
-  }
-}
-
-window.editThursQ = function(idx) {
-  const it = masterSchedule.thursday_releases[idx];
-  const newQ = prompt(`編輯第 ${it.index} 週題目：`, it.question || '');
-  if (newQ) {
-    it.question = newQ;
-    renderAdminContent();
-    renderWeeklyPush();
-  }
-};
-
-window.moveWeekendOrder = function(idx, dir) {
-  const targetIdx = idx + dir;
-  const list = masterSchedule.weekend_releases;
-  if (targetIdx < 0 || targetIdx >= list.length) return;
-  const temp = list[idx].group_name;
-  list[idx].group_name = list[targetIdx].group_name;
-  list[targetIdx].group_name = temp;
-  renderAdminContent();
-};
-
-window.exportAdminSchedule = function() {
-  const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(masterSchedule, null, 2));
-  const dl = document.createElement('a');
-  dl.setAttribute("href", str);
-  dl.setAttribute("download", "master_schedule.json");
-  dl.click();
-};
-
-// PWA 註冊與通知
+// PWA 註冊與推播通知測試
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=20280114').catch(e => console.log('SW error:', e));
+    navigator.serviceWorker.register('./sw.js?v=20280114-clean').catch(e => console.log('SW error:', e));
   }
 }
 
@@ -481,9 +433,9 @@ window.triggerPushTest = async function() {
     permission = await Notification.requestPermission();
   }
   if (permission === 'granted') {
-    const item = masterSchedule && masterSchedule.thursday_releases ? masterSchedule.thursday_releases[currentThursIndex] : null;
+    const item = activeThursItem;
     const title = '🔔 2028 學測家長陪跑日曆';
-    const body = item && item.question ? `【${item.stage}】${item.question}` : '每週四指引已發布，點擊查看本週解惑！';
+    const body = item && item.question ? `【${item.stage}】${item.question}` : '本週最新指引已發布！';
     if ('serviceWorker' in navigator) {
       try {
         const reg = await navigator.serviceWorker.ready;
