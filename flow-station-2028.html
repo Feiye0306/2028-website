@@ -422,8 +422,9 @@
               <div style="font-size:0.75rem; color:#64748b; margin-top:2px;">「${it.sample_push || ''}」</div>
             </div>
             <div class="slot-actions">
-              <button class="btn btn-sm btn-secondary" onclick="moveThursday(${realIdx}, -1)" ${unreleasedIdx === 0 ? 'disabled style="opacity:0.4;"' : ''}>▲</button>
-              <button class="btn btn-sm btn-secondary" onclick="moveThursday(${realIdx}, 1)" ${unreleasedIdx === unreleased.length - 1 ? 'disabled style="opacity:0.4;"' : ''}>▼</button>
+              <button class="btn btn-sm btn-secondary" onclick="moveThursday(${realIdx}, -1)" ${unreleasedIdx === 0 ? 'disabled style="opacity:0.4;"' : ''} title="上移一週">▲</button>
+              <button class="btn btn-sm btn-secondary" onclick="moveThursday(${realIdx}, 1)" ${unreleasedIdx === unreleased.length - 1 ? 'disabled style="opacity:0.4;"' : ''} title="下移一週">▼</button>
+              <button class="btn btn-sm btn-secondary" onclick="jumpThursday(${realIdx})" title="直接調整到指定週次">移至...</button>
               <button class="btn btn-sm btn-accent" onclick="promoteToCurrentThurs(${realIdx})">設為當週</button>
               <button class="btn btn-sm btn-secondary" onclick="openEditGuideModal(${realIdx})">✏️ 編輯</button>
             </div>
@@ -466,8 +467,9 @@
               <div class="slot-sub">${it.release_date || '待定'} (${it.day || '六'}) ｜ ${it.schools_count || 0} 校開設 ｜ ${it.tag || '科系特色'}</div>
             </div>
             <div class="slot-actions">
-              <button class="btn btn-sm btn-secondary" onclick="moveWeekend(${realIdx}, -1)" ${unreleasedIdx === 0 ? 'disabled style="opacity:0.4;"' : ''}>▲</button>
-              <button class="btn btn-sm btn-secondary" onclick="moveWeekend(${realIdx}, 1)" ${unreleasedIdx === unreleased.length - 1 ? 'disabled style="opacity:0.4;"' : ''}>▼</button>
+              <button class="btn btn-sm btn-secondary" onclick="moveWeekend(${realIdx}, -1)" ${unreleasedIdx === 0 ? 'disabled style="opacity:0.4;"' : ''} title="往前調移">▲</button>
+              <button class="btn btn-sm btn-secondary" onclick="moveWeekend(${realIdx}, 1)" ${unreleasedIdx === unreleased.length - 1 ? 'disabled style="opacity:0.4;"' : ''} title="往後調移">▼</button>
+              <button class="btn btn-sm btn-secondary" onclick="jumpWeekend(${realIdx})" title="直接調整到指定格數">移至...</button>
               <button class="btn btn-sm btn-accent" onclick="promoteToCurrentWeekend(${realIdx})">設為當週</button>
               <button class="btn btn-sm btn-secondary" onclick="openReplaceModal(${realIdx})">置換</button>
             </div>
@@ -528,6 +530,38 @@
       renderThursdays();
     };
 
+    // 直接插隊/移動到指定週次
+    window.jumpThursday = function(realIdx) {
+      const list = masterData.thursday_releases;
+      const currentWeek = list[realIdx].index;
+      const targetInput = prompt(`目前為第 ${currentWeek} 週內容，請輸入欲移至的「週次編號」（範圍 2 ～ ${list.length}）：`, currentWeek);
+      if (targetInput === null) return;
+      const targetWeek = parseInt(targetInput.trim(), 10);
+      if (isNaN(targetWeek) || targetWeek < 2 || targetWeek > list.length) {
+        alert(`請輸入有效的週次數字（2 ～ ${list.length}）`);
+        return;
+      }
+      const targetIdx = list.findIndex(it => it.index === targetWeek);
+      if (targetIdx <= 0 || targetIdx === realIdx) return;
+
+      // 執行插隊移動 (將 realIdx 移動至 targetIdx)
+      const movedItem = list.splice(realIdx, 1)[0];
+      list.splice(targetIdx, 0, movedItem);
+
+      // 重新依序校正 index 與 release_date 標記
+      reindexThursdays();
+      markDirty();
+      renderThursdays();
+    };
+
+    function reindexThursdays() {
+      // 保持原本各週次的位置 index 與 release_date 節奏不變，僅調動內容
+      // 重新給定正確 index 序號
+      masterData.thursday_releases.forEach((it, idx) => {
+        it.index = idx + 1;
+      });
+    }
+
     // 設為本週指引（與第 0 格對調）
     window.promoteToCurrentThurs = function(realIdx) {
       if (!confirm(`確定要將此週題目設為「當前線上班發布的本週指引」嗎？`)) return;
@@ -553,6 +587,30 @@
       if (targetIdx <= 0 || targetIdx >= list.length) return;
 
       swapWeekendContent(realIdx, targetIdx);
+      markDirty();
+      renderWeekends();
+    };
+
+    // 直接插隊/移動科系到指定格數
+    window.jumpWeekend = function(realIdx) {
+      const list = masterData.weekend_releases;
+      const curSlot = list[realIdx].slot_num;
+      const targetInput = prompt(`目前為第 ${curSlot} 格 (${list[realIdx].group_name})，請輸入欲移至的「格數編號」（範圍 2 ～ ${list.length}）：`, curSlot);
+      if (targetInput === null) return;
+      const targetSlot = parseInt(targetInput.trim(), 10);
+      if (isNaN(targetSlot) || targetSlot < 2 || targetSlot > list.length) {
+        alert(`請輸入有效的格數數字（2 ～ ${list.length}）`);
+        return;
+      }
+      const targetIdx = list.findIndex(it => it.slot_num === targetSlot);
+      if (targetIdx <= 0 || targetIdx === realIdx) return;
+
+      const movedItem = list.splice(realIdx, 1)[0];
+      list.splice(targetIdx, 0, movedItem);
+
+      masterData.weekend_releases.forEach((it, idx) => {
+        it.slot_num = idx + 1;
+      });
       markDirty();
       renderWeekends();
     };
