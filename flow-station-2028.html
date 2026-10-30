@@ -289,6 +289,12 @@
       }
     }
 
+    // 題目過濾輔助：徹底拔除開頭無效的 #號碼 與舊序號
+    function stripNumberPrefix(str) {
+      if (!str) return '';
+      return str.replace(/^#\d+\s*(?:[◎●]\s*)?/, '').replace(/^\d+\.\s*/, '').trim();
+    }
+
     // UTF-8 安全 Base64 編解碼
     function utf8ToBase64(str) {
       return window.btoa(unescape(encodeURIComponent(str)));
@@ -393,7 +399,7 @@
       // 1. 渲染「本週指引焦點 (第 0 格)」
       const cur = list[0];
       if (cur) {
-        document.getElementById('cur-q-title').textContent = cur.question || '尚未設定題目';
+        document.getElementById('cur-q-title').textContent = stripNumberPrefix(cur.question) || '尚未設定題目';
         document.getElementById('cur-q-quote').textContent = `「${cur.sample_push || '無引言金句'}」`;
         document.getElementById('cur-q-meta').textContent = `${cur.release_date || ''} (${cur.day || '四'}) ｜ 倒數 ${cur.countdown_weeks} 週 ｜ ${cur.stage || ''}`;
         document.getElementById('cur-q-student').textContent = cur.student_task || '未設定';
@@ -417,7 +423,7 @@
           <div class="slot-item">
             <div class="slot-num">第 ${it.index} 週</div>
             <div class="slot-info">
-              <div class="slot-title">${it.question}</div>
+              <div class="slot-title">${stripNumberPrefix(it.question)}</div>
               <div class="slot-sub">${it.release_date || ''} (${it.day || '四'}) ｜ 倒數 ${it.countdown_weeks} 週 ｜ ${it.stage || ''}</div>
               <div style="font-size:0.75rem; color:#64748b; margin-top:2px;">「${it.sample_push || ''}」</div>
             </div>
@@ -506,7 +512,7 @@
       if (editingGuideIdx < 0 || !masterData || !masterData.thursday_releases) return;
       const it = masterData.thursday_releases[editingGuideIdx];
 
-      it.question = document.getElementById('edit-q-question').value.trim();
+      it.question = stripNumberPrefix(document.getElementById('edit-q-question').value.trim());
       it.sample_push = document.getElementById('edit-q-sample-push').value.trim();
       it.student_task = document.getElementById('edit-q-student-task').value.trim();
       it.parent_task = document.getElementById('edit-q-parent-task').value.trim();

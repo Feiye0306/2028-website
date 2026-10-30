@@ -148,6 +148,11 @@ function renderCurrentContent() {
   renderWeekendFocus();
 }
 
+function cleanQuestionText(str) {
+  if (!str) return '';
+  return str.replace(/^#\d+\s*(?:[◎●]\s*)?/, '').replace(/^\d+\.\s*/, '').trim();
+}
+
 // 1. 渲染「本週指引」（當下焦點）
 function renderWeeklyPushCard(item) {
   const container = document.getElementById('weekly-push-container');
@@ -172,7 +177,7 @@ function renderWeeklyPushCard(item) {
 
     <div class="question-highlight-box">
       <div class="question-label">家長關鍵問答・精選解惑</div>
-      <div class="question-text">${item.question}</div>
+      <div class="question-text">${cleanQuestionText(item.question)}</div>
     </div>
 
     <div class="action-card-grid">
@@ -219,7 +224,7 @@ function renderHistoryThursdays() {
       <div class="history-item-row" onclick="viewHistoryThurs(${it.index})" style="padding: 10px 12px; border-bottom: 1px solid #f1f0eb; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
         <div>
           <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-headline);">第 ${it.index} 週 (${it.release_date})</span>
-          <div style="font-size: 0.85rem; color: #475569; margin-top: 2px;">${it.question}</div>
+          <div style="font-size: 0.85rem; color: #475569; margin-top: 2px;">${cleanQuestionText(it.question)}</div>
         </div>
         <span style="font-size: 0.8rem; color: var(--accent-warm); font-weight: 600;">回看 ➔</span>
       </div>
