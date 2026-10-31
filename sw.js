@@ -1,18 +1,17 @@
-const CACHE_NAME = 'kanban-2028-v4-network-first';
+const CACHE_NAME = 'roadmap-2028-v1-network-first';
 
-// 安裝時立即接管
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// 啟動時徹底清除所有舊版本的快取（徹底清除舊版校系總覽快取）
+// 清除所有舊版作戰地圖的過期快取
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((k) => {
           if (k !== CACHE_NAME) {
-            console.log('清除過期快取:', k);
+            console.log('清除舊快取:', k);
             return caches.delete(k);
           }
         })
@@ -21,9 +20,8 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 核心快取策略：Network-First（優先請求最新網路版本，斷網才回退快取）
+// Network-First 策略：優先獲取最新資料，斷網才讀快取
 self.addEventListener('fetch', (event) => {
-  // 忽略非 GET 請求或跨域 API 請求
   if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
     return;
   }
@@ -40,7 +38,6 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       })
       .catch(() => {
-        // 斷網時才讀取本地快取
         return caches.match(event.request).then((cachedResponse) => {
           if (cachedResponse) {
             return cachedResponse;
@@ -53,11 +50,11 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// 推播事件監聽
+// 推播事件監聽（學測作戰地圖）
 self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : {
-    title: '2028 學測陪跑日曆',
-    body: '本週倒數週數與指引已更新，歡迎前往查看。'
+    title: '學測作戰地圖',
+    body: '本週最新升學關鍵問答已發布，歡迎前往查閱。'
   };
   event.waitUntil(
     self.registration.showNotification(data.title, {

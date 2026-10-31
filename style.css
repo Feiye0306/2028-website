@@ -1,544 +1,390 @@
-/* 2028 學測家長陪跑日曆 - 人文誌極致美學 (Editorial Warm Craft Style) */
+/* 2028 學測作戰地圖 ｜ 典雅編輯排版 (Editorial Layout) */
+
 :root {
-  --bg-canvas: #f8f7f4;        /* 溫潤米燕麥紙色，徹底告別冷冰冰的 AI 死灰 */
-  --card-surface: #ffffff;
-  --text-headline: #1c2536;    /* 深青石墨色，沉穩優雅 */
-  --text-body: #334155;        /* 護眼深炭灰 */
-  --text-muted: #8c827a;       /* 柔和大地茶褐 */
-  --accent-warm: #c26732;      /* 暖琥珀陶土色，溫暖不刺眼 */
-  --accent-green: #2d5a43;     /* 深森綠，象徵希望與成長 */
-  --border-delicate: #e8e6df;  /* 極細紙質邊框 */
-  --border-focus: #1c2536;
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --shadow-subtle: 0 4px 20px rgba(28, 37, 54, 0.04);
-  --shadow-hover: 0 8px 30px rgba(28, 37, 54, 0.07);
+  --bg: #FAF6EF;
+  --text-main: #0D2242;
+  --text-muted: #556377;
+  --accent: #7A5A13;
+  --border: #E5DFD3;
+  --border-dark: #D4CBBC;
+  --card-bg: #FFFFFF;
+  --font-sans: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background-color: var(--bg-canvas);
-  color: var(--text-body);
-  line-height: 1.65;
-  padding-bottom: 80px;
+  background-color: var(--bg);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.75;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-bottom: 80px;
 }
 
-/* 鎖定全屏純淨狀態（說明會未開放時，無任何 UI、無倒數、無陪跑，極致純淨） */
-body.is-locked {
-  display: flex;
-  min-height: 100vh;
-  min-height: 100dvh;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  padding-bottom: 24px;
-  background-color: var(--bg-canvas);
-}
-
-body.is-locked .editorial-header,
-body.is-locked .countdown-focus-card,
-body.is-locked .editorial-footer,
-body.is-locked #unlocked-content-area {
-  display: none !important;
-}
-
-body.is-locked .container {
-  max-width: 480px;
+/* 頁面主寬度容器：最大 780px，居中但內部元素嚴格左對齊，大量留白 */
+.container {
   width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-body.is-locked #gate-locked-card {
-  display: block !important;
-  width: 100%;
-}
-
-.welcome-screen {
-  width: 100%;
-}
-
-.welcome-card {
-  width: 100%;
-  text-align: center;
-  padding: 56px 24px;
-  background: var(--card-surface);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-delicate);
-  box-shadow: var(--shadow-subtle);
-}
-
-.welcome-title {
-  font-size: 1.55rem;
-  font-weight: 800;
-  color: var(--text-headline);
-  letter-spacing: 0.6px;
-  line-height: 1.5;
-  margin: 0;
-}
-
-/* 解鎖狀態下隱藏歡迎卡片 */
-body:not(.is-locked) #gate-locked-card {
-  display: none !important;
-}
-
-/* 頂部人文誌氣質 Header */
-.editorial-header {
-  background: #ffffff;
-  border-bottom: 1px solid var(--border-delicate);
-  padding: 24px 20px 20px;
-  text-align: center;
-}
-
-.header-inner {
-  max-width: 600px;
+  max-width: 780px;
   margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 0 24px;
+}
+
+/* ==================== 頂部 Header ==================== */
+.site-header {
+  padding-top: 48px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 36px;
 }
 
 .brand-kicker {
-  font-size: 0.76rem;
-  letter-spacing: 2px;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--text-muted);
-  font-weight: 600;
-  margin-bottom: 4px;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 12px;
 }
 
 .brand-title {
-  font-size: 1.35rem;
+  font-size: 2.25rem;
   font-weight: 800;
-  color: var(--text-headline);
-  letter-spacing: -0.5px;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-bottom: 10px;
 }
 
-.admin-pill-btn {
-  background: transparent;
-  border: 1px solid var(--border-delicate);
+.brand-desc {
+  font-size: 0.95rem;
   color: var(--text-muted);
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  line-height: 1.6;
 }
 
-.admin-pill-btn:hover {
-  border-color: var(--text-headline);
-  color: var(--text-headline);
-  background: #f1f0eb;
-}
-
-/* 簡約現代分頁導航（去除廉價分頁標籤感） */
-.nav-container {
-  max-width: 600px;
-  margin: 16px auto 0;
-  padding: 0 16px;
-}
-
-.nav-pills {
+/* ==================== 倒數週數列 ==================== */
+.countdown-strip {
   display: flex;
-  background: #edeae2;
-  padding: 4px;
-  border-radius: 12px;
-  gap: 4px;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 24px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid var(--border);
 }
 
-.pill-btn {
-  flex: 1;
-  padding: 10px 8px;
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.92rem;
-  font-weight: 600;
-  border-radius: 9px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.pill-btn.active {
-  background: #ffffff;
-  color: var(--text-headline);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-/* 主容器 */
-.container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px 16px;
-}
-
-/* 倒數週數主視覺卡片（純週數・極致大氣・零機械感） */
-.countdown-focus-card {
-  background: var(--card-surface);
-  border: 1px solid var(--border-delicate);
-  border-radius: var(--radius-lg);
-  padding: 36px 24px;
-  text-align: center;
-  box-shadow: var(--shadow-subtle);
-  margin-bottom: 20px;
-  position: relative;
-  overflow: hidden;
-}
-
-.countdown-focus-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 20%;
-  right: 20%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--accent-warm), transparent);
-}
-
-.countdown-subhead {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
-.countdown-hero-block {
-  margin: 18px 0 14px;
+.countdown-left {
   display: flex;
   align-items: baseline;
-  justify-content: center;
   gap: 10px;
 }
 
-.countdown-word-prefix {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.countdown-big-num {
-  font-size: 5.6rem;
+.countdown-digits {
+  font-size: 2.5rem;
   font-weight: 900;
-  line-height: 0.95;
-  color: var(--text-headline);
-  letter-spacing: -3px;
-  font-feature-settings: "tnum";
+  color: var(--text-main);
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
-.countdown-word-suffix {
-  font-size: 1.8rem;
+.countdown-unit {
+  font-size: 1.1rem;
   font-weight: 700;
-  color: var(--text-headline);
+  color: var(--text-main);
 }
 
-.countdown-badge-date {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #fdfbf7;
-  border: 1px solid #f0e6d6;
-  color: var(--accent-warm);
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 5px 14px;
-  border-radius: 20px;
-  margin-top: 6px;
-}
-
-.countdown-footer-quote {
-  font-size: 0.82rem;
+.countdown-label {
+  font-size: 0.88rem;
   color: var(--text-muted);
-  margin-top: 18px;
-  line-height: 1.6;
-  border-top: 1px solid #f1f0eb;
-  padding-top: 14px;
 }
 
-/* 本週指南卡片（雜誌隨筆質感） */
-.editorial-card {
-  background: var(--card-surface);
-  border: 1px solid var(--border-delicate);
-  border-radius: var(--radius-md);
-  padding: 24px;
-  box-shadow: var(--shadow-subtle);
-  margin-bottom: 20px;
+.countdown-exam-date {
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.05em;
 }
 
-.card-top-meta {
+/* ==================== 主題區域：本週常見問答 ==================== */
+.section-meta-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 32px;
 }
 
-.stage-tag {
-  background: #f1ede5;
-  color: #685b52;
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 6px;
-  letter-spacing: 0.3px;
-}
-
-.card-main-title {
-  font-size: 1.25rem;
+.section-headline {
+  font-size: 1.45rem;
   font-weight: 800;
-  color: var(--text-headline);
-  line-height: 1.45;
-  margin-bottom: 16px;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
 }
 
-.question-highlight-box {
-  background: #fff9f3;
-  border-left: 3px solid var(--accent-warm);
-  padding: 16px 18px;
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  margin: 16px 0;
-}
-
-.question-label {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  color: var(--accent-warm);
-  font-weight: 800;
-  letter-spacing: 1px;
-  margin-bottom: 4px;
-}
-
-.question-text {
-  font-size: 1.05rem;
+.section-stage-badge {
+  font-size: 0.82rem;
   font-weight: 700;
-  color: #5c2c11;
-  line-height: 1.5;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  padding: 4px 12px;
+  border-radius: 2px;
+  letter-spacing: 0.04em;
 }
 
-.action-card-grid {
+/* 題目列表 */
+.faq-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 0;
 }
 
-.action-row {
-  background: #faf9f6;
-  border: 1px solid #f0eee8;
-  border-radius: var(--radius-sm);
-  padding: 14px 16px;
-}
-
-.action-header {
-  font-size: 0.86rem;
-  font-weight: 800;
-  color: var(--text-headline);
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.action-desc {
-  font-size: 0.92rem;
-  color: #475569;
-  line-height: 1.55;
-}
-
-/* 週次切換器（極簡優雅） */
-.timeline-stepper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-  padding: 0 4px;
-}
-
-.btn-stepper {
+.faq-card {
+  padding: 32px 0;
+  border-bottom: 1px solid var(--border);
   background: transparent;
-  border: 1px solid var(--border-delicate);
-  color: var(--text-headline);
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
 }
 
-.btn-stepper:hover {
-  background: #edeae2;
+.faq-card:first-child {
+  padding-top: 0;
 }
 
-.stepper-label {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--text-headline);
-}
-
-/* 通用按鈕 */
-.btn {
-  background: var(--text-headline);
-  color: #ffffff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 10px;
-  font-size: 0.92rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.btn:hover {
-  opacity: 0.92;
-  transform: translateY(-1px);
-}
-
-.btn-sm {
-  padding: 6px 12px;
-  font-size: 0.82rem;
-}
-
-.btn-outline {
-  background: transparent;
-  color: var(--text-headline);
-  border: 1px solid var(--border-delicate);
-}
-
-.btn-outline:hover {
-  background: #f1f0eb;
-}
-
-/* 週末科系發布項目 */
-.release-item {
-  border-bottom: 1px solid #f1f0eb;
-  padding: 18px 0;
-}
-
-.release-item:last-child {
+.faq-card:last-child {
   border-bottom: none;
 }
 
-.release-badge {
-  background: #f3f0e8;
-  color: #5c5249;
+.faq-index-kicker {
   font-size: 0.78rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 5px;
-}
-
-.release-dept-title {
-  font-size: 1.15rem;
   font-weight: 800;
-  color: var(--text-headline);
-  margin: 6px 0 4px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
 }
 
-/* 校系連結標籤 */
-.link-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-decoration: none;
+.faq-question-title {
+  font-size: 1.28rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.45;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
 }
 
-.link-dept-green {
-  background: #eef7f2;
-  color: #1b633e;
-  border: 1px solid #cce8d7;
+/* 答案內文編輯排版 */
+.faq-answer-body {
+  font-size: 1rem;
+  color: var(--text-main);
+  line-height: 1.8;
+  white-space: pre-line;
+  word-break: break-word;
 }
 
-.link-rule-amber {
-  background: #fdf6ec;
-  color: #8c5313;
-  border: 1px solid #f5ddb8;
-}
-
-/* 搜尋框與標籤 */
-.editorial-input {
-  width: 100%;
-  padding: 12px 16px;
-  background: #ffffff;
-  border: 1px solid var(--border-delicate);
-  border-radius: 10px;
-  font-size: 0.96rem;
-  outline: none;
-  color: var(--text-headline);
-  margin-bottom: 12px;
-}
-
-.editorial-input:focus {
-  border-color: var(--text-headline);
-}
-
-.filter-chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+.faq-answer-body p {
   margin-bottom: 14px;
 }
 
-.filter-chip {
-  background: transparent;
-  border: 1px solid var(--border-delicate);
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 20px;
+.faq-answer-body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  word-break: break-all;
+}
+
+/* 摺疊關聯問題手風琴 (Details) */
+.faq-folded-wrapper {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+}
+
+.faq-folded-item {
+  margin-top: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #FFFFFF;
+  overflow: hidden;
+}
+
+.faq-folded-summary {
+  padding: 12px 16px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-main);
   cursor: pointer;
+  background: #FCFAF6;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faq-folded-summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-folded-summary::after {
+  content: "＋";
+  font-size: 1rem;
+  color: var(--accent);
+  font-weight: 800;
+  transition: transform 0.2s ease;
+}
+
+details[open] .faq-folded-summary::after {
+  content: "－";
+}
+
+.faq-folded-content {
+  padding: 16px;
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: var(--text-main);
+  white-space: pre-line;
+  border-top: 1px solid var(--border);
+  background: #FFFFFF;
+}
+
+/* ==================== 歷史發布抽屜 (點即開啟) ==================== */
+.history-drawer-section {
+  margin-top: 48px;
+  border-top: 2px solid var(--text-main);
+  padding-top: 28px;
+}
+
+.history-drawer-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  padding: 8px 0;
+}
+
+.history-drawer-heading {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.history-drawer-btn {
+  background: transparent;
+  border: 1px solid var(--border-dark);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   transition: all 0.2s;
 }
 
-.filter-chip.active {
-  background: var(--text-headline);
-  color: #ffffff;
-  border-color: var(--text-headline);
+.history-drawer-btn:hover {
+  background: var(--text-main);
+  color: #FAF6EF;
+  border-color: var(--text-main);
 }
 
-/* 底部聲明 */
-.editorial-footer {
-  text-align: center;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  padding: 24px 16px;
-  line-height: 1.7;
-}
-
-/* 彈窗樣式 */
-.tab-pane { display: none; }
-.tab-pane.active { display: block; }
-
-.modal-backdrop {
+.history-drawer-panel {
   display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(28, 37, 54, 0.6);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(5px);
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
 }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.history-drawer-panel.is-open {
+  display: block;
+}
+
+.history-week-block {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-week-header {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.history-q-row {
+  padding: 8px 0;
+}
+
+.history-q-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.history-q-text:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.history-q-answer {
+  display: none;
+  margin-top: 10px;
+  padding: 14px 16px;
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+/* ==================== 頁尾 Footer ==================== */
+.site-footer {
+  margin-top: 64px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.footer-copy {
+  margin-top: 6px;
+}
+
+/* ==================== 手機窄螢幕最佳化 (RWD) ==================== */
+@media (max-width: 600px) {
+  .container {
+    padding: 0 20px;
+  }
+  .site-header {
+    padding-top: 36px;
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+  }
+  .brand-title {
+    font-size: 1.85rem;
+  }
+  .countdown-digits {
+    font-size: 2.1rem;
+  }
+  .section-headline {
+    font-size: 1.3rem;
+  }
+  .faq-question-title {
+    font-size: 1.15rem;
+  }
+  .faq-card {
+    padding: 24px 0;
+  }
+}

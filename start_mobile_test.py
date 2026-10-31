@@ -2,7 +2,7 @@ import subprocess, re, time, os, sys
 
 def main():
     print("=" * 60)
-    print("   2028 學測家長陪跑日曆 - 真實手機公網 (4G/5G) 測試環境")
+    print("   2028 學測作戰地圖 - 真實手機公網 (4G/5G) 測試環境")
     print("=" * 60)
     print("\n[1/3] 正在啟動本機安全服務 (Port 8080)...")
     

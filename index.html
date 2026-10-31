@@ -3,159 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>2028 學測家長陪跑日曆</title>
+  <title>學測作戰地圖 ｜ 2028 家長升學關鍵導航</title>
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#f8f7f4">
+  <meta name="theme-color" content="#0d2242">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="學測陪跑日曆">
-  <link rel="stylesheet" href="./style.css?v=2028-pure-welcome">
+  <meta name="apple-mobile-web-app-title" content="學測作戰地圖">
+  <link rel="stylesheet" href="./style.css?v=2028-v1-roadmap">
 </head>
-<body class="is-locked">
+<body>
 
-  <!-- 人文誌頂部 Header（解鎖後才呈現） -->
-  <header class="editorial-header">
-    <div class="header-inner">
-      <div style="text-align: left;">
-        <div class="brand-kicker">2028 PARENT COMPANION</div>
-        <h1 class="brand-title">學測家長陪跑日曆</h1>
-      </div>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand-kicker">2028 STRATEGY ROADMAP</div>
+      <h1 class="brand-title">學測作戰地圖</h1>
+      <p class="brand-desc">依考程時序每週精選家長關鍵問答，全台 2,178 個系組全收錄。</p>
     </div>
   </header>
 
-  <!-- 主內容容器 -->
   <main class="container">
 
-    <!-- 說明會現場歡迎卡片（乾淨極簡・無任何 UI・無倒數・無陪跑字樣・鎖定時唯一呈現） -->
-    <div id="gate-locked-card" class="welcome-screen">
-      <div class="welcome-card">
-        <h1 class="welcome-title">感謝您來參加贏家的說明會</h1>
+    <!-- 倒數週數區塊 (左對齊・大標大氣) -->
+    <section class="countdown-strip">
+      <div class="countdown-left">
+        <span class="countdown-label">距離 2028 學測</span>
+        <span class="countdown-digits" id="weeks-num">63</span>
+        <span class="countdown-unit">週</span>
       </div>
-    </div>
-
-    <!-- 倒數週數主卡片（解鎖後呈現） -->
-    <div class="countdown-focus-card">
-      <div class="countdown-subhead">距離 2028 學測</div>
-      
-      <div class="countdown-hero-block">
-        <span class="countdown-word-prefix">倒數</span>
-        <span id="weeks-num" class="countdown-big-num">64</span>
-        <span class="countdown-word-suffix">週</span>
+      <div class="countdown-exam-date">
+        預估學測日 2028.01.14
       </div>
+    </section>
 
-      <div>
-        <span class="countdown-badge-date">
-          📅 預估學測日 2028.01.14
-        </span>
+    <!-- 本週問答主角區 (本週大字置頂) -->
+    <section class="weekly-faq-section">
+      <div class="section-meta-bar">
+        <h2 class="section-headline" id="cur-week-headline">本週常見問答</h2>
+        <span class="section-stage-badge" id="cur-week-stage">第 1 週・高二下打底</span>
       </div>
 
-      <div class="countdown-footer-quote">
-        「陪伴孩子，每週走穩一步。我們用時間的節奏，換取心中的從容。」
+      <!-- 問答內容容器 -->
+      <div class="faq-list" id="faq-list-container">
+        <p style="padding: 30px 0; color: var(--text-muted);">正在載入本週常見問答...</p>
       </div>
-    </div>
+    </section>
 
-    <!-- 開放後內容包裝區（當 gate.open == true 時自動平滑展示） -->
-    <div id="unlocked-content-area" style="display: none;">
-
-      <!-- PWA 手機安裝橫幅 -->
-      <div id="pwa-install-banner" class="editorial-card" style="display: none; padding: 14px 18px; background: #fffcf8; border-color: #f2e3d0; margin-bottom: 16px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-          <div style="font-size: 0.88rem; color: #7c4a27;">
-            <strong>📱 加到手機桌面</strong>
-            <div style="font-size: 0.8rem; color: #a1704e;">安裝成專屬日曆，每週陪伴孩子隨手查閱</div>
-          </div>
-          <button class="btn btn-sm" onclick="installPwa()" style="background: #c26732;">加到主畫面</button>
+    <!-- 歷史發布週次抽屜 (點即開啟) -->
+    <section class="history-drawer-section" id="history-drawer-section">
+      <div class="history-drawer-toggle-row" onclick="toggleHistoryDrawer()">
+        <h3 class="history-drawer-heading">過往週次回看 (<span id="history-count">0</span> 週)</h3>
+        <button class="history-drawer-btn" id="drawer-toggle-btn">開啟抽屜</button>
+      </div>
+      <div class="history-drawer-panel" id="history-drawer-panel">
+        <div id="history-list-container">
+          <!-- 動態載入過往週次 -->
         </div>
       </div>
+    </section>
 
-      <!-- 兩大核心膠囊導航列（依週程慢慢揭露・不填鴨） -->
-      <div class="nav-container">
-        <nav class="nav-pills">
-          <button class="pill-btn active" data-tab="countdown-pane">
-            🌱 本週指引
-          </button>
-          <button class="pill-btn" data-tab="weekend-pane">
-            🎓 週末精選
-          </button>
-        </nav>
-      </div>
-
-      <!-- ==================== 分頁 1：本週指引 ==================== -->
-      <section id="countdown-pane" class="tab-pane active">
-
-        <div class="editorial-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f1f0eb; padding-bottom: 10px;">
-            <span id="current-week-title" style="font-size: 0.95rem; font-weight: 800; color: var(--text-headline);">
-              本週最新指引
-            </span>
-            <button class="btn btn-outline btn-sm" onclick="resetToCurrentThurs()" style="font-size: 0.78rem; padding: 3px 8px;">
-              回當週
-            </button>
-          </div>
-
-          <!-- 動態載入當週指引內容 -->
-          <div id="current-thurs-content">
-            <p style="text-align: center; color: var(--text-muted); padding: 30px;">正在整理本週最新指引...</p>
-          </div>
-
-          <!-- 歷史週次回顧折疊區 -->
-          <div id="thurs-history-wrapper" style="display: none; margin-top: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; background: #faf9f6; padding: 10px 14px; border-radius: 8px; border: 1px solid #f0eee8;">
-              <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-headline);">
-                📜 過往時程回顧 (<span id="thurs-history-count">0</span> 週)
-              </span>
-              <button id="toggle-thurs-history-btn" class="btn btn-outline btn-sm" onclick="toggleThursHistory()">展開過往指引 ▼</button>
-            </div>
-            <div id="thurs-history-drawer" style="display: none; margin-top: 8px; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; max-height: 260px; overflow-y: auto;">
-              <div id="thurs-history-container"></div>
-            </div>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- ==================== 分頁 2：週末精選（只看當下焦點，歷史折疊收合，慢慢揭露） ==================== -->
-      <section id="weekend-pane" class="tab-pane">
-        <div class="editorial-card" style="margin-bottom: 14px;">
-          <div class="brand-kicker">WEEKEND FOCUS</div>
-          <h2 style="font-size: 1.22rem; color: var(--text-headline); font-weight: 800; margin-bottom: 4px;">
-            週末精選
-          </h2>
-          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
-            每週末精選科系深度解析。陪孩子慢慢看懂未來，找到真正適合的方向。
-          </p>
-        </div>
-
-        <!-- 當下焦點科系（大卡片獨佔） -->
-        <div class="editorial-card" id="weekend-focus-card" style="border-left: 4px solid var(--accent-warm);">
-          <p style="text-align: center; color: var(--text-muted); padding: 30px;">正在整理精選科系...</p>
-        </div>
-
-        <!-- 歷史已發布科系折疊區 -->
-        <div id="weekend-history-wrapper" class="editorial-card" style="display: none; padding: 14px 18px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 0.9rem; font-weight: 800; color: var(--text-headline);">
-              📜 過往已發布科系 (<span id="weekend-history-count">0</span> 系)
-            </span>
-            <button id="toggle-weekend-history-btn" class="btn btn-outline btn-sm" onclick="toggleWeekendHistory()">展開過往科系 ▼</button>
-          </div>
-          <div id="weekend-history-drawer" style="display: none; margin-top: 12px; border-top: 1px solid #f1f0eb; max-height: 320px; overflow-y: auto;">
-            <div id="weekend-history-list"></div>
-          </div>
-        </div>
-
-      </section>
-
-    </div>
-
-    <!-- 底部聲明（語言親切・絕無生硬「底本」） -->
-    <footer class="editorial-footer">
-      <p>資料來源：大學甄選入學委員會 115 學年度申請入學簡章 ＆ 教育部校務資訊公開平臺</p>
-      <p style="margin-top: 4px;">本站依時程每週釋出陪跑指南；與家長一同從容應對。</p>
+    <!-- 頁尾 -->
+    <footer class="site-footer">
+      <p>資料依據：大學甄選入學委員會、大學考試分發委員會公告與全台各大專院校官方規程。</p>
+      <p class="footer-copy">全台 2,178 個系組全收錄 ｜ 學測作戰地圖每週四依排程自然解鎖發布。</p>
     </footer>
 
   </main>
 
-  <script src="./app.js?v=2028-pure-welcome"></script>
+  <script src="./app.js?v=2028-v1-roadmap"></script>
 </body>
 </html>
