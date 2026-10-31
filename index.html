@@ -3,72 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>學測作戰地圖 ｜ 2028 家長升學關鍵導航</title>
+  <title>學測作戰地圖</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0d2242">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="學測作戰地圖">
-  <link rel="stylesheet" href="./style.css?v=2028-v1-roadmap">
+  <link rel="stylesheet" href="./style.css?v=2028-v1-clean">
 </head>
 <body>
 
   <header class="site-header">
     <div class="container">
-      <div class="brand-kicker">2028 STRATEGY ROADMAP</div>
       <h1 class="brand-title">學測作戰地圖</h1>
-      <p class="brand-desc">依考程時序每週精選家長關鍵問答，全台 2,178 個系組全收錄。</p>
+      <div class="countdown-strip">
+        <span class="countdown-exam-date">預估學測日 2028.01.14</span>
+        <span class="countdown-sep">｜</span>
+        <span class="countdown-value">倒數 <strong id="weeks-num">63</strong> 週</span>
+      </div>
     </div>
   </header>
 
   <main class="container">
 
-    <!-- 倒數週數區塊 (左對齊・大標大氣) -->
-    <section class="countdown-strip">
-      <div class="countdown-left">
-        <span class="countdown-label">距離 2028 學測</span>
-        <span class="countdown-digits" id="weeks-num">63</span>
-        <span class="countdown-unit">週</span>
-      </div>
-      <div class="countdown-exam-date">
-        預估學測日 2028.01.14
-      </div>
+    <!-- 發布週次與階段標記 (純資訊) -->
+    <div class="week-meta-bar">
+      <span class="week-stage-text" id="cur-week-stage">第 1 週 ｜ 高二下打底</span>
+    </div>
+
+    <!-- 問答內容清單 (問題本身就是標題) -->
+    <section class="faq-list" id="faq-list-container">
+      <p style="padding: 24px 0; color: var(--text-muted);">載入問答中...</p>
     </section>
 
-    <!-- 本週問答主角區 (本週大字置頂) -->
-    <section class="weekly-faq-section">
-      <div class="section-meta-bar">
-        <h2 class="section-headline" id="cur-week-headline">本週常見問答</h2>
-        <span class="section-stage-badge" id="cur-week-stage">第 1 週・高二下打底</span>
-      </div>
-
-      <!-- 問答內容容器 -->
-      <div class="faq-list" id="faq-list-container">
-        <p style="padding: 30px 0; color: var(--text-muted);">正在載入本週常見問答...</p>
-      </div>
-    </section>
-
-    <!-- 歷史發布週次抽屜 (點即開啟) -->
-    <section class="history-drawer-section" id="history-drawer-section">
+    <!-- 歷史週次回看抽屜 (僅在有歷史週次時顯示) -->
+    <section class="history-drawer-section" id="history-drawer-section" style="display: none;">
       <div class="history-drawer-toggle-row" onclick="toggleHistoryDrawer()">
-        <h3 class="history-drawer-heading">過往週次回看 (<span id="history-count">0</span> 週)</h3>
-        <button class="history-drawer-btn" id="drawer-toggle-btn">開啟抽屜</button>
+        <h2 class="history-drawer-heading">已發布週次回看 (<span id="history-count">0</span> 週)</h2>
+        <button class="history-drawer-btn" id="drawer-toggle-btn">開啟</button>
       </div>
       <div class="history-drawer-panel" id="history-drawer-panel">
-        <div id="history-list-container">
-          <!-- 動態載入過往週次 -->
-        </div>
+        <div id="history-list-container"></div>
       </div>
     </section>
 
-    <!-- 頁尾 -->
+    <!-- 頁尾 (純資訊來源) -->
     <footer class="site-footer">
-      <p>資料依據：大學甄選入學委員會、大學考試分發委員會公告與全台各大專院校官方規程。</p>
-      <p class="footer-copy">全台 2,178 個系組全收錄 ｜ 學測作戰地圖每週四依排程自然解鎖發布。</p>
+      <p>全台 2,178 個系組全收錄</p>
+      <p class="footer-source">資料來源：大學甄選入學委員會、大學考試分發委員會、各大專院校官方簡章。</p>
     </footer>
 
   </main>
 
-  <script src="./app.js?v=2028-v1-roadmap"></script>
+  <script src="./app.js?v=2028-v1-clean"></script>
 </body>
 </html>

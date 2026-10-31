@@ -1,4 +1,4 @@
-/* 2028 學測作戰地圖 ｜ 典雅編輯排版 (Editorial Layout) */
+/* 2028 學測作戰地圖 ｜ 純淨編輯排版 */
 
 :root {
   --bg: #FAF6EF;
@@ -7,7 +7,6 @@
   --accent: #7A5A13;
   --border: #E5DFD3;
   --border-dark: #D4CBBC;
-  --card-bg: #FFFFFF;
   --font-sans: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -22,174 +21,110 @@ body {
   color: var(--text-main);
   font-family: var(--font-sans);
   font-size: 16px;
-  line-height: 1.75;
+  line-height: 1.8;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding-bottom: 80px;
 }
 
-/* 頁面主寬度容器：最大 780px，居中但內部元素嚴格左對齊，大量留白 */
 .container {
   width: 100%;
-  max-width: 780px;
+  max-width: 760px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
-/* ==================== 頂部 Header ==================== */
+/* 頂部 Header：左對齊、大標題、純資訊倒數行 */
 .site-header {
-  padding-top: 48px;
-  padding-bottom: 24px;
+  padding-top: 44px;
+  padding-bottom: 20px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 36px;
-}
-
-.brand-kicker {
-  font-size: 0.75rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--accent);
-  font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 }
 
 .brand-title {
-  font-size: 2.25rem;
+  font-size: 2.2rem;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.02em;
-  line-height: 1.25;
-  margin-bottom: 10px;
+  line-height: 1.2;
+  margin-bottom: 12px;
 }
 
-.brand-desc {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-/* ==================== 倒數週數列 ==================== */
 .countdown-strip {
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 12px;
-  padding-bottom: 24px;
-  margin-bottom: 40px;
-  border-bottom: 1px solid var(--border);
-}
-
-.countdown-left {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-
-.countdown-digits {
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: var(--text-main);
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-
-.countdown-unit {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text-main);
-}
-
-.countdown-label {
-  font-size: 0.88rem;
+  gap: 8px;
+  font-size: 0.95rem;
   color: var(--text-muted);
 }
 
 .countdown-exam-date {
-  font-size: 0.85rem;
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
+}
+
+.countdown-sep {
+  color: var(--border-dark);
+}
+
+.countdown-value strong {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--text-main);
+  margin: 0 2px;
+}
+
+/* 週次與階段資訊列 */
+.week-meta-bar {
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.week-stage-text {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--accent);
   letter-spacing: 0.05em;
 }
 
-/* ==================== 主題區域：本週常見問答 ==================== */
-.section-meta-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 32px;
-}
-
-.section-headline {
-  font-size: 1.45rem;
-  font-weight: 800;
-  color: var(--text-main);
-  letter-spacing: -0.01em;
-}
-
-.section-stage-badge {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--accent);
-  background: transparent;
-  border: 1px solid var(--accent);
-  padding: 4px 12px;
-  border-radius: 2px;
-  letter-spacing: 0.04em;
-}
-
-/* 題目列表 */
+/* 問答列表：每題獨立大標題，細線隔開 */
 .faq-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
 .faq-card {
   padding: 32px 0;
   border-bottom: 1px solid var(--border);
-  background: transparent;
 }
 
 .faq-card:first-child {
-  padding-top: 0;
+  padding-top: 4px;
 }
 
 .faq-card:last-child {
   border-bottom: none;
 }
 
-.faq-index-kicker {
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: var(--accent);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
 .faq-question-title {
-  font-size: 1.28rem;
+  font-size: 1.35rem;
   font-weight: 800;
   color: var(--text-main);
   line-height: 1.45;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
   letter-spacing: -0.01em;
 }
 
-/* 答案內文編輯排版 */
+/* 答案內文 */
 .faq-answer-body {
-  font-size: 1rem;
+  font-size: 1.02rem;
   color: var(--text-main);
-  line-height: 1.8;
+  line-height: 1.85;
   white-space: pre-line;
   word-break: break-word;
-}
-
-.faq-answer-body p {
-  margin-bottom: 14px;
 }
 
 .faq-answer-body a {
@@ -199,9 +134,9 @@ body {
   word-break: break-all;
 }
 
-/* 摺疊關聯問題手風琴 (Details) */
+/* 摺疊子題：直接以摺疊問題文字作為摘要 */
 .faq-folded-wrapper {
-  margin-top: 20px;
+  margin-top: 24px;
   padding-top: 16px;
   border-top: 1px dashed var(--border);
 }
@@ -209,14 +144,13 @@ body {
 .faq-folded-item {
   margin-top: 12px;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: 2px;
   background: #FFFFFF;
-  overflow: hidden;
 }
 
 .faq-folded-summary {
   padding: 12px 16px;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-main);
   cursor: pointer;
@@ -235,8 +169,7 @@ body {
   content: "＋";
   font-size: 1rem;
   color: var(--accent);
-  font-weight: 800;
-  transition: transform 0.2s ease;
+  font-weight: 700;
 }
 
 details[open] .faq-folded-summary::after {
@@ -245,19 +178,19 @@ details[open] .faq-folded-summary::after {
 
 .faq-folded-content {
   padding: 16px;
-  font-size: 0.92rem;
-  line-height: 1.75;
+  font-size: 0.95rem;
+  line-height: 1.8;
   color: var(--text-main);
   white-space: pre-line;
   border-top: 1px solid var(--border);
   background: #FFFFFF;
 }
 
-/* ==================== 歷史發布抽屜 (點即開啟) ==================== */
+/* 歷史週次抽屜 */
 .history-drawer-section {
   margin-top: 48px;
   border-top: 2px solid var(--text-main);
-  padding-top: 28px;
+  padding-top: 24px;
 }
 
 .history-drawer-toggle-row {
@@ -265,15 +198,13 @@ details[open] .faq-folded-summary::after {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  user-select: none;
-  padding: 8px 0;
+  padding: 6px 0;
 }
 
 .history-drawer-heading {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 800;
   color: var(--text-main);
-  letter-spacing: -0.01em;
 }
 
 .history-drawer-btn {
@@ -282,19 +213,15 @@ details[open] .faq-folded-summary::after {
   color: var(--text-main);
   font-size: 0.85rem;
   font-weight: 700;
-  padding: 6px 14px;
-  border-radius: 3px;
+  padding: 5px 14px;
+  border-radius: 2px;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   transition: all 0.2s;
 }
 
 .history-drawer-btn:hover {
   background: var(--text-main);
   color: #FAF6EF;
-  border-color: var(--text-main);
 }
 
 .history-drawer-panel {
@@ -309,24 +236,26 @@ details[open] .faq-folded-summary::after {
 }
 
 .history-week-block {
-  padding: 24px 0;
+  padding: 20px 0;
   border-bottom: 1px solid var(--border);
 }
 
 .history-week-header {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 800;
   color: var(--accent);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .history-q-row {
-  padding: 8px 0;
+  padding: 6px 0;
 }
 
 .history-q-text {
   font-size: 0.95rem;
-  font-weight: 700;
   color: var(--text-main);
   cursor: pointer;
 }
@@ -338,51 +267,44 @@ details[open] .faq-folded-summary::after {
 
 .history-q-answer {
   display: none;
-  margin-top: 10px;
-  padding: 14px 16px;
+  margin-top: 8px;
+  padding: 12px 14px;
   background: #FFFFFF;
   border: 1px solid var(--border);
-  border-radius: 4px;
   font-size: 0.92rem;
-  line-height: 1.7;
+  line-height: 1.75;
   white-space: pre-line;
 }
 
-/* ==================== 頁尾 Footer ==================== */
+/* 頁尾 */
 .site-footer {
-  margin-top: 64px;
-  padding-top: 28px;
+  margin-top: 60px;
+  padding-top: 24px;
   border-top: 1px solid var(--border);
   font-size: 0.82rem;
   color: var(--text-muted);
-  line-height: 1.65;
+  line-height: 1.6;
 }
 
-.footer-copy {
-  margin-top: 6px;
+.footer-source {
+  margin-top: 4px;
 }
 
-/* ==================== 手機窄螢幕最佳化 (RWD) ==================== */
+/* 手機版 RWD */
 @media (max-width: 600px) {
   .container {
     padding: 0 20px;
   }
   .site-header {
-    padding-top: 36px;
-    padding-bottom: 20px;
-    margin-bottom: 28px;
+    padding-top: 32px;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
   }
   .brand-title {
     font-size: 1.85rem;
   }
-  .countdown-digits {
-    font-size: 2.1rem;
-  }
-  .section-headline {
-    font-size: 1.3rem;
-  }
   .faq-question-title {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
   }
   .faq-card {
     padding: 24px 0;

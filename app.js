@@ -1,6 +1,6 @@
 /**
- * 2028 學測作戰地圖 ｜ 前台主腳本 v1
- * 依考程時序每週精選家長關鍵問答，全台 2,178 個系組全收錄
+ * 2028 學測作戰地圖 ｜ 前台主腳本
+ * 全台 2,178 個系組全收錄
  */
 
 const EXAM_DATE_STR = '2028-01-14';
@@ -64,7 +64,7 @@ async function loadFaqData() {
     console.warn('無法從網路讀取 faq_data.json，回退到預設第一批資料：', err);
   }
 
-  // 備援預設第一週資料 (順序嚴格照排)
+  // 備援預設第一週資料 (順序嚴格照排，無任何題號與內部備註)
   if (!faqMasterData || !faqMasterData.weeks || faqMasterData.weeks.length === 0) {
     faqMasterData = {
       weeks: [
@@ -76,19 +76,19 @@ async function loadFaqData() {
             {
               id: 2,
               question: "高二開始準備學測會太早嗎？總複習應該從什麼時候開始？高二下才開始來得及嗎？",
-              answer: "【查證答案 2026-10-20】\n✅ 一句話結論：高二開始不算太早，但「開始的方式」決定成敗。高二的重點不是狂刷歷屆試題，而是穩住高二進度、補強英文單字與基本運算，並開始了解學測架構。\n\n重點建議：\n- 高二課程就是學測的一半範圍（國英數社自的第四冊皆在高二），顧好段考就是最好的學測打底。\n- 英文單字請立即啟動每天固定量（如 15～20 字），英文是無法短期速成的考科。\n- 高二升高三的暑假（黃金七月）才是大範圍總複習的全力衝刺期。",
+              answer: "- 不會太早，但高二的「準備」不是衝刺，是打地基：跟上學校進度、把觀念漏洞補起來；學測範圍本來就以高一高二內容為主體。\n- 高二下開始來得及：關鍵在有沒有系統地複習。每週固定撥時間回顧舊範圍，比假日一次爆讀更有效。\n- 避免太早燃燒殆盡：學測是長跑，高二拚到沒電、高三反而撐不住；節奏感比強度重要。\n- 家長可以幫的：幫他守住作息和睡眠，盯生活節奏勝過盯進度；進度落後時先陪他把計畫拆小，而不是加壓。\n- 高二下可先做兩件小事：開始累積需要時間的東西（例如英文單字、國文古文），並慢慢看目標校系的參採科目，確認自己的選考組合沒問題。",
               folded: []
             },
             {
               id: 12,
               question: "學測到底要考幾科？可以只選考其中幾科嗎？自然組也要考社會、社會組也要考自然嗎？",
-              answer: "【查證答案 2026-10-20】\n✅ 一句話結論：學測共 6 科（國文、英文、數A、數B、社會、自然），考生採「自由選考」，完全不必 6 科全報！\n\n重點：\n- 自由選考：大學校系在個人申請時，最多只能採計 4 科（不可 5 科或 6 科全採）。\n- 自然組多半選考：國、英、數A、自然。\n- 社會組多半選考：國、英、數B、社會。\n- 是否跨考：可依目標校系採計標準決定，不必盲目跨考增加負擔。",
+              answer: "一句話結論：學測共6科、可以自由選考只報需要的科；但沒考的科目，校系有採計就等於沒成績，所以實務上多數人仍報4到6科。\n\n重點：\n- 6科是國文、英文、數學A、數學B、社會、自然；國文分國綜、國寫兩節考，但合併算1科級分，不是2科\n- 只報1科到6科全報都可以，沒有規定必考幾科；報名費按選考科數計算\n- 自然組、社會組只是校內分組，大考中心不按組別強制考科：自然組不必考社會，社會組不必考自然",
               folded: []
             },
             {
               id: 13,
               question: "學測考幾天？國文、英文、數學、社會、自然各考多久？",
-              answer: "【查證答案 2026-10-20】\n✅ 一句話結論：學測固定考 3 天，時間多在 1 月中下旬（週五、週六、週日）。\n\n考試科目與時間：\n- 國文綜合（國綜）：90 分鐘\n- 國文寫作（國寫）：90 分鐘（國綜與國寫分節施測，成績各占 50% 合併為國文科 15 級分）\n- 英文：100 分鐘\n- 數學 A：100 分鐘\n- 數學 B：100 分鐘\n- 社會：110 分鐘\n- 自然：110 分鐘",
+              answer: "一句話結論：學測考3天，每科90到110分鐘；115學年度是2026/1/17–1/19，116學年度是2027/1/22–1/24。\n\n重點：\n- 115日程：第1天數學A、自然；第2天英文、國綜、國寫；第3天數學B、社會（每年順序以當年簡章為準）\n- 國綜90分鐘、國寫90分鐘\n- 英文、數學A、數學B各100分鐘\n- 社會、自然各110分鐘",
               folded: []
             }
           ]
@@ -98,15 +98,14 @@ async function loadFaqData() {
   }
 }
 
-// 核心渲染：分流「本週問答」與「歷史抽屜」
+// 渲染問答畫面
 function renderFaqView() {
   if (!faqMasterData || !faqMasterData.weeks) return;
 
   const today = getTodayString();
   const allWeeks = faqMasterData.weeks;
 
-  // 1. 決定哪些週次屬於「已發布」：
-  // 規則：第 1 週上線就直接顯示（不論日期）；第 2 週及以後需符合今日日期 >= release_date
+  // 決定已發布週次：第 1 週直接發布；第 2 週起依日期
   const publishedWeeks = allWeeks.filter(w => {
     if (w.week === 1) return true;
     return today >= w.release_date;
@@ -114,34 +113,28 @@ function renderFaqView() {
 
   if (publishedWeeks.length === 0) return;
 
-  // 當前選中的週次（預設為最新已發布的週次）
+  // 當前選中的週次（預設最新已發布週）
   let targetWeek = publishedWeeks.find(w => w.week === currentActiveWeekNum);
   if (!targetWeek) {
-    targetWeek = publishedWeeks[publishedWeeks.length - 1]; // 取最新發布週
+    targetWeek = publishedWeeks[publishedWeeks.length - 1];
     currentActiveWeekNum = targetWeek.week;
   }
 
-  // 渲染頂部當週標題與階段
-  const headlineEl = document.getElementById('cur-week-headline');
+  // 階段與週次標籤（純資訊）
   const stageEl = document.getElementById('cur-week-stage');
-  if (headlineEl) {
-    headlineEl.textContent = (targetWeek.week === publishedWeeks[publishedWeeks.length - 1].week)
-      ? '本週常見問答'
-      : `第 ${targetWeek.week} 週問答回看`;
-  }
   if (stageEl) {
     stageEl.textContent = `第 ${targetWeek.week} 週 ｜ ${targetWeek.stage}`;
   }
 
-  // 2. 渲染本週 3 題問答 (大字置頂・細線・無題號)
+  // 渲染問答（大標題、細線分隔、無任何多餘英文抬頭與題號）
   const faqListContainer = document.getElementById('faq-list-container');
   if (faqListContainer) {
     let html = '';
-    targetWeek.questions.forEach((q, idx) => {
+    targetWeek.questions.forEach((q) => {
       const cleanTitle = stripNumberPrefix(q.question);
       const answerHtml = formatAnswerHtml(q.answer);
 
-      // 檢查是否有摺疊題（收在主問底下，不獨立出現）
+      // 摺疊題：收在主問底下，不獨立出現；摘要文字即題目本身
       let foldedHtml = '';
       if (q.folded && q.folded.length > 0) {
         foldedHtml = `
@@ -149,7 +142,7 @@ function renderFaqView() {
             ${q.folded.map(f => `
               <details class="faq-folded-item">
                 <summary class="faq-folded-summary">
-                  <span>延伸問答：${stripNumberPrefix(f.question)}</span>
+                  <span>${stripNumberPrefix(f.question)}</span>
                 </summary>
                 <div class="faq-folded-content">
                   ${formatAnswerHtml(f.answer)}
@@ -162,8 +155,7 @@ function renderFaqView() {
 
       html += `
         <article class="faq-card">
-          <div class="faq-index-kicker">QUESTION 0${idx + 1}</div>
-          <h3 class="faq-question-title">${cleanTitle}</h3>
+          <h2 class="faq-question-title">${cleanTitle}</h2>
           <div class="faq-answer-body">${answerHtml}</div>
           ${foldedHtml}
         </article>
@@ -173,63 +165,59 @@ function renderFaqView() {
     faqListContainer.innerHTML = html;
   }
 
-  // 3. 渲染歷史抽屜清單（已發布的過往週次，排除當前正在看的週次，或列出全部已發布週）
+  // 歷史抽屜：僅在歷史週次數量 > 0 時呈現
   const historyWeeks = publishedWeeks.filter(w => w.week !== targetWeek.week);
   const drawerSection = document.getElementById('history-drawer-section');
   const historyCountEl = document.getElementById('history-count');
   const historyListContainer = document.getElementById('history-list-container');
 
-  if (historyCountEl) {
-    historyCountEl.textContent = historyWeeks.length;
-  }
-
-  if (historyListContainer) {
-    if (historyWeeks.length === 0) {
-      historyListContainer.innerHTML = `
-        <p style="font-size: 0.9rem; color: var(--text-muted); padding: 12px 0;">
-          目前為第一批發布週次，後續每週四系統將依考程時序自動解鎖發布下一批問答。
-        </p>
-      `;
-    } else {
-      let hHtml = '';
-      historyWeeks.slice().reverse().forEach(hw => {
-        hHtml += `
-          <div class="history-week-block">
-            <div class="history-week-header">
-              第 ${hw.week} 週 ｜ ${hw.stage} (${hw.release_date} 發布)
-              <button onclick="selectWeek(${hw.week})" style="margin-left: 10px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-size: 0.78rem; padding: 2px 8px; border-radius: 2px; cursor: pointer;">
-                置頂查看此週
-              </button>
-            </div>
-            ${hw.questions.map(hq => `
-              <div class="history-q-row">
-                <div class="history-q-text" onclick="toggleHistoryAnswer(this)">
-                  ・${stripNumberPrefix(hq.question)}
-                </div>
-                <div class="history-q-answer">
-                  ${formatAnswerHtml(hq.answer)}
-                </div>
+  if (drawerSection) {
+    if (historyWeeks.length > 0) {
+      drawerSection.style.display = 'block';
+      if (historyCountEl) historyCountEl.textContent = historyWeeks.length;
+      if (historyListContainer) {
+        let hHtml = '';
+        historyWeeks.slice().reverse().forEach(hw => {
+          hHtml += `
+            <div class="history-week-block">
+              <div class="history-week-header">
+                <span>第 ${hw.week} 週 ｜ ${hw.stage} (${hw.release_date})</span>
+                <button onclick="selectWeek(${hw.week})" style="background: transparent; border: 1px solid var(--accent); color: var(--accent); font-size: 0.8rem; padding: 2px 8px; border-radius: 2px; cursor: pointer;">
+                  查看此週
+                </button>
               </div>
-            `).join('')}
-          </div>
-        `;
-      });
-      historyListContainer.innerHTML = hHtml;
+              ${hw.questions.map(hq => `
+                <div class="history-q-row">
+                  <div class="history-q-text" onclick="toggleHistoryAnswer(this)">
+                    ・${stripNumberPrefix(hq.question)}
+                  </div>
+                  <div class="history-q-answer">
+                    ${formatAnswerHtml(hq.answer)}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        });
+        historyListContainer.innerHTML = hHtml;
+      }
+    } else {
+      drawerSection.style.display = 'none';
     }
   }
 }
 
-// 抽屜展開與收起切換
+// 抽屜切換
 window.toggleHistoryDrawer = function() {
   const panel = document.getElementById('history-drawer-panel');
   const btn = document.getElementById('drawer-toggle-btn');
   if (!panel || !btn) return;
 
   const isOpen = panel.classList.toggle('is-open');
-  btn.textContent = isOpen ? '收起抽屜' : '開啟抽屜';
+  btn.textContent = isOpen ? '收起' : '開啟';
 };
 
-// 抽屜內題目單題展開查看
+// 歷史題目單題答案展開
 window.toggleHistoryAnswer = function(el) {
   const ansEl = el.nextElementSibling;
   if (ansEl) {
@@ -238,14 +226,14 @@ window.toggleHistoryAnswer = function(el) {
   }
 };
 
-// 切換置頂查看某特定週次
+// 切換查看指定週次
 window.selectWeek = function(weekNum) {
   currentActiveWeekNum = weekNum;
   renderFaqView();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// 註冊 Service Worker (更新為學測作戰地圖)
+// 註冊 Service Worker
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(err => {
