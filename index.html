@@ -9,29 +9,56 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="學測作戰地圖">
-  <link rel="stylesheet" href="./style.css?v=2028-v1-accordion">
+  <link rel="stylesheet" href="./style.css?v=2028-v1-hero-countdown">
 </head>
 <body>
 
+  <!-- 頂部 Header：站名（小） ➔ 倒數（全頁最大主角） ＋ 預估學測日 -->
   <header class="site-header">
     <div class="container">
-      <h1 class="brand-title">學測作戰地圖</h1>
-      <div class="countdown-strip">
-        <span class="countdown-exam-date">預估學測日 2028.01.14</span>
-        <span class="countdown-sep">｜</span>
-        <span class="countdown-value">倒數 <strong id="weeks-num">63</strong> 週</span>
+      
+      <!-- 1. 站名（小，放最上面一行，不搶位置） -->
+      <div class="site-brand-label">學測作戰地圖</div>
+      
+      <!-- 2. 全頁最大主角：倒數週數 + 預估學測日 -->
+      <div class="countdown-hero-block">
+        <div class="countdown-main">
+          <span class="countdown-prefix">倒數</span>
+          <span class="countdown-big-number" id="weeks-num">63</span>
+          <span class="countdown-suffix">週</span>
+        </div>
+        <div class="countdown-sub-date">
+          預估學測日 2028.01.14
+        </div>
       </div>
+
     </div>
   </header>
 
   <main class="container">
 
-    <!-- 發布週次標頭（只留：第 1 週・日期，嚴禁任何內部註解） -->
-    <div class="week-header-row">
+    <!-- 3. 搜尋框 (即時檢索升學問題) -->
+    <section class="search-section">
+      <div class="search-input-wrap">
+        <input 
+          type="text" 
+          id="faq-search-input" 
+          class="search-input" 
+          placeholder="搜尋升學問題（如：繁星、英聽、選系、分科...）" 
+          oninput="handleSearch(this.value)"
+          autocomplete="off"
+        />
+        <button id="search-clear-btn" class="search-clear-btn" onclick="clearSearch()" style="display: none;">✕</button>
+      </div>
+      <div id="search-feedback" class="search-feedback-text" style="display: none;"></div>
+    </section>
+
+    <!-- 發布週次標頭（搜尋時隱藏，平時顯示：第 1 週・2027.02.04） -->
+    <div class="week-header-row" id="week-header-row">
       <span class="week-tag" id="cur-week-tag">第 1 週・2027.02.04</span>
     </div>
 
-    <!-- 首屏問題清單（預設全部收合，點開才看答案，手風琴切換） -->
+    <!-- 4. 首屏問題清單（預設全部收合，點開才看答案，手風琴切換） -->
     <section class="accordion-list" id="faq-accordion-container">
       <p style="padding: 24px 0; color: var(--text-muted);">載入問題清單中...</p>
     </section>
@@ -55,6 +82,6 @@
 
   </main>
 
-  <script src="./app.js?v=2028-v1-accordion"></script>
+  <script src="./app.js?v=2028-v1-hero-countdown"></script>
 </body>
 </html>

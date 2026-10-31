@@ -107,7 +107,11 @@
   <div class="top-header">
     <div>
       <h1>☁️ 2028 學測作戰地圖 ｜ 雲端排程中控台</h1>
-      <p>隨時在手機線上自由調整「本週指引、未來題目與科系排程」，即時存檔生效且全站物理防洩密！</p>
+      <p style="margin-top: 4px; font-weight: 600; color: #059669;">已全面整頓為單一中控台（絕無跳轉）：此處調整 ➔ 即時雲端儲存 ➔ 家長前台同步更新。</p>
+      <div style="margin-top: 6px; font-size: 0.82rem; display: flex; gap: 14px;">
+        <span>🏠 家長前台：<a href="./index.html" target="_blank" style="color: #0369a1; text-decoration: underline; font-weight: 700;">index.html</a></span>
+        <span>⚙️ 本管理台：<a href="./flow-station-2028.html" style="color: #0369a1; text-decoration: underline; font-weight: 700;">flow-station-2028.html</a></span>
+      </div>
     </div>
   </div>
 
@@ -292,7 +296,11 @@
     // 題目過濾輔助：徹底拔除開頭無效的 #號碼 與舊序號
     function stripNumberPrefix(str) {
       if (!str) return '';
-      return str.replace(/^#\d+\s*(?:[◎●]\s*)?/, '').replace(/^\d+\.\s*/, '').trim();
+      return str
+        .replace(/^#\d+\s*(?:[◎●★■◆]\s*)?/, '')
+        .replace(/^[◎●★■◆]\s*/, '')
+        .replace(/^\d+[\.、]\s*/, '')
+        .trim();
     }
 
     // UTF-8 安全 Base64 編解碼
@@ -373,7 +381,19 @@
           }
         }
 
-        // 3. 備援讀取本地 public_feed
+        // 3. 備援讀取本地 master_schedule.json（完整 64 週/126系）
+        try {
+          const masterRes = await fetch("./data/master_schedule.json?t=" + Date.now());
+          if (masterRes.ok) {
+            masterData = await masterRes.json();
+            document.getElementById("sync-info").textContent = "已載入排程庫 (64週/126系)";
+            return;
+          }
+        } catch(e) {
+          console.warn("無法載入本地 master_schedule.json", e);
+        }
+
+        // 4. 最後備援 public_feed
         const feedRes = await fetch('./data/public_feed.json?t=' + Date.now()).then(r => r.json());
         masterData = {
           thursday_releases: [feedRes.current_thursday, ...(feedRes.history_thursdays || [])].filter(Boolean),
@@ -540,21 +560,21 @@
     window.jumpThursday = function(realIdx) {
       const list = masterData.thursday_releases;
       const currentWeek = list[realIdx].index;
-      const targetInput = prompt(`目前為第 ${currentWeek} 週內容，請輸入欲移至的「週次編號」（範圍 2 ～ ${list.length}）：`, currentWeek);
+      const targetInput = prompt(`目前為第 ${currentWeek} 週內容，請輸入欲移至的「週次編號」（範圍 1 ～ ${list.length}）：`, currentWeek);
       if (targetInput === null) return;
       const targetWeek = parseInt(targetInput.trim(), 10);
-      if (isNaN(targetWeek) || targetWeek < 2 || targetWeek > list.length) {
-        alert(`請輸入有效的週次數字（2 ～ ${list.length}）`);
+      if (isNaN(targetWeek) || targetWeek < 1 || targetWeek > list.length) {
+        alert(`請輸入有效的週次數字（1 ～ ${list.length}）`);
         return;
       }
       const targetIdx = list.findIndex(it => it.index === targetWeek);
-      if (targetIdx <= 0 || targetIdx === realIdx) return;
+      if (targetIdx < 0 || targetIdx === realIdx) return;
 
-      // 執行插隊移動 (將 realIdx 移動至 targetIdx)
+      // 執行移動
       const movedItem = list.splice(realIdx, 1)[0];
       list.splice(targetIdx, 0, movedItem);
 
-      // 重新依序校正 index 與 release_date 標記
+      // 重新依序校正 index
       reindexThursdays();
       markDirty();
       renderThursdays();
@@ -601,7 +621,7 @@
     window.jumpWeekend = function(realIdx) {
       const list = masterData.weekend_releases;
       const curSlot = list[realIdx].slot_num;
-      const targetInput = prompt(`目前為第 ${curSlot} 格 (${list[realIdx].group_name})，請輸入欲移至的「格數編號」（範圍 2 ～ ${list.length}）：`, curSlot);
+      const targetInput = prompt(`目前為第 ${curSlot} 格 (${list[realIdx].group_name})，請輸入欲移至的「格數編號」（範圍 1 ～ ${list.length}）：`, curSlot);
       if (targetInput === null) return;
       const targetSlot = parseInt(targetInput.trim(), 10);
       if (isNaN(targetSlot) || targetSlot < 2 || targetSlot > list.length) {
@@ -609,7 +629,7 @@
         return;
       }
       const targetIdx = list.findIndex(it => it.slot_num === targetSlot);
-      if (targetIdx <= 0 || targetIdx === realIdx) return;
+      if (targetIdx < 0 || targetIdx === realIdx) return;
 
       const movedItem = list.splice(realIdx, 1)[0];
       list.splice(targetIdx, 0, movedItem);

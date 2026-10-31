@@ -1,4 +1,4 @@
-/* 2028 學測作戰地圖 ｜ 手風琴清單大氣排版 (Accordion Editorial Layout) */
+/* 2028 學測作戰地圖 ｜ 手風琴清單與編輯排版 (Accordion Editorial Layout) */
 
 :root {
   --bg: #FAF6EF;
@@ -36,50 +36,125 @@ body {
 
 /* ==================== 頂部 Header ==================== */
 .site-header {
-  padding-top: 48px;
-  padding-bottom: 22px;
+  padding-top: 42px;
+  padding-bottom: 24px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
-.brand-title {
-  font-size: 2.25rem;
-  font-weight: 800;
-  color: var(--text-main);
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  margin-bottom: 12px;
+/* 1. 站名（小，放最上面一行，克制不搶倒數位置） */
+.site-brand-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+  text-transform: uppercase;
 }
 
-.countdown-strip {
+/* 2. 全頁最大主角：倒數週數 + 預估學測日 */
+.countdown-hero-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.countdown-main {
   display: flex;
   align-items: baseline;
-  flex-wrap: wrap;
-  gap: 8px;
-  font-size: 0.95rem;
-  color: var(--text-muted);
+  gap: 6px;
 }
 
-.countdown-exam-date {
-  color: var(--accent);
+.countdown-prefix {
+  font-size: 1.5rem;
   font-weight: 700;
+  color: var(--text-main);
 }
 
-.countdown-sep {
-  color: var(--border-dark);
-}
-
-.countdown-value strong {
-  font-size: 1.4rem;
+.countdown-big-number {
+  font-size: 4.2rem;
   font-weight: 900;
   color: var(--text-main);
-  margin: 0 2px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.countdown-suffix {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.countdown-sub-date {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.03em;
+  margin-top: 4px;
+}
+
+/* ==================== 3. 搜尋框 ==================== */
+.search-section {
+  margin-bottom: 24px;
+}
+
+.search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  background: #FFFFFF;
+  border: 1px solid var(--border-dark);
+  border-radius: 4px;
+  padding: 12px 38px 12px 14px;
+  font-size: 1rem;
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--text-main);
+  background: #FFFFFF;
+}
+
+.search-input::placeholder {
+  color: #8C98A4;
+  font-size: 0.95rem;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.search-clear-btn:hover {
+  color: var(--text-main);
+}
+
+.search-feedback-text {
+  font-size: 0.88rem;
+  color: var(--accent);
+  font-weight: 700;
+  margin-top: 8px;
+  padding-left: 2px;
 }
 
 /* ==================== 週次標頭（只留：第 1 週・日期） ==================== */
 .week-header-row {
-  padding-bottom: 18px;
-  margin-bottom: 8px;
+  padding-bottom: 16px;
+  margin-bottom: 6px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -156,7 +231,7 @@ body {
 }
 
 .accordion-item.is-open .accordion-icon {
-  transform: rotate(45deg); /* 將 ＋ 旋轉變 ✕，或切換符號 */
+  transform: rotate(45deg);
 }
 
 /* 答案內文排版：字大、行距寬、段落分明 */
@@ -182,7 +257,46 @@ body {
   word-break: break-all;
 }
 
-/* 摺疊關聯子題 (收在主問底下) */
+/* ==================== 來源收合區塊 (低調收合) ==================== */
+.faq-source-details {
+  margin-top: 18px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+.faq-source-summary {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.faq-source-summary:hover {
+  color: var(--accent);
+}
+
+.faq-source-list {
+  list-style: none;
+  padding: 8px 0 4px 0;
+  margin: 0;
+}
+
+.faq-source-list li {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.faq-source-list a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ==================== 摺疊關聯子題 (收在主問底下) ==================== */
 .faq-folded-box {
   margin-top: 22px;
   padding-top: 16px;
@@ -297,6 +411,16 @@ details[open] .faq-folded-summary::after {
   align-items: center;
 }
 
+.history-view-btn {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
 .history-q-row {
   padding: 8px 0;
 }
@@ -342,12 +466,15 @@ details[open] .faq-folded-summary::after {
     padding: 0 20px;
   }
   .site-header {
-    padding-top: 36px;
-    padding-bottom: 18px;
-    margin-bottom: 22px;
+    padding-top: 32px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
   }
-  .brand-title {
-    font-size: 1.95rem;
+  .countdown-big-number {
+    font-size: 3.6rem;
+  }
+  .countdown-prefix, .countdown-suffix {
+    font-size: 1.3rem;
   }
   .accordion-title {
     font-size: 1.15rem;
