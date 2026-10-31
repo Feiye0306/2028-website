@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="學測作戰地圖">
-  <link rel="stylesheet" href="./style.css?v=2028-v1-clean">
+  <link rel="stylesheet" href="./style.css?v=2028-v1-accordion">
 </head>
 <body>
 
@@ -26,17 +26,17 @@
 
   <main class="container">
 
-    <!-- 發布週次與階段標記 (純資訊) -->
-    <div class="week-meta-bar">
-      <span class="week-stage-text" id="cur-week-stage">第 1 週 ｜ 高二下打底</span>
+    <!-- 發布週次標頭（只留：第 1 週・日期，嚴禁任何內部註解） -->
+    <div class="week-header-row">
+      <span class="week-tag" id="cur-week-tag">第 1 週・2027.02.04</span>
     </div>
 
-    <!-- 問答內容清單 (問題本身就是標題) -->
-    <section class="faq-list" id="faq-list-container">
-      <p style="padding: 24px 0; color: var(--text-muted);">載入問答中...</p>
+    <!-- 首屏問題清單（預設全部收合，點開才看答案，手風琴切換） -->
+    <section class="accordion-list" id="faq-accordion-container">
+      <p style="padding: 24px 0; color: var(--text-muted);">載入問題清單中...</p>
     </section>
 
-    <!-- 歷史週次回看抽屜 (僅在有歷史週次時顯示) -->
+    <!-- 歷史已發布週次回看抽屜（僅在有過往週次時顯示） -->
     <section class="history-drawer-section" id="history-drawer-section" style="display: none;">
       <div class="history-drawer-toggle-row" onclick="toggleHistoryDrawer()">
         <h2 class="history-drawer-heading">已發布週次回看 (<span id="history-count">0</span> 週)</h2>
@@ -47,7 +47,7 @@
       </div>
     </section>
 
-    <!-- 頁尾 (純資訊來源) -->
+    <!-- 頁尾 -->
     <footer class="site-footer">
       <p>全台 2,178 個系組全收錄</p>
       <p class="footer-source">資料來源：大學甄選入學委員會、大學考試分發委員會、各大專院校官方簡章。</p>
@@ -55,6 +55,6 @@
 
   </main>
 
-  <script src="./app.js?v=2028-v1-clean"></script>
+  <script src="./app.js?v=2028-v1-accordion"></script>
 </body>
 </html>

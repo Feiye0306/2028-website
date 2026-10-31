@@ -1,4 +1,4 @@
-/* 2028 學測作戰地圖 ｜ 純淨編輯排版 */
+/* 2028 學測作戰地圖 ｜ 手風琴清單大氣排版 (Accordion Editorial Layout) */
 
 :root {
   --bg: #FAF6EF;
@@ -21,7 +21,7 @@ body {
   color: var(--text-main);
   font-family: var(--font-sans);
   font-size: 16px;
-  line-height: 1.8;
+  line-height: 1.85;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding-bottom: 80px;
@@ -34,16 +34,16 @@ body {
   padding: 0 24px;
 }
 
-/* 頂部 Header：左對齊、大標題、純資訊倒數行 */
+/* ==================== 頂部 Header ==================== */
 .site-header {
-  padding-top: 44px;
-  padding-bottom: 20px;
+  padding-top: 48px;
+  padding-bottom: 22px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .brand-title {
-  font-size: 2.2rem;
+  font-size: 2.25rem;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.02em;
@@ -70,87 +70,135 @@ body {
 }
 
 .countdown-value strong {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 900;
   color: var(--text-main);
   margin: 0 2px;
 }
 
-/* 週次與階段資訊列 */
-.week-meta-bar {
-  padding-bottom: 16px;
-  margin-bottom: 24px;
+/* ==================== 週次標頭（只留：第 1 週・日期） ==================== */
+.week-header-row {
+  padding-bottom: 18px;
+  margin-bottom: 8px;
   border-bottom: 1px solid var(--border);
 }
 
-.week-stage-text {
-  font-size: 0.88rem;
-  font-weight: 700;
+.week-tag {
+  font-size: 1rem;
+  font-weight: 800;
   color: var(--accent);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
 }
 
-/* 問答列表：每題獨立大標題，細線隔開 */
-.faq-list {
+/* ==================== 首屏問題手風琴清單 ==================== */
+.accordion-list {
   display: flex;
   flex-direction: column;
 }
 
-.faq-card {
-  padding: 32px 0;
+.accordion-item {
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+  transition: background-color 0.15s ease;
+}
+
+.accordion-item:last-child {
   border-bottom: 1px solid var(--border);
 }
 
-.faq-card:first-child {
-  padding-top: 4px;
+/* 題目觸控列：一題一行、大字、清楚 */
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  cursor: pointer;
+  user-select: none;
 }
 
-.faq-card:last-child {
-  border-bottom: none;
-}
-
-.faq-question-title {
-  font-size: 1.35rem;
-  font-weight: 800;
+.accordion-title {
+  font-size: 1.25rem;
+  font-weight: 700;
   color: var(--text-main);
-  line-height: 1.45;
-  margin-bottom: 18px;
+  line-height: 1.5;
   letter-spacing: -0.01em;
+  flex: 1;
 }
 
-/* 答案內文 */
-.faq-answer-body {
-  font-size: 1.02rem;
+.accordion-header:hover .accordion-title {
+  color: var(--accent);
+}
+
+/* 開合指示符號 (＋ / －) */
+.accordion-icon {
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--accent);
+  line-height: 1.2;
+  flex-shrink: 0;
+  padding-top: 2px;
+  transition: transform 0.2s ease;
+}
+
+/* 展開狀態的答案面板 (預設全部收合隱藏) */
+.accordion-body {
+  display: none;
+  padding-top: 20px;
+  padding-bottom: 6px;
+}
+
+.accordion-item.is-open .accordion-body {
+  display: block;
+}
+
+.accordion-item.is-open .accordion-title {
+  color: var(--accent);
+}
+
+.accordion-item.is-open .accordion-icon {
+  transform: rotate(45deg); /* 將 ＋ 旋轉變 ✕，或切換符號 */
+}
+
+/* 答案內文排版：字大、行距寬、段落分明 */
+.faq-answer-paragraphs {
+  font-size: 1.05rem;
   color: var(--text-main);
-  line-height: 1.85;
-  white-space: pre-line;
+  line-height: 1.9;
   word-break: break-word;
 }
 
-.faq-answer-body a {
+.faq-answer-paragraphs p {
+  margin-bottom: 16px;
+}
+
+.faq-answer-paragraphs p:last-child {
+  margin-bottom: 0;
+}
+
+.faq-answer-paragraphs a {
   color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 3px;
   word-break: break-all;
 }
 
-/* 摺疊子題：直接以摺疊問題文字作為摘要 */
-.faq-folded-wrapper {
-  margin-top: 24px;
+/* 摺疊關聯子題 (收在主問底下) */
+.faq-folded-box {
+  margin-top: 22px;
   padding-top: 16px;
   border-top: 1px dashed var(--border);
 }
 
-.faq-folded-item {
-  margin-top: 12px;
+.faq-folded-details {
   border: 1px solid var(--border);
   border-radius: 2px;
   background: #FFFFFF;
+  margin-top: 12px;
 }
 
 .faq-folded-summary {
   padding: 12px 16px;
-  font-size: 0.95rem;
+  font-size: 0.96rem;
   font-weight: 700;
   color: var(--text-main);
   cursor: pointer;
@@ -176,19 +224,18 @@ details[open] .faq-folded-summary::after {
   content: "－";
 }
 
-.faq-folded-content {
+.faq-folded-inner {
   padding: 16px;
-  font-size: 0.95rem;
-  line-height: 1.8;
+  font-size: 0.98rem;
+  line-height: 1.85;
   color: var(--text-main);
-  white-space: pre-line;
   border-top: 1px solid var(--border);
   background: #FFFFFF;
 }
 
-/* 歷史週次抽屜 */
+/* ==================== 歷史週次回看抽屜 ==================== */
 .history-drawer-section {
-  margin-top: 48px;
+  margin-top: 54px;
   border-top: 2px solid var(--text-main);
   padding-top: 24px;
 }
@@ -244,18 +291,18 @@ details[open] .faq-folded-summary::after {
   font-size: 0.95rem;
   font-weight: 800;
   color: var(--accent);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .history-q-row {
-  padding: 6px 0;
+  padding: 8px 0;
 }
 
 .history-q-text {
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   color: var(--text-main);
   cursor: pointer;
 }
@@ -267,18 +314,17 @@ details[open] .faq-folded-summary::after {
 
 .history-q-answer {
   display: none;
-  margin-top: 8px;
-  padding: 12px 14px;
+  margin-top: 10px;
+  padding: 14px 16px;
   background: #FFFFFF;
   border: 1px solid var(--border);
-  font-size: 0.92rem;
-  line-height: 1.75;
-  white-space: pre-line;
+  font-size: 0.95rem;
+  line-height: 1.8;
 }
 
-/* 頁尾 */
+/* ==================== 頁尾 ==================== */
 .site-footer {
-  margin-top: 60px;
+  margin-top: 64px;
   padding-top: 24px;
   border-top: 1px solid var(--border);
   font-size: 0.82rem;
@@ -290,23 +336,27 @@ details[open] .faq-folded-summary::after {
   margin-top: 4px;
 }
 
-/* 手機版 RWD */
+/* ==================== 手機窄螢幕 (RWD) ==================== */
 @media (max-width: 600px) {
   .container {
     padding: 0 20px;
   }
   .site-header {
-    padding-top: 32px;
-    padding-bottom: 16px;
-    margin-bottom: 20px;
+    padding-top: 36px;
+    padding-bottom: 18px;
+    margin-bottom: 22px;
   }
   .brand-title {
-    font-size: 1.85rem;
+    font-size: 1.95rem;
   }
-  .faq-question-title {
-    font-size: 1.2rem;
+  .accordion-title {
+    font-size: 1.15rem;
   }
-  .faq-card {
-    padding: 24px 0;
+  .accordion-item {
+    padding: 20px 0;
+  }
+  .faq-answer-paragraphs {
+    font-size: 1rem;
+    line-height: 1.8;
   }
 }
