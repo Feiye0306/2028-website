@@ -81,23 +81,35 @@ function updateTimeline() {
   const indicator = document.getElementById('timeline-now-indicator');
   const caption = document.getElementById('timeline-stage-caption');
 
-  // 時間範圍：2027年2月 ~ 2028年1月
-  // 6 個主要刻度：2027.02 (0%), 2027.05 (20%), 2027.08 (40%), 2027.11 (60%), 2028.02 (80%), 2028.01 (100%)
-  if (year < 2027 || (year === 2027 && month <= 2)) {
-    if (indicator) indicator.style.left = '4%';
-    if (caption) caption.textContent = '高二下打底期（打穩基本盤）';
-  } else if (year === 2027 && month <= 6) {
-    if (indicator) indicator.style.left = '16%';
-    if (caption) caption.textContent = '高二下打底期・學測國數開始複習';
-  } else if (year === 2027 && month <= 8) {
+  // 時間範圍：2026年11月 ~ 2028年1月
+  // 6 個主要刻度點：
+  // 1. 2026.11 (0%): 高二上起跑期
+  // 2. 2027.02 (20%): 高二下打底期
+  // 3. 2027.05 (40%): 高二下打底期
+  // 4. 2027.08 (60%): 暑假總複習
+  // 5. 2027.11 (80%): 高三上衝刺
+  // 6. 2028.01 (100%): 考前收尾
+  if (year < 2026 || (year === 2026 && month <= 11)) {
+    if (indicator) indicator.style.left = '0%';
+    if (caption) caption.textContent = '高二上起跑期（學測倒數準備）';
+  } else if (year === 2026 && month === 12) {
+    if (indicator) indicator.style.left = '7%';
+    if (caption) caption.textContent = '高二上起跑期（打穩基本盤）';
+  } else if (year === 2027 && month <= 2) {
+    if (indicator) indicator.style.left = '20%';
+    if (caption) caption.textContent = '高二下打底期（學測國數開始複習）';
+  } else if (year === 2027 && month <= 5) {
     if (indicator) indicator.style.left = '40%';
-    if (caption) caption.textContent = '暑假總複習・五科補強';
-  } else if (year === 2027 && month <= 12) {
-    if (indicator) indicator.style.left = '65%';
+    if (caption) caption.textContent = '高二下打底期（弱科補強）';
+  } else if (year === 2027 && month <= 8) {
+    if (indicator) indicator.style.left = '60%';
+    if (caption) caption.textContent = '暑假總複習・五科全面補強';
+  } else if (year === 2027 && month <= 11) {
+    if (indicator) indicator.style.left = '80%';
     if (caption) caption.textContent = '高三上衝刺・跟上模考刷題';
   } else {
-    if (indicator) indicator.style.left = '92%';
-    if (caption) caption.textContent = '考前收尾・調整作息迎接學測';
+    if (indicator) indicator.style.left = '100%';
+    if (caption) caption.textContent = '考前收尾・倒數衝刺';
   }
 }
 
