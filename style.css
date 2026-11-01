@@ -1,12 +1,17 @@
-/* 2028 學測作戰地圖 ｜ 手風琴清單與編輯排版 (Accordion Editorial Layout) */
+/* ==========================================================================
+   家長站「學測作戰地圖」— Liquid Glass 透鏡配方定版樣式
+   依據：handover/2028-website/design_glass_v1/spec_v1.md
+   ========================================================================== */
 
 :root {
-  --bg: #FAF6EF;
+  --bg-page: #FAF7EF;
   --text-main: #0D2242;
   --text-muted: #556377;
-  --accent: #7A5A13;
-  --border: #E5DFD3;
-  --border-dark: #D4CBBC;
+  --accent-orange: #B34E08;
+  --gold-glow: #F0BE5C;
+  --blue-glow: #4E8BD2;
+  --border-light: rgba(13, 34, 66, 0.08);
+  --border-line: rgba(13, 34, 66, 0.12);
   --font-sans: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -14,258 +19,462 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background-color: var(--bg);
+  background-color: var(--bg-page);
   color: var(--text-main);
   font-family: var(--font-sans);
   font-size: 16px;
-  line-height: 1.85;
+  line-height: 1.8;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding-bottom: 80px;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  padding-bottom: 96px;
 }
 
-.container {
+/* ==================== 頁面背景對稱色暈層 (等量對稱) ==================== */
+.bg-glow-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.glow-orb {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  filter: blur(22px);
+  opacity: 0.48;
+}
+
+/* 左側金色光暈 */
+.glow-left {
+  top: 60px;
+  left: -40px;
+  background: radial-gradient(circle, var(--gold-glow) 0%, rgba(240, 190, 92, 0) 70%);
+}
+
+/* 右側藍色光暈（等量對稱） */
+.glow-right {
+  top: 140px;
+  right: -40px;
+  background: radial-gradient(circle, var(--blue-glow) 0%, rgba(78, 139, 210, 0) 70%);
+}
+
+.glow-center-subtle {
+  top: 480px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 180px;
+  background: radial-gradient(ellipse, rgba(240, 190, 92, 0.22) 0%, rgba(78, 139, 210, 0.18) 60%, transparent 80%);
+}
+
+/* ==================== 容器 ==================== */
+.page-container {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  max-width: 760px;
+  max-width: 440px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 16px 20px 40px 20px;
 }
 
-/* ==================== 頂部 Header ==================== */
-.site-header {
-  padding-top: 42px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 24px;
+/* ==========================================================================
+   二、清透透鏡配方 (.glass)
+   - 模糊 ≤3px、飽和度 1.8、亮度 1.03
+   - 無外圈粗框、無大外投影
+   - 光影全做 inset（上緣高光、下緣暗帶）
+   ========================================================================== */
+.glass {
+  position: relative;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(255, 255, 255, 0.42) 45%,
+    rgba(255, 255, 255, 0.58) 100%);
+  backdrop-filter: blur(2.5px) saturate(1.8) brightness(1.03);
+  -webkit-backdrop-filter: blur(2.5px) saturate(1.8) brightness(1.03);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  outline: 1px solid rgba(13, 34, 66, 0.05);
+  box-shadow:
+    inset 0 4px 8px -4px rgba(255, 255, 255, 0.75),
+    inset 0 -8px 14px -8px rgba(13, 34, 66, 0.12),
+    inset 0 0 0 1px rgba(13, 34, 66, 0.03);
+  border-radius: 20px;
+  overflow: hidden;
 }
 
-/* 1. 站名（小，放最上面一行，克制不搶倒數位置） */
-.site-brand-label {
-  font-size: 0.95rem;
+/* 玻璃反光面：左上方固定角度之淡橢圓高光 */
+.glass::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: radial-gradient(ellipse at 25% 0%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* ==================== 1. 倒數卡（頁面主角） ==================== */
+.hero-countdown-card {
+  padding: 24px 20px 20px 20px;
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+/* 站名只縮在最上一行 */
+.glass-site-brand {
+  font-size: 0.85rem;
   font-weight: 700;
-  color: var(--accent);
-  letter-spacing: 0.08em;
-  margin-bottom: 16px;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  margin-bottom: 12px;
 }
 
-/* 2. 全頁最大主角：倒數週數 + 預估學測日 */
-.countdown-hero-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
+/* 上行小字「距離 2028 學測」 */
+.countdown-sub-intro {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
 }
 
-.countdown-main {
+/* 倒數主視覺：大數字置中 */
+.countdown-headline {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: 6px;
+  margin: 4px 0 8px 0;
 }
 
-.countdown-prefix {
-  font-size: 1.5rem;
+.countdown-txt {
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--text-main);
 }
 
-.countdown-big-number {
-  font-size: 4.2rem;
+.countdown-main-num {
+  font-size: 4.6rem;
   font-weight: 900;
   color: var(--text-main);
   line-height: 1;
   letter-spacing: -0.04em;
+  font-feature-settings: "tnum";
 }
 
-.countdown-suffix {
-  font-size: 1.5rem;
+/* 「預估學測日 2028.01.14」：一行橘字印在玻璃上，無底塊、無膠囊 */
+.exam-target-date-line {
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: var(--accent-orange);
+  letter-spacing: 0.03em;
+  margin-top: 6px;
+}
+
+/* ==================== 2. 時間軸（倒數卡下方） ==================== */
+.timeline-section {
+  margin-bottom: 28px;
+  padding: 0 6px;
+}
+
+.timeline-track-wrap {
+  position: relative;
+  height: 28px;
+  display: flex;
+  align-items: center;
+}
+
+/* 橫軸加粗 */
+.timeline-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(13, 34, 66, 0.18);
+  border-radius: 2px;
+}
+
+/* 黑點＝月份刻度 */
+.timeline-dots-row {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+.timeline-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timeline-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--text-main);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--bg-page);
+}
+
+.timeline-month {
+  position: absolute;
+  top: 14px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* NOW 標記小 */
+.timeline-now-indicator {
+  position: absolute;
+  top: -19px;
+  left: 0%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+}
+
+.now-tag-mini {
+  background: var(--text-main);
+  color: #FFFFFF;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+}
+
+.now-pointer {
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 3px solid var(--text-main);
+}
+
+/* 軸下方置中一行目前階段名 */
+.timeline-stage-row {
+  text-align: center;
+  margin-top: 18px;
+}
+
+.timeline-stage-caption {
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-main);
+  letter-spacing: 0.05em;
 }
 
-.countdown-sub-date {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--accent);
-  letter-spacing: 0.03em;
-  margin-top: 4px;
+/* ==================== 3. 問答區標題列 ==================== */
+.faq-header-block {
+  margin-bottom: 18px;
 }
 
-/* ==================== 3. 搜尋框 ==================== */
-.search-section {
-  margin-bottom: 24px;
+.faq-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 10px;
 }
 
-.search-input-wrap {
+.faq-title-main {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.faq-week-date-pill {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+}
+
+/* 底下一條粗線 */
+.faq-thick-divider {
+  height: 3px;
+  background-color: var(--text-main);
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+/* ==================== 搜尋框 ==================== */
+.search-container {
+  margin-bottom: 22px;
+}
+
+.search-input-shell {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.search-input {
+.search-box {
   width: 100%;
-  background: #FFFFFF;
-  border: 1px solid var(--border-dark);
-  border-radius: 4px;
-  padding: 12px 38px 12px 14px;
-  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border-line);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border-radius: 12px;
+  padding: 11px 36px 11px 14px;
+  font-size: 0.95rem;
   color: var(--text-main);
   font-family: var(--font-sans);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all 0.2s ease;
 }
 
-.search-input:focus {
+.search-box:focus {
   outline: none;
-  border-color: var(--text-main);
   background: #FFFFFF;
+  border-color: var(--text-main);
+  box-shadow: inset 0 0 0 1px var(--text-main);
 }
 
-.search-input::placeholder {
-  color: #8C98A4;
-  font-size: 0.95rem;
-}
-
-.search-clear-btn {
+.search-clear-cross {
   position: absolute;
   right: 12px;
   background: transparent;
   border: none;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text-muted);
   cursor: pointer;
   padding: 4px;
 }
 
-.search-clear-btn:hover {
-  color: var(--text-main);
-}
-
-.search-feedback-text {
-  font-size: 0.88rem;
-  color: var(--accent);
+.search-count-feedback {
+  font-size: 0.86rem;
+  color: var(--accent-orange);
   font-weight: 700;
   margin-top: 8px;
   padding-left: 2px;
 }
 
-/* ==================== 週次標頭（只留：第 1 週・日期） ==================== */
-.week-header-row {
-  padding-bottom: 16px;
-  margin-bottom: 6px;
-  border-bottom: 1px solid var(--border);
-}
-
-.week-tag {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--accent);
-  letter-spacing: 0.04em;
-}
-
-/* ==================== 首屏問題手風琴清單 ==================== */
-.accordion-list {
+/* ==================== 4. 本週問答手風琴與玻璃浮層卡 ==================== */
+.faq-accordion-group {
   display: flex;
   flex-direction: column;
+  gap: 12px;
 }
 
-.accordion-item {
-  border-bottom: 1px solid var(--border);
-  padding: 24px 0;
+/* 題目觸控列：一題一行大字 */
+.faq-q-item {
+  border-radius: 14px;
   transition: background-color 0.15s ease;
 }
 
-.accordion-item:last-child {
-  border-bottom: 1px solid var(--border);
-}
-
-/* 題目觸控列：一題一行、大字、清楚 */
-.accordion-header {
+.faq-q-header {
+  padding: 14px 16px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: 12px;
   cursor: pointer;
   user-select: none;
+  border-bottom: 1px solid var(--border-light);
 }
 
-.accordion-title {
-  font-size: 1.25rem;
+.faq-q-text {
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--text-main);
   line-height: 1.5;
-  letter-spacing: -0.01em;
   flex: 1;
 }
 
-.accordion-header:hover .accordion-title {
-  color: var(--accent);
+.faq-q-header:hover .faq-q-text {
+  color: var(--accent-orange);
 }
 
-/* 開合指示符號 (＋ / －) */
-.accordion-icon {
-  font-size: 1.35rem;
+.faq-q-arrow {
+  font-size: 1.25rem;
   font-weight: 400;
-  color: var(--accent);
-  line-height: 1.2;
+  color: var(--text-muted);
   flex-shrink: 0;
+  line-height: 1.2;
   padding-top: 2px;
   transition: transform 0.2s ease;
 }
 
-/* 展開狀態的答案面板 (預設全部收合隱藏) */
-.accordion-body {
+/* 點題目開玻璃浮層卡 (套用 .glass 配方) */
+.faq-answer-floating-card {
   display: none;
-  padding-top: 20px;
-  padding-bottom: 6px;
+  margin: 8px 0 16px 0;
+  padding: 20px 18px;
 }
 
-.accordion-item.is-open .accordion-body {
+.faq-q-item.is-active .faq-answer-floating-card {
   display: block;
 }
 
-.accordion-item.is-open .accordion-title {
-  color: var(--accent);
-}
-
-.accordion-item.is-open .accordion-icon {
+.faq-q-item.is-active .faq-q-arrow {
   transform: rotate(45deg);
+  color: var(--accent-orange);
 }
 
-/* 答案內文排版：字大、行距寬、段落分明 */
-.faq-answer-paragraphs {
+.faq-q-item.is-active .faq-q-text {
+  color: var(--accent-orange);
+}
+
+/* 浮層卡內部題目與大字答案 */
+.floating-card-question-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(13, 34, 66, 0.12);
+}
+
+.faq-rich-paragraphs {
   font-size: 1.05rem;
   color: var(--text-main);
-  line-height: 1.9;
-  word-break: break-word;
+  line-height: 1.85;
 }
 
-.faq-answer-paragraphs p {
-  margin-bottom: 16px;
+.faq-rich-paragraphs p {
+  margin-bottom: 14px;
 }
 
-.faq-answer-paragraphs p:last-child {
+.faq-rich-paragraphs p:last-child {
   margin-bottom: 0;
 }
 
-.faq-answer-paragraphs a {
-  color: var(--accent);
+.faq-rich-paragraphs a {
+  color: var(--accent-orange);
   text-decoration: underline;
   text-underline-offset: 3px;
-  word-break: break-all;
 }
 
-/* ==================== 來源收合區塊 (低調收合) ==================== */
-.faq-source-details {
-  margin-top: 18px;
+/* 來源收合區塊 */
+.source-accordion-box {
+  margin-top: 16px;
   padding-top: 10px;
-  border-top: 1px dashed var(--border);
+  border-top: 1px dashed rgba(13, 34, 66, 0.12);
 }
 
-.faq-source-summary {
+.source-summary-label {
   font-size: 0.85rem;
+  font-weight: 600;
   color: var(--text-muted);
   cursor: pointer;
   user-select: none;
@@ -274,216 +483,288 @@ body {
   gap: 4px;
 }
 
-.faq-source-summary:hover {
-  color: var(--accent);
+.source-summary-label:hover {
+  color: var(--accent-orange);
 }
 
-.faq-source-list {
+.source-url-list {
   list-style: none;
-  padding: 8px 0 4px 0;
+  padding-top: 6px;
   margin: 0;
 }
 
-.faq-source-list li {
-  font-size: 0.85rem;
-  line-height: 1.6;
+.source-url-list li {
+  font-size: 0.84rem;
+  line-height: 1.5;
   margin-bottom: 4px;
 }
 
-.faq-source-list a {
-  color: var(--accent);
+.source-url-list a {
+  color: var(--accent-orange);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
-/* ==================== 摺疊關聯子題 (收在主問底下) ==================== */
-.faq-folded-box {
-  margin-top: 22px;
-  padding-top: 16px;
-  border-top: 1px dashed var(--border);
+/* 摺疊關聯子題 */
+.folded-subquestions-wrap {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(13, 34, 66, 0.12);
 }
 
-.faq-folded-details {
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  background: #FFFFFF;
-  margin-top: 12px;
+.folded-details-item {
+  border: 1px solid rgba(13, 34, 66, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  margin-top: 8px;
+  overflow: hidden;
 }
 
-.faq-folded-summary {
-  padding: 12px 16px;
-  font-size: 0.96rem;
+.folded-summary-btn {
+  padding: 10px 14px;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-main);
   cursor: pointer;
-  background: #FCFAF6;
-  list-style: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  list-style: none;
 }
 
-.faq-folded-summary::-webkit-details-marker {
+.folded-summary-btn::-webkit-details-marker {
   display: none;
 }
 
-.faq-folded-summary::after {
+.folded-summary-btn::after {
   content: "＋";
-  font-size: 1rem;
-  color: var(--accent);
-  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--accent-orange);
 }
 
-details[open] .faq-folded-summary::after {
+details[open] .folded-summary-btn::after {
   content: "－";
 }
 
-.faq-folded-inner {
-  padding: 16px;
-  font-size: 0.98rem;
-  line-height: 1.85;
-  color: var(--text-main);
-  border-top: 1px solid var(--border);
-  background: #FFFFFF;
+.folded-body-content {
+  padding: 12px 14px;
+  font-size: 0.96rem;
+  border-top: 1px solid rgba(13, 34, 66, 0.08);
+  background: rgba(255, 255, 255, 0.7);
 }
 
-/* ==================== 歷史週次回看抽屜 ==================== */
-.history-drawer-section {
-  margin-top: 54px;
+/* ==================== 抽屜：過往已發布週次回看 ==================== */
+.history-section-drawer {
+  margin-top: 36px;
   border-top: 2px solid var(--text-main);
-  padding-top: 24px;
+  padding-top: 18px;
 }
 
-.history-drawer-toggle-row {
+.history-drawer-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  padding: 6px 0;
 }
 
-.history-drawer-heading {
+.history-drawer-title {
   font-size: 1.1rem;
   font-weight: 800;
   color: var(--text-main);
 }
 
-.history-drawer-btn {
+.history-action-toggle {
   background: transparent;
-  border: 1px solid var(--border-dark);
+  border: 1px solid var(--text-main);
   color: var(--text-main);
   font-size: 0.85rem;
   font-weight: 700;
-  padding: 5px 14px;
-  border-radius: 2px;
+  padding: 4px 12px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
 }
 
-.history-drawer-btn:hover {
-  background: var(--text-main);
-  color: #FAF6EF;
-}
-
-.history-drawer-panel {
+.history-content-flow {
   display: none;
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
+  margin-top: 14px;
 }
 
-.history-drawer-panel.is-open {
+.history-content-flow.is-open {
   display: block;
 }
 
-.history-week-block {
-  padding: 20px 0;
-  border-bottom: 1px solid var(--border);
+.history-week-item {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-light);
 }
 
-.history-week-header {
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: var(--accent);
-  margin-bottom: 12px;
+.history-week-tag-line {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--accent-orange);
+  margin-bottom: 8px;
 }
 
-.history-view-btn {
+.history-load-btn {
   background: transparent;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  font-size: 0.8rem;
+  border: 1px solid var(--accent-orange);
+  color: var(--accent-orange);
+  font-size: 0.78rem;
   padding: 2px 8px;
-  border-radius: 2px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-.history-q-row {
-  padding: 8px 0;
+/* ==========================================================================
+   5. 底部切換膠囊（開關）
+   - 玻璃浮條，套 .glass，圓角全圓
+   - 只有一個內容時不顯示；科系上線時顯示兩顆
+   - 選中顆＝深藍（#0E2547–#162F5C 漸層）鑲嵌在軌道裡，只有 inset 高光與內框，不准有外凸投影
+   ========================================================================== */
+.bottom-floating-tab-wrap {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+  pointer-events: none;
 }
 
-.history-q-text {
-  font-size: 0.98rem;
-  color: var(--text-main);
+.bottom-tab-track {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 6px;
+  border-radius: 9999px; /* 全圓 */
+  gap: 4px;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.45) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.8),
+    inset 0 -3px 6px rgba(13, 34, 66, 0.08);
+}
+
+.tab-pill-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 18px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  border-radius: 9999px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
 }
 
-.history-q-text:hover {
-  color: var(--accent);
-  text-decoration: underline;
+/* 選中顆：深藍漸層鑲嵌，只有 inset 高光與內框，嚴禁外凸投影 */
+.tab-pill-btn.is-active {
+  background: linear-gradient(180deg, #0E2547 0%, #162F5C 100%);
+  color: #FFFFFF;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
-.history-q-answer {
+/* ==========================================================================
+   6. 科系分頁（未上線先占位）與玻璃詳情卡
+   ========================================================================== */
+.department-view-panel {
   display: none;
-  margin-top: 10px;
-  padding: 14px 16px;
-  background: #FFFFFF;
-  border: 1px solid var(--border);
-  font-size: 0.95rem;
-  line-height: 1.8;
+}
+
+.department-card-item {
+  padding: 20px 18px;
+  margin-bottom: 16px;
+}
+
+.dept-header-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.dept-name-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.dept-quota-badge {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+}
+
+.dept-school-sub {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.dept-subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+.dept-subj-col {
+  font-size: 0.88rem;
+  color: var(--text-main);
+}
+
+.dept-subj-val {
+  font-weight: 800;
+  color: var(--accent-orange);
+}
+
+.dept-action-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dept-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  background: var(--text-main);
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: opacity 0.2s;
+}
+
+.dept-link-btn:hover {
+  opacity: 0.9;
 }
 
 /* ==================== 頁尾 ==================== */
-.site-footer {
-  margin-top: 64px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
-  font-size: 0.82rem;
+.page-footer {
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-light);
+  font-size: 0.84rem;
   color: var(--text-muted);
+  text-align: center;
   line-height: 1.6;
 }
 
-.footer-source {
+.page-footer p:last-child {
   margin-top: 4px;
-}
-
-/* ==================== 手機窄螢幕 (RWD) ==================== */
-@media (max-width: 600px) {
-  .container {
-    padding: 0 20px;
-  }
-  .site-header {
-    padding-top: 32px;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-  }
-  .countdown-big-number {
-    font-size: 3.6rem;
-  }
-  .countdown-prefix, .countdown-suffix {
-    font-size: 1.3rem;
-  }
-  .accordion-title {
-    font-size: 1.15rem;
-  }
-  .accordion-item {
-    padding: 20px 0;
-  }
-  .faq-answer-paragraphs {
-    font-size: 1rem;
-    line-height: 1.8;
-  }
+  font-size: 0.78rem;
 }

@@ -5,83 +5,202 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>學測作戰地圖</title>
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#0d2242">
+  <meta name="theme-color" content="#FAF7EF">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="學測作戰地圖">
-  <link rel="stylesheet" href="./style.css?v=2028-v1-hero-countdown">
+  <link rel="stylesheet" href="./style.css?v=2028-glass-lens-v1">
 </head>
 <body>
 
-  <!-- 頂部 Header：站名（小） ➔ 倒數（全頁最大主角） ＋ 預估學測日 -->
-  <header class="site-header">
-    <div class="container">
+  <!-- 頁面背景對稱色暈層 (左金右藍，等量對稱，退淡 blur 22px) -->
+  <div class="bg-glow-layer" aria-hidden="true">
+    <div class="glow-orb glow-left"></div>
+    <div class="glow-orb glow-right"></div>
+    <div class="glow-orb glow-center-subtle"></div>
+  </div>
+
+  <div class="page-container">
+
+    <!-- 1. 倒數卡（頁面主角，套用 .glass 清透透鏡配方） -->
+    <header class="hero-countdown-card glass">
+      <!-- 站名縮在最上一行 -->
+      <div class="glass-site-brand">學測作戰地圖</div>
       
-      <!-- 1. 站名（小，放最上面一行，不搶位置） -->
-      <div class="site-brand-label">學測作戰地圖</div>
+      <!-- 上行小字 -->
+      <div class="countdown-sub-intro">距離 2028 學測</div>
       
-      <!-- 2. 全頁最大主角：倒數週數 + 預估學測日 -->
-      <div class="countdown-hero-block">
-        <div class="countdown-main">
-          <span class="countdown-prefix">倒數</span>
-          <span class="countdown-big-number" id="weeks-num">63</span>
-          <span class="countdown-suffix">週</span>
+      <!-- 主角大字置中 -->
+      <div class="countdown-headline">
+        <span class="countdown-txt">倒數</span>
+        <span class="countdown-main-num" id="weeks-num">63</span>
+        <span class="countdown-txt">週</span>
+      </div>
+
+      <!-- 預估學測日：一行純橘字印在玻璃上，無底塊、無膠囊、無框影 -->
+      <div class="exam-target-date-line">
+        預估學測日 2028.01.14
+      </div>
+    </header>
+
+    <!-- 2. 時間軸（橫軸加粗，黑點標月份，NOW 標記，置中階段名） -->
+    <section class="timeline-section" aria-label="學測作戰時程時間軸">
+      <div class="timeline-track-wrap">
+        <div class="timeline-line"></div>
+        <div class="timeline-dots-row">
+          <div class="timeline-step">
+            <div class="timeline-dot"></div>
+            <span class="timeline-month">2月</span>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot"></div>
+            <span class="timeline-month">5月</span>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot"></div>
+            <span class="timeline-month">8月</span>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot"></div>
+            <span class="timeline-month">11月</span>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot"></div>
+            <span class="timeline-month">2月</span>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot"></div>
+            <span class="timeline-month">1月</span>
+          </div>
         </div>
-        <div class="countdown-sub-date">
-          預估學測日 2028.01.14
+
+        <!-- NOW 標記小，動態對應目前時間 -->
+        <div class="timeline-now-indicator" id="timeline-now-indicator" style="left: 4%;">
+          <span class="now-tag-mini">NOW</span>
+          <span class="now-pointer"></span>
         </div>
       </div>
 
-    </div>
-  </header>
-
-  <main class="container">
-
-    <!-- 3. 搜尋框 (即時檢索升學問題) -->
-    <section class="search-section">
-      <div class="search-input-wrap">
-        <input 
-          type="text" 
-          id="faq-search-input" 
-          class="search-input" 
-          placeholder="搜尋升學問題（如：繁星、英聽、選系、分科...）" 
-          oninput="handleSearch(this.value)"
-          autocomplete="off"
-        />
-        <button id="search-clear-btn" class="search-clear-btn" onclick="clearSearch()" style="display: none;">✕</button>
+      <!-- 軸下方置中一行目前階段名 -->
+      <div class="timeline-stage-row">
+        <div class="timeline-stage-caption" id="timeline-stage-caption">高二下打底期</div>
       </div>
-      <div id="search-feedback" class="search-feedback-text" style="display: none;"></div>
     </section>
 
-    <!-- 發布週次標頭（搜尋時隱藏，平時顯示：第 1 週・2027.02.04） -->
-    <div class="week-header-row" id="week-header-row">
-      <span class="week-tag" id="cur-week-tag">第 1 週・2027.02.04</span>
-    </div>
-
-    <!-- 4. 首屏問題清單（預設全部收合，點開才看答案，手風琴切換） -->
-    <section class="accordion-list" id="faq-accordion-container">
-      <p style="padding: 24px 0; color: var(--text-muted);">載入問題清單中...</p>
-    </section>
-
-    <!-- 歷史已發布週次回看抽屜（僅在有過往週次時顯示） -->
-    <section class="history-drawer-section" id="history-drawer-section" style="display: none;">
-      <div class="history-drawer-toggle-row" onclick="toggleHistoryDrawer()">
-        <h2 class="history-drawer-heading">已發布週次回看 (<span id="history-count">0</span> 週)</h2>
-        <button class="history-drawer-btn" id="drawer-toggle-btn">開啟</button>
+    <!-- 主內容區：問答視圖 -->
+    <main id="view-faq-section">
+      <!-- 3. 問答區標題列：「爸媽最想問」直接坐標題位置，右邊「第 n 週・日期」，底下一條粗線 -->
+      <div class="faq-header-block">
+        <div class="faq-title-row">
+          <h1 class="faq-main-title">爸媽最想問</h1>
+          <span class="faq-week-date-pill" id="cur-week-tag">第 1 週・2027.02.04</span>
+        </div>
+        <div class="faq-thick-divider"></div>
       </div>
-      <div class="history-drawer-panel" id="history-drawer-panel">
-        <div id="history-list-container"></div>
+
+      <!-- 搜尋框 (即時檢索已發布內容) -->
+      <section class="search-container">
+        <div class="search-input-shell">
+          <input 
+            type="text" 
+            id="faq-search-input" 
+            class="search-box" 
+            placeholder="搜尋升學問題（如：繁星、英聽、選系、分科...）" 
+            oninput="handleSearch(this.value)"
+            autocomplete="off"
+          />
+          <button id="search-clear-btn" class="search-clear-cross" onclick="clearSearch()" style="display: none;">✕</button>
+        </div>
+        <div id="search-feedback" class="search-count-feedback" style="display: none;"></div>
+      </section>
+
+      <!-- 4. 本週問答手風琴（一題一行大字，點題目以玻璃浮層卡打開，點新題收上一題） -->
+      <section class="faq-accordion-group" id="faq-accordion-container">
+        <p style="padding: 20px 0; color: var(--text-muted); text-align: center;">載入問答內容中...</p>
+      </section>
+
+      <!-- 歷史已發布週次回看抽屜（收在同一個收合區） -->
+      <section class="history-section-drawer" id="history-drawer-section" style="display: none;">
+        <div class="history-drawer-bar" onclick="toggleHistoryDrawer()">
+          <h2 class="history-drawer-title">已發布週次回看 (<span id="history-count">0</span> 週)</h2>
+          <button class="history-action-toggle" id="drawer-toggle-btn">開啟</button>
+        </div>
+        <div class="history-content-flow" id="history-drawer-panel">
+          <div id="history-list-container"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 6. 科系分頁（占位展示，點擊底部膠囊切換） -->
+    <section id="view-dept-section" class="department-view-panel">
+      <div class="faq-header-block">
+        <div class="faq-title-row">
+          <h1 class="faq-main-title">校系探索</h1>
+          <span class="faq-week-date-pill">本週精選系組</span>
+        </div>
+        <div class="faq-thick-divider"></div>
+      </div>
+
+      <!-- 玻璃詳情卡 (套用 .glass 配方) -->
+      <div class="department-card-item glass">
+        <div class="dept-header-line">
+          <h2 class="dept-name-title">資訊工程學系</h2>
+          <span class="dept-quota-badge">招生名額：42 名</span>
+        </div>
+        <div class="dept-school-sub">國立臺灣大學 ｜ 工程與電資學院</div>
+        
+        <div class="dept-subjects-grid">
+          <div class="dept-subj-col">學測參採：<span class="dept-subj-val">國、英、數A、自</span></div>
+          <div class="dept-subj-val dept-subj-col">第一階段倍率：<span class="dept-subj-val">3 倍</span></div>
+          <div class="dept-subj-col">英文檢定：<span class="dept-subj-val">頂標</span></div>
+          <div class="dept-subj-col">數A檢定：<span class="dept-subj-val">頂標</span></div>
+        </div>
+
+        <div class="dept-action-row">
+          <a href="https://www.csie.ntu.edu.tw/" target="_blank" rel="noopener noreferrer" class="dept-link-btn">
+            前往學系官方網站 ↗
+          </a>
+        </div>
+      </div>
+
+      <div class="department-card-item glass">
+        <div class="dept-header-line">
+          <h2 class="dept-name-title">醫學系</h2>
+          <span class="dept-quota-badge">招生名額：50 名</span>
+        </div>
+        <div class="dept-school-sub">國立陽明交通大學 ｜ 醫學院</div>
+        
+        <div class="dept-subjects-grid">
+          <div class="dept-subj-col">學測參採：<span class="dept-subj-val">國、英、數A、自</span></div>
+          <div class="dept-subj-col">第一階段倍率：<span class="dept-subj-val">2.5 倍</span></div>
+          <div class="dept-subj-col">國文檢定：<span class="dept-subj-val">頂標</span></div>
+          <div class="dept-subj-col">英文檢定：<span class="dept-subj-val">頂標</span></div>
+        </div>
+
+        <div class="dept-action-row">
+          <a href="https://med.nycu.edu.tw/" target="_blank" rel="noopener noreferrer" class="dept-link-btn">
+            前往學系官方網站 ↗
+          </a>
+        </div>
       </div>
     </section>
 
     <!-- 頁尾 -->
-    <footer class="site-footer">
+    <footer class="page-footer">
       <p>全台 2,178 個系組全收錄</p>
-      <p class="footer-source">資料來源：大學甄選入學委員會、大學考試分發委員會、各大專院校官方簡章。</p>
+      <p>資料來源：大學甄選入學委員會、大學考試分發委員會、各大專院校官方簡章。</p>
     </footer>
 
-  </main>
+  </div>
 
-  <script src="./app.js?v=2028-v1-hero-countdown"></script>
+  <!-- 5. 底部切換膠囊（開關）：玻璃浮條，套 .glass，圓角全圓，只有一個內容時不顯示 -->
+  <div class="bottom-floating-tab-wrap" id="bottom-tab-wrap" style="display: none;">
+    <div class="bottom-tab-track">
+      <button class="tab-pill-btn is-active" id="tab-faq-btn" onclick="switchMainTab('faq')">爸媽最想問</button>
+      <button class="tab-pill-btn" id="tab-dept-btn" onclick="switchMainTab('dept')">科系</button>
+    </div>
+  </div>
+
+  <script src="./app.js?v=2028-glass-lens-v1"></script>
 </body>
 </html>

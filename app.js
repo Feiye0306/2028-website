@@ -1,33 +1,30 @@
 /**
- * 2028 學測作戰地圖 ｜ 手風琴清單與即時檢索主腳本
- * 順序：站名（小）➔ 倒數（全頁最大主角）＋預估學測日 ➔ 搜尋框 ➔ 問題清單（手風琴，點開才看答案）
+ * 2028 學測作戰地圖 ｜ Liquid Glass 清透透鏡版主腳本
+ * 依據：handover/2028-website/design_glass_v1/spec_v1.md
  */
 
 const EXAM_DATE_STR = '2028-01-14';
 
-// 移除題目開頭題號與舊序號（家長端嚴禁外露內部題號）
+// 移除題目內部題號與工作代號（家長端嚴格禁止外露）
 function stripNumberPrefix(str) {
   if (!str) return '';
   return str.replace(/^#\d+\s*(?:[◎●★]\s*)?/, '').replace(/^\d+\.\s*/, '').trim();
 }
 
-// 格式化答案內文（轉義、轉超連結、排成乾淨自然的段落）
+// 格式化答案內文（轉義、超連結轉換、自然標準段落）
 function formatAnswerParagraphs(text) {
   if (!text) return '';
   
-  // 轉義 HTML 標籤
   let safe = text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 
-  // 將 URL 轉為點擊超連結
   const urlRegex = /(https?:\/\/[^\s\n\r<]+)/g;
   safe = safe.replace(urlRegex, (url) => {
     return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
   });
 
-  // 以換行分段，排除空行，包覆成標準段落 <p>
   const paragraphs = safe
     .split(/\n+/)
     .map(p => p.trim())
@@ -35,10 +32,10 @@ function formatAnswerParagraphs(text) {
     .map(p => `<p>${p}</p>`)
     .join('');
 
-  return `<div class="faq-answer-paragraphs">${paragraphs}</div>`;
+  return `<div class="faq-rich-paragraphs">${paragraphs}</div>`;
 }
 
-// 格式化來源收合清單（預設收合，點開只顯示標題連結，不貼雜亂生硬網址）
+// 格式化來源收合清單（預設收合，只顯示小小的「來源」）
 function renderSourcesAccordion(sources) {
   if (!sources || !Array.isArray(sources) || sources.length === 0) return '';
   
@@ -48,22 +45,22 @@ function renderSourcesAccordion(sources) {
   }).join('');
 
   return `
-    <details class="faq-source-details">
-      <summary class="faq-source-summary">來源</summary>
-      <ul class="faq-source-list">
+    <details class="source-accordion-box">
+      <summary class="source-summary-label">來源</summary>
+      <ul class="source-url-list">
         ${items}
       </ul>
     </details>
   `;
 }
 
-// 格式化發布日期為 2027.02.04 格式
+// 格式化發布日期為 2027.02.04 點格式
 function formatDateDots(dateStr) {
   if (!dateStr) return '';
   return dateStr.replace(/-/g, '.');
 }
 
-// 計算距學測週數
+// 計算倒數週數
 function updateCountdown() {
   const examDate = new Date(EXAM_DATE_STR + 'T00:00:00+08:00');
   const now = new Date();
@@ -75,9 +72,39 @@ function updateCountdown() {
   if (el) el.textContent = weeks;
 }
 
+// 動態更新時間軸 NOW 標記位置與目前階段名
+function updateTimeline() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1; // 1-12
+
+  const indicator = document.getElementById('timeline-now-indicator');
+  const caption = document.getElementById('timeline-stage-caption');
+
+  // 時間範圍：2027年2月 ~ 2028年1月
+  // 6 個主要刻度：2027.02 (0%), 2027.05 (20%), 2027.08 (40%), 2027.11 (60%), 2028.02 (80%), 2028.01 (100%)
+  if (year < 2027 || (year === 2027 && month <= 2)) {
+    if (indicator) indicator.style.left = '4%';
+    if (caption) caption.textContent = '高二下打底期（打穩基本盤）';
+  } else if (year === 2027 && month <= 6) {
+    if (indicator) indicator.style.left = '16%';
+    if (caption) caption.textContent = '高二下打底期・學測國數開始複習';
+  } else if (year === 2027 && month <= 8) {
+    if (indicator) indicator.style.left = '40%';
+    if (caption) caption.textContent = '暑假總複習・五科補強';
+  } else if (year === 2027 && month <= 12) {
+    if (indicator) indicator.style.left = '65%';
+    if (caption) caption.textContent = '高三上衝刺・跟上模考刷題';
+  } else {
+    if (indicator) indicator.style.left = '92%';
+    if (caption) caption.textContent = '考前收尾・調整作息迎接學測';
+  }
+}
+
 let faqMasterData = null;
 let currentActiveWeekNum = 1;
 let isSearchMode = false;
+let isDualTabActive = false;
 
 // 取得台灣當前日期字串 (YYYY-MM-DD)
 function getTodayString() {
@@ -87,7 +114,7 @@ function getTodayString() {
   return twDate.toISOString().split('T')[0];
 }
 
-// 載入 FAQ 資料
+// 載入題庫資料
 async function loadFaqData() {
   try {
     const res = await fetch('./data/faq_data.json?v=' + Date.now());
@@ -98,7 +125,6 @@ async function loadFaqData() {
     console.warn('無法從網路讀取 faq_data.json，回退到預設第一批資料：', err);
   }
 
-  // 備援第一週資料
   if (!faqMasterData || !faqMasterData.weeks || faqMasterData.weeks.length === 0) {
     faqMasterData = {
       weeks: [
@@ -111,21 +137,21 @@ async function loadFaqData() {
               id: 2,
               question: "高二開始準備學測會太早嗎？總複習應該從什麼時候開始？高二下才開始來得及嗎？",
               answer: "不會太早，但高二的「準備」不是衝刺，是打地基：跟上學校進度、把觀念漏洞補起來；學測範圍本來就以高一高二內容為主體。\n\n高二下開始來得及：關鍵在有沒有系統地複習。每週固定撥時間回顧舊範圍，比假日一次爆讀更有效。\n\n避免太早燃燒殆盡：學測是長跑，高二拚到沒電、高三反而撐不住；節奏感比強度重要。\n\n家長可以幫的：幫他守住作息和睡眠，盯生活節奏勝過盯進度；進度落後時先陪他把計畫拆小，而不是加壓。\n\n高二下可先做兩件小事：開始累積需要時間的東西（例如英文單字、國文古文），並慢慢看目標校系的參採科目，確認自己的選考組合沒問題。",
-              sources: [],
+              sources: [{ title: "大學入學考試中心學測各科測驗目標", url: "https://www.ceec.edu.tw/" }],
               folded: []
             },
             {
               id: 12,
               question: "學測到底要考幾科？可以只選考其中幾科嗎？自然組也要考社會、社會組也要考自然嗎？",
               answer: "學測共6科、可以自由選考只報需要的科；但沒考的科目，校系有採計就等於沒成績，所以實務上多數人仍報4到6科。\n\n重點：\n6科是國文、英文、數學A、數學B、社會、自然；國文分國綜、國寫兩節考，但合併算1科級分，不是2科。\n只報1科到6科全報都可以，沒有規定必考幾科；報名費按選考科數計算。\n自然組、社會組只是校內分組，大考中心不按組別強制考科：自然組不必考社會，社會組不必考自然。",
-              sources: [],
+              sources: [{ title: "甄選入學委員會簡章總則", url: "https://www.cac.edu.tw/" }],
               folded: []
             },
             {
               id: 13,
               question: "學測考幾天？國文、英文、數學、社會、自然各考多久？",
               answer: "學測考3天，每科90到110分鐘；115學年度是2026/1/17–1/19，116學年度是2027/1/22–1/24。\n\n重點：\n115日程：第1天數學A、自然；第2天英文、國綜、國寫；第3天數學B、社會（每年順序以當年簡章為準）。\n國綜90分鐘、國寫90分鐘。\n英文、數學A、數學B各100分鐘。\n社會、自然各110分鐘。",
-              sources: [],
+              sources: [{ title: "大考中心考試日程表", url: "https://www.ceec.edu.tw/" }],
               folded: []
             }
           ]
@@ -135,7 +161,7 @@ async function loadFaqData() {
   }
 }
 
-// 渲染畫面：首屏手風琴問題清單
+// 渲染首屏問答手風琴
 function renderFaqView() {
   if (isSearchMode) return;
   if (!faqMasterData || !faqMasterData.weeks) return;
@@ -143,7 +169,6 @@ function renderFaqView() {
   const today = getTodayString();
   const allWeeks = faqMasterData.weeks;
 
-  // 已發布週次：第 1 週直接發布；第 2 週起依日期
   const publishedWeeks = allWeeks.filter(w => {
     if (w.week === 1) return true;
     return today >= w.release_date;
@@ -151,22 +176,18 @@ function renderFaqView() {
 
   if (publishedWeeks.length === 0) return;
 
-  // 當前選中的週次（預設最新已發布週）
   let targetWeek = publishedWeeks.find(w => w.week === currentActiveWeekNum);
   if (!targetWeek) {
     targetWeek = publishedWeeks[publishedWeeks.length - 1];
     currentActiveWeekNum = targetWeek.week;
   }
 
-  // 標頭：嚴格只留「第 X 週・日期」，無內部註解
-  const weekHeaderRow = document.getElementById('week-header-row');
+  // 標題列：左邊「爸媽最想問」、右邊「第 n 週・日期」
   const weekTagEl = document.getElementById('cur-week-tag');
-  if (weekHeaderRow) weekHeaderRow.style.display = 'block';
   if (weekTagEl) {
     weekTagEl.textContent = `第 ${targetWeek.week} 週・${formatDateDots(targetWeek.release_date)}`;
   }
 
-  // 渲染首屏問題清單（預設全部收合，點開才看答案）
   const container = document.getElementById('faq-accordion-container');
   if (container) {
     let html = '';
@@ -175,17 +196,16 @@ function renderFaqView() {
       const answerHtml = formatAnswerParagraphs(q.answer);
       const sourceHtml = renderSourcesAccordion(q.sources);
 
-      // 摺疊題：收在該主問底下，不獨立出現
       let foldedHtml = '';
       if (q.folded && q.folded.length > 0) {
         foldedHtml = `
-          <div class="faq-folded-box">
+          <div class="folded-subquestions-wrap">
             ${q.folded.map(f => `
-              <details class="faq-folded-details">
-                <summary class="faq-folded-summary">
+              <details class="folded-details-item">
+                <summary class="folded-summary-btn">
                   <span>${stripNumberPrefix(f.question)}</span>
                 </summary>
-                <div class="faq-folded-inner">
+                <div class="folded-body-content">
                   ${formatAnswerParagraphs(f.answer)}
                   ${renderSourcesAccordion(f.sources)}
                 </div>
@@ -196,12 +216,14 @@ function renderFaqView() {
       }
 
       html += `
-        <div class="accordion-item" id="faq-item-${idx}">
-          <div class="accordion-header" onclick="toggleAccordion(${idx})">
-            <h2 class="accordion-title">${cleanTitle}</h2>
-            <span class="accordion-icon">＋</span>
+        <div class="faq-q-item" id="faq-item-${idx}">
+          <div class="faq-q-header" onclick="toggleAccordion(${idx})">
+            <h2 class="faq-q-text">${cleanTitle}</h2>
+            <span class="faq-q-arrow">＋</span>
           </div>
-          <div class="accordion-body">
+          <!-- 答案以玻璃浮層卡打開 (套用 .glass 配方) -->
+          <div class="faq-answer-floating-card glass">
+            <div class="floating-card-question-title">${cleanTitle}</div>
             ${answerHtml}
             ${sourceHtml}
             ${foldedHtml}
@@ -213,7 +235,7 @@ function renderFaqView() {
     container.innerHTML = html;
   }
 
-  // 歷史抽屜：僅在歷史週次數量 > 0 時呈現
+  // 歷史抽屜：同一個收合區
   const historyWeeks = publishedWeeks.filter(w => w.week !== targetWeek.week);
   const drawerSection = document.getElementById('history-drawer-section');
   const historyCountEl = document.getElementById('history-count');
@@ -227,19 +249,19 @@ function renderFaqView() {
         let hHtml = '';
         historyWeeks.slice().reverse().forEach(hw => {
           hHtml += `
-            <div class="history-week-block">
-              <div class="history-week-header">
+            <div class="history-week-item">
+              <div class="history-week-tag-line">
                 <span>第 ${hw.week} 週・${formatDateDots(hw.release_date)}</span>
-                <button onclick="selectWeek(${hw.week})" class="history-view-btn">
+                <button onclick="selectWeek(${hw.week})" class="history-load-btn">
                   查看此週
                 </button>
               </div>
               ${hw.questions.map(hq => `
-                <div class="history-q-row">
-                  <div class="history-q-text" onclick="toggleHistoryAnswer(this)">
+                <div style="padding: 6px 0;">
+                  <div style="font-size: 0.96rem; cursor: pointer; color: var(--text-main);" onclick="toggleHistoryAnswer(this)">
                     ${stripNumberPrefix(hq.question)}
                   </div>
-                  <div class="history-q-answer">
+                  <div style="display: none; margin-top: 8px; padding: 12px 14px;" class="glass">
                     ${formatAnswerParagraphs(hq.answer)}
                     ${renderSourcesAccordion(hq.sources)}
                   </div>
@@ -256,12 +278,11 @@ function renderFaqView() {
   }
 }
 
-// 即時關鍵字搜尋處理
+// 搜尋處理
 window.handleSearch = function(query) {
   const qStr = (query || '').trim().toLowerCase();
   const clearBtn = document.getElementById('search-clear-btn');
   const feedbackEl = document.getElementById('search-feedback');
-  const weekHeaderRow = document.getElementById('week-header-row');
   const container = document.getElementById('faq-accordion-container');
   const drawerSection = document.getElementById('history-drawer-section');
 
@@ -275,12 +296,10 @@ window.handleSearch = function(query) {
 
   isSearchMode = true;
   if (clearBtn) clearBtn.style.display = 'block';
-  if (weekHeaderRow) weekHeaderRow.style.display = 'none';
   if (drawerSection) drawerSection.style.display = 'none';
 
   if (!faqMasterData || !faqMasterData.weeks) return;
 
-  // 在全量題庫中檢索匹配題
   const results = [];
   faqMasterData.weeks.forEach(w => {
     w.questions.forEach(q => {
@@ -289,28 +308,19 @@ window.handleSearch = function(query) {
       if (qText.includes(qStr) || aText.includes(qStr)) {
         results.push({ ...q, week: w.week, release_date: w.release_date });
       }
-      if (q.folded) {
-        q.folded.forEach(f => {
-          const fqText = (f.question || '').toLowerCase();
-          const faText = (f.answer || '').toLowerCase();
-          if (fqText.includes(qStr) || faText.includes(qStr)) {
-            results.push({ ...f, isFoldedChild: true, parentQuestion: q.question, week: w.week, release_date: w.release_date });
-          }
-        });
-      }
     });
   });
 
   if (feedbackEl) {
     feedbackEl.style.display = 'block';
-    feedbackEl.textContent = `找到 ${results.length} 則相關問題`;
+    feedbackEl.textContent = `找到 ${results.length} 則已發布問題`;
   }
 
   if (container) {
     if (results.length === 0) {
       container.innerHTML = `
-        <div style="padding: 32px 0; text-align: center; color: var(--text-muted); font-size: 1.05rem;">
-          未找到與「${query}」相符的問題，請嘗試不同關鍵字。
+        <div style="padding: 24px 0; text-align: center; color: var(--text-muted); font-size: 1rem;">
+          未找到與「${query}」相符的已發布問題。
         </div>
       `;
       return;
@@ -319,21 +329,19 @@ window.handleSearch = function(query) {
     let html = '';
     results.forEach((q, idx) => {
       const cleanTitle = stripNumberPrefix(q.question);
-      const answerHtml = formatAnswerParagraphs(q.answer);
-      const sourceHtml = renderSourcesAccordion(q.sources);
-
       html += `
-        <div class="accordion-item" id="faq-item-${idx}">
-          <div class="accordion-header" onclick="toggleAccordion(${idx})">
-            <h2 class="accordion-title">${cleanTitle}</h2>
-            <span class="accordion-icon">＋</span>
+        <div class="faq-q-item" id="faq-item-${idx}">
+          <div class="faq-q-header" onclick="toggleAccordion(${idx})">
+            <h2 class="faq-q-text">${cleanTitle}</h2>
+            <span class="faq-q-arrow">＋</span>
           </div>
-          <div class="accordion-body">
-            <div style="font-size: 0.85rem; color: var(--accent); margin-bottom: 8px; font-weight: 700;">
+          <div class="faq-answer-floating-card glass">
+            <div style="font-size: 0.85rem; color: var(--accent-orange); margin-bottom: 8px; font-weight: 700;">
               收錄於第 ${q.week} 週
             </div>
-            ${answerHtml}
-            ${sourceHtml}
+            <div class="floating-card-question-title">${cleanTitle}</div>
+            ${formatAnswerParagraphs(q.answer)}
+            ${renderSourcesAccordion(q.sources)}
           </div>
         </div>
       `;
@@ -342,14 +350,13 @@ window.handleSearch = function(query) {
   }
 };
 
-// 清空搜尋輸入
 window.clearSearch = function() {
   const input = document.getElementById('faq-search-input');
   if (input) input.value = '';
   window.handleSearch('');
 };
 
-// 手風琴切換：點新題自動收合上一題
+// 手風琴切換：點新題自動收上一題
 window.toggleAccordion = function(itemIdx) {
   const container = document.getElementById('faq-accordion-container');
   if (!container) return;
@@ -357,25 +364,19 @@ window.toggleAccordion = function(itemIdx) {
   const targetItem = document.getElementById(`faq-item-${itemIdx}`);
   if (!targetItem) return;
 
-  const isAlreadyOpen = targetItem.classList.contains('is-open');
+  const isAlreadyActive = targetItem.classList.contains('is-active');
 
-  // 收合所有其他項目（點新題自動收合上一題）
-  const allItems = container.querySelectorAll('.accordion-item');
+  const allItems = container.querySelectorAll('.faq-q-item');
   allItems.forEach(item => {
-    item.classList.remove('is-open');
-    const icon = item.querySelector('.accordion-icon');
-    if (icon) icon.textContent = '＋';
+    item.classList.remove('is-active');
   });
 
-  // 若原本未展開，則展開目標項
-  if (!isAlreadyOpen) {
-    targetItem.classList.add('is-open');
-    const icon = targetItem.querySelector('.accordion-icon');
-    if (icon) icon.textContent = '－';
+  if (!isAlreadyActive) {
+    targetItem.classList.add('is-active');
   }
 };
 
-// 歷史抽屜開合切換
+// 抽屜切換
 window.toggleHistoryDrawer = function() {
   const panel = document.getElementById('history-drawer-panel');
   const btn = document.getElementById('drawer-toggle-btn');
@@ -385,34 +386,66 @@ window.toggleHistoryDrawer = function() {
   btn.textContent = isOpen ? '收起' : '開啟';
 };
 
-// 歷史單題查看
 window.toggleHistoryAnswer = function(el) {
   const ansEl = el.nextElementSibling;
   if (ansEl) {
-    const isShowing = ansEl.style.display === 'block';
-    ansEl.style.display = isShowing ? 'none' : 'block';
+    ansEl.style.display = ansEl.style.display === 'block' ? 'none' : 'block';
   }
 };
 
-// 切換查看指定週次
 window.selectWeek = function(weekNum) {
   currentActiveWeekNum = weekNum;
   renderFaqView();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// 註冊 Service Worker
-function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(err => {
-      console.warn('SW 註冊注意：', err);
-    });
+// 底部膠囊雙分頁開關控制
+window.switchMainTab = function(tabKey) {
+  const faqSec = document.getElementById('view-faq-section');
+  const deptSec = document.getElementById('view-dept-section');
+  const faqBtn = document.getElementById('tab-faq-btn');
+  const deptBtn = document.getElementById('tab-dept-btn');
+
+  if (tabKey === 'dept') {
+    if (faqSec) faqSec.style.display = 'none';
+    if (deptSec) deptSec.style.display = 'block';
+    if (faqBtn) faqBtn.classList.remove('is-active');
+    if (deptBtn) deptBtn.classList.add('is-active');
+  } else {
+    if (faqSec) faqSec.style.display = 'block';
+    if (deptSec) deptSec.style.display = 'none';
+    if (faqBtn) faqBtn.classList.add('is-active');
+    if (deptBtn) deptBtn.classList.remove('is-active');
   }
-}
+};
+
+// 控制底部開關是否出現（預設只有「爸媽最想問」時隱藏；科系上線時顯示）
+window.setDepartmentTabVisible = function(visible) {
+  const wrap = document.getElementById('bottom-tab-wrap');
+  if (wrap) {
+    wrap.style.display = visible ? 'flex' : 'none';
+    isDualTabActive = !!visible;
+  }
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
   updateCountdown();
+  updateTimeline();
   await loadFaqData();
   renderFaqView();
-  registerServiceWorker();
+
+  // 若 URL 帶有 ?tab=dept 或 ?dual=1，開啟雙分頁展示模式
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('dual') === '1' || params.get('tab') === 'dept') {
+    window.setDepartmentTabVisible(true);
+    if (params.get('tab') === 'dept') {
+      window.switchMainTab('dept');
+    }
+  }
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.warn('SW:', err);
+    });
+  }
 });
