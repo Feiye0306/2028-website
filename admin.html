@@ -3,31 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>2028 學測作戰地圖 ｜ 雲端排程中控台</title>
+  <title>2028 學測作戰地圖 ｜ 常見問答排程中控台</title>
   <style>
     :root {
-      --primary: #1c2536;
-      --accent: #c26732;
-      --bg: #f8f7f4;
-      --card: #ffffff;
-      --border: #e8e6df;
-      --text: #1c2536;
-      --muted: #64748b;
+      --primary: #0D2242;
+      --accent: #7A5A13;
+      --bg: #FAF6EF;
+      --card: #FFFFFF;
+      --border: #E5DFD3;
+      --border-dark: #D4CBBC;
+      --text: #0D2242;
+      --muted: #556377;
       --success: #059669;
-      --danger: #dc2626;
-      --current-bg: #f0fdf4;
-      --current-border: #bbf7d0;
+      --danger: #DC2626;
+      --current-bg: #F0FDF4;
+      --current-border: #86EFAC;
+      --font-sans: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 14px; line-height: 1.5; padding-bottom: 90px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-sans); }
+    body { background: var(--bg); color: var(--text); padding: 14px; line-height: 1.6; padding-bottom: 96px; }
     
     .top-header {
       background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      padding: 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;
+      box-shadow: 0 2px 8px rgba(13,34,66,0.04);
     }
-    .top-header h1 { font-size: 1.18rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; }
-    .top-header p { font-size: 0.82rem; color: var(--muted); margin-top: 3px; }
+    .top-header h1 { font-size: 1.25rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+    .top-header p { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+    .top-nav-links { margin-top: 8px; font-size: 0.84rem; display: flex; gap: 16px; flex-wrap: wrap; }
+    .top-nav-links a { color: var(--accent); text-decoration: underline; font-weight: 700; text-underline-offset: 3px; }
 
     .btn {
       background: var(--primary); color: white; border: none; padding: 7px 14px;
@@ -38,169 +42,169 @@
     .btn-success { background: var(--success); }
     .btn-danger { background: var(--danger); }
     .btn-accent { background: var(--accent); }
-    .btn-secondary { background: #edeae2; color: var(--text); }
-    .btn-sm { padding: 4px 8px; font-size: 0.78rem; }
+    .btn-secondary { background: #EFECE6; color: var(--text); border: 1px solid var(--border-dark); }
+    .btn-sm { padding: 4px 8px; font-size: 0.78rem; border-radius: 6px; }
 
     .card {
       background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+      padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(13,34,66,0.03);
     }
 
     .auth-banner {
-      background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;
-      padding: 12px 14px; margin-bottom: 14px; font-size: 0.86rem; color: #1e40af;
+      background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 10px;
+      padding: 12px 14px; margin-bottom: 14px; font-size: 0.86rem; color: #1E40AF;
     }
 
-    .tab-row { display: flex; gap: 8px; margin-bottom: 14px; }
-    .tab-btn {
-      flex: 1; padding: 11px; border: 1px solid var(--border); background: var(--card);
-      border-radius: 8px; font-size: 0.9rem; font-weight: 700; color: var(--muted); cursor: pointer; text-align: center;
-      transition: all 0.2s;
+    /* 搜尋與篩選列 */
+    .filter-bar {
+      display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;
     }
-    .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .search-box {
+      flex: 1; min-width: 200px; position: relative;
+    }
+    .search-input {
+      width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-size: 0.88rem; background: var(--card); color: var(--text);
+    }
+    .search-input:focus { outline: none; border-color: var(--primary); }
 
     /* 當週焦點發布卡片 */
     .current-focus-card {
       background: var(--current-bg); border: 2px solid var(--current-border);
-      border-radius: 12px; padding: 15px; margin-bottom: 16px;
+      border-radius: 12px; padding: 16px; margin-bottom: 18px;
     }
     .current-badge {
-      display: inline-block; background: #16a34a; color: white; font-size: 0.75rem;
+      display: inline-block; background: #16A34A; color: white; font-size: 0.76rem;
       font-weight: 800; padding: 3px 8px; border-radius: 6px; margin-bottom: 8px;
     }
-    .current-title { font-size: 1.05rem; font-weight: 800; color: #14532d; margin-bottom: 6px; }
-    .current-desc { font-size: 0.85rem; color: #166534; line-height: 1.5; margin-bottom: 8px; }
-    .current-meta { font-size: 0.78rem; color: #4b5563; margin-bottom: 10px; }
+    .current-title { font-size: 1.15rem; font-weight: 800; color: #14532D; margin-bottom: 6px; }
+    .current-meta { font-size: 0.82rem; color: #4B5563; margin-bottom: 12px; }
 
-    .slot-item {
-      padding: 12px 10px; border-bottom: 1px solid #f1f0eb; display: flex;
-      justify-content: space-between; align-items: center; gap: 8px;
+    /* 問題項目列表 */
+    .q-item-card {
+      background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px 14px; margin-bottom: 10px; display: flex; justify-content: space-between;
+      align-items: flex-start; gap: 12px; transition: border-color 0.2s;
     }
-    .slot-item:last-child { border-bottom: none; }
-    .slot-num { font-size: 0.88rem; font-weight: 800; color: var(--accent); min-width: 60px; }
-    .slot-info { flex: 1; overflow: hidden; }
-    .slot-title { font-size: 0.92rem; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .slot-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
-    .slot-actions { display: flex; gap: 4px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+    .q-item-card:hover { border-color: var(--accent); }
+    .q-item-num {
+      font-size: 0.82rem; font-weight: 800; color: var(--accent);
+      background: #FAF6EF; padding: 2px 6px; border-radius: 4px; flex-shrink: 0;
+    }
+    .q-item-body { flex: 1; min-width: 0; }
+    .q-item-title { font-size: 0.98rem; font-weight: 700; color: var(--text); line-height: 1.5; }
+    .q-item-desc {
+      font-size: 0.82rem; color: var(--muted); margin-top: 4px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .q-item-sources {
+      font-size: 0.76rem; color: var(--accent); margin-top: 4px; font-weight: 600;
+    }
+    .q-item-actions { display: flex; gap: 4px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+
+    /* 未來週次卡片 */
+    .week-block {
+      border: 1px solid var(--border); border-radius: 10px; margin-bottom: 14px;
+      overflow: hidden; background: #FFFFFF;
+    }
+    .week-header {
+      background: #FAF8F5; padding: 12px 14px; display: flex; justify-content: space-between;
+      align-items: center; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 8px;
+    }
+    .week-info { display: flex; align-items: baseline; gap: 8px; }
+    .week-label { font-size: 1rem; font-weight: 800; color: var(--primary); }
+    .week-date { font-size: 0.82rem; color: var(--muted); }
+    .week-actions { display: flex; gap: 4px; }
+    .week-questions { padding: 10px 14px; background: #FFFFFF; }
 
     /* 彈窗樣式 */
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.55); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-    .modal-box { background: white; border-radius: 14px; width: 94%; max-width: 540px; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-    .modal-body { padding: 14px 16px; flex: 1; overflow-y: auto; }
-    .form-group { margin-bottom: 12px; }
-    .form-label { display: block; font-size: 0.82rem; font-weight: 700; color: #475569; margin-bottom: 4px; }
-    .form-input, .form-textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.88rem; color: var(--text); background: #faf9f6; }
-    .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--accent); background: #ffffff; }
-    .form-textarea { min-height: 70px; resize: vertical; line-height: 1.4; }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(13,34,66,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    .modal-box { background: white; border-radius: 14px; width: 94%; max-width: 620px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+    .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #FAF9F6; }
+    .modal-body { padding: 16px 18px; flex: 1; overflow-y: auto; }
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 5px; }
+    .form-input, .form-textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.92rem; color: var(--text); background: #FAF9F6; font-family: var(--font-sans); }
+    .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--accent); background: #FFFFFF; }
+    .form-textarea { min-height: 130px; resize: vertical; line-height: 1.6; }
+
+    /* 來源動態編輯 */
+    .source-row { display: flex; gap: 8px; margin-bottom: 6px; }
 
     /* 浮動儲存條 */
     .bottom-bar {
-      position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(8px); border-top: 1px solid var(--border); padding: 12px 16px;
+      position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px); border-top: 1px solid var(--border); padding: 12px 18px;
       display: flex; justify-content: space-between; align-items: center; z-index: 900;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
     }
-    .badge-dirty { background: #fef3c7; color: #b45309; padding: 4px 8px; border-radius: 6px; font-size: 0.76rem; font-weight: 700; }
+    .badge-dirty { background: #FEF3C7; color: #B45309; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 800; }
   </style>
 </head>
 <body>
 
+  <!-- 頂部 Header -->
   <div class="top-header">
     <div>
-      <h1>☁️ 2028 學測作戰地圖 ｜ 雲端排程中控台</h1>
-      <p style="margin-top: 4px; font-weight: 600; color: #059669;">已全面整頓為單一中控台（絕無跳轉）：此處調整 ➔ 即時雲端儲存 ➔ 家長前台同步更新。</p>
-      <div style="margin-top: 6px; font-size: 0.82rem; display: flex; gap: 14px;">
-        <span>🏠 家長前台：<a href="./index.html" target="_blank" style="color: #0369a1; text-decoration: underline; font-weight: 700;">index.html</a></span>
-        <span>⚙️ 本管理台：<a href="./flow-station-2028.html" style="color: #0369a1; text-decoration: underline; font-weight: 700;">flow-station-2028.html</a></span>
+      <h1>☁️ 2028 學測作戰地圖 ｜ 常見問答中控台</h1>
+      <p style="color: #059669; font-weight: 600;">
+        已全面與前台 100% 精準對齊（52 週、每週 3 題升學問答）：此處調整 ➔ 雲端儲存 ➔ 家長前台即時同步更新！
+      </p>
+      <div class="top-nav-links">
+        <span>🏠 家長前台：<a href="./index.html" target="_blank">index.html</a></span>
+        <span>⚙️ 本管理台：<a href="./flow-station-2028.html">flow-station-2028.html</a></span>
+        <span>📊 題庫規模：<strong id="stat-total-weeks">52</strong> 週 / <strong id="stat-total-q">156</strong> 題問答</span>
       </div>
     </div>
   </div>
 
-  <!-- 授權狀態條（Token 僅存於手機 LocalStorage，不硬編碼在代碼） -->
+  <!-- 授權狀態條 -->
   <div class="auth-banner" id="auth-box">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
       <div>
         <strong>🔑 雲端管理狀態：</strong>
-        <span id="auth-status-text">載入中...</span>
+        <span id="auth-status-text">檢查中...</span>
       </div>
       <button class="btn btn-sm btn-secondary" onclick="configureToken()">設定 / 變更 Token</button>
     </div>
     <div style="font-size: 0.78rem; color: #475569; margin-top: 5px;">
-      🔒 說明：Token 僅安全存於此裝置瀏覽器，用以讀寫私密排程庫並同步公開前台。
+      🔒 說明：Token 儲存於此裝置瀏覽器，用以直接同步公開前台資料庫（data/faq_data.json）。
     </div>
   </div>
 
-  <!-- 分頁切換 -->
-  <div class="tab-row">
-    <button class="tab-btn active" id="btn-tab-q" onclick="switchTab('q')">
-      🌱 週四指引管理 (<span id="unreleased-q-count">0</span>)
-    </button>
-    <button class="tab-btn" id="btn-tab-w" onclick="switchTab('w')">
-      🎓 週末科系管理 (<span id="unreleased-w-count">0</span>)
-    </button>
-  </div>
-
-  <!-- ==================== 分頁 1：週四指引管理（含本週指引直接調整） ==================== -->
-  <div id="pane-q" class="card">
-    
-    <!-- 📍 當前線上發布中・本週最新指引 (第 0 格) -->
-    <div class="current-focus-card" id="current-thurs-box">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-        <span class="current-badge">📍 家長前台目前正在看：本週指引焦點</span>
-        <button class="btn btn-sm btn-success" onclick="openEditGuideModal(0)">
-          ✏️ 編輯本週指引內容
-        </button>
-      </div>
-      <div class="current-title" id="cur-q-title">載入中...</div>
-      <div class="current-desc" id="cur-q-quote">載入中...</div>
-      <div class="current-meta" id="cur-q-meta">載入中...</div>
-      <div style="background: rgba(255,255,255,0.7); padding: 8px 10px; border-radius: 8px; font-size: 0.8rem; margin-top: 6px;">
-        <div><strong>🌱 學生本週節奏：</strong><span id="cur-q-student">--</span></div>
-        <div style="margin-top: 4px;"><strong>☕ 家長陪伴心法：</strong><span id="cur-q-parent">--</span></div>
-      </div>
-    </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #f1f0eb; padding-bottom: 8px; gap: 8px;">
-      <span style="font-size: 0.85rem; font-weight: 700; color: #475569;">
-        🗓️ 未來週次題目（點擊編輯可改文案，或點「▲/▼」調動週次）：
-      </span>
-      <input type="text" id="filter-thurs-input" placeholder="🔍 快速搜尋題目..." style="padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; width: 130px;" oninput="renderThursdays()">
-    </div>
-    <div id="unreleased-thurs-list">
-      載入未來題目中...
+  <!-- 搜尋與過濾 -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <input type="text" id="filter-search-input" class="search-input" placeholder="🔍 搜尋題目關鍵字（如：繁星、英聽、分科、國文...）" oninput="renderAll()">
     </div>
   </div>
 
-  <!-- ==================== 分頁 2：週末科系管理 ==================== -->
-  <div id="pane-w" class="card" style="display: none;">
-
-    <!-- 📍 當前線上發布中・週末精選科系 (第 0 格) -->
-    <div class="current-focus-card" id="current-weekend-box" style="background: #fffbeb; border-color: #fde68a;">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-        <span class="current-badge" style="background: #d97706;">📍 家長前台目前正在看：本週末精選科系</span>
-        <button class="btn btn-sm btn-accent" onclick="openReplaceModal(0)">
-          🔄 置換當週科系
-        </button>
-      </div>
-      <div class="current-title" id="cur-w-title" style="color: #92400e;">載入中...</div>
-      <div class="current-desc" id="cur-w-desc" style="color: #b45309;">載入中...</div>
-      <div class="current-meta" id="cur-w-meta">載入中...</div>
+  <!-- ==================== 1. 當前線上發布中（第 1 週 / 當週焦點） ==================== -->
+  <div class="current-focus-card" id="current-week-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <span class="current-badge">📍 家長前台目前正在看：本週焦點問答</span>
+      <span id="current-week-meta" style="font-size: 0.85rem; color: #166534; font-weight: 700;">第 1 週・2027.02.04</span>
     </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #f1f0eb; padding-bottom: 8px; gap: 8px;">
-      <span style="font-size: 0.85rem; font-weight: 700; color: #475569;">
-        🗓️ 未來預排科系（點擊 ▲/▼ 調換順序，或置換其他科系）：
-      </span>
-      <input type="text" id="filter-dept-input" placeholder="🔍 搜尋科系..." style="padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; width: 110px;" oninput="renderWeekends()">
-    </div>
-    <div id="unreleased-weekend-list">
-      載入科系排程中...
+    <div id="current-week-questions-list">
+      <!-- 動態載入本週 3 題 -->
     </div>
   </div>
 
-  <!-- 底部吸底儲存條 -->
+  <!-- ==================== 2. 未來排程列表 ==================== -->
+  <div class="card">
+    <h2 style="font-size: 1.05rem; font-weight: 800; color: var(--primary); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+      <span>📅 未來週次題目排程 (<span id="unreleased-weeks-count">51</span> 週)</span>
+      <span style="font-size: 0.78rem; color: var(--muted); font-weight: normal;">點「▲/▼」調順序，點「✏️」編輯題目與答案</span>
+    </h2>
+    <div id="unreleased-weeks-container">
+      載入排程中...
+    </div>
+  </div>
+
+  <!-- 底部固定儲存列 -->
   <div class="bottom-bar">
     <div>
-      <span id="dirty-status" class="badge-dirty" style="display: none;">⚠️ 已有修改・尚未儲存</span>
+      <span id="dirty-status" class="badge-dirty" style="display: none;">⚠️ 有修改尚未儲存</span>
       <span id="sync-info" style="font-size: 0.8rem; color: var(--muted); margin-left: 6px;">全端雲端連線</span>
     </div>
     <button class="btn btn-success" id="btn-cloud-save" onclick="saveToGitHubCloud()">
@@ -208,77 +212,51 @@
     </button>
   </div>
 
-  <!-- ==================== 彈窗 1：指引完整編輯器 (Modal) ==================== -->
-  <div id="edit-guide-modal" class="modal-overlay">
+  <!-- ==================== 彈窗：編輯問答題目、答案與來源 (Modal) ==================== -->
+  <div id="edit-modal" class="modal-overlay">
     <div class="modal-box">
-      <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #faf9f6;">
-        <h3 id="guide-modal-title" style="font-size: 0.98rem; color: var(--primary);">✏️ 編輯每週指引</h3>
-        <button class="btn btn-sm btn-secondary" onclick="closeGuideModal()">✖ 關閉</button>
+      <div class="modal-header">
+        <h3 id="modal-title" style="font-size: 1rem; color: var(--primary);">✏️ 編輯問答內容</h3>
+        <button class="btn btn-sm btn-secondary" onclick="closeEditModal()">✖ 關閉</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">📌 家長關鍵問答題目 (核心主題)：</label>
-          <textarea id="edit-q-question" class="form-textarea" placeholder="輸入問答主題..."></textarea>
+          <label class="form-label">📌 題目標題 (Question)：</label>
+          <textarea id="edit-q-title" class="form-textarea" style="min-height: 60px;" placeholder="輸入問題題目..."></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label">💡 大標金句引言 (卡片核心大標)：</label>
-          <textarea id="edit-q-sample-push" class="form-textarea" placeholder="輸入金句引言..."></textarea>
+          <label class="form-label">📝 答案正文 (Answer)：</label>
+          <textarea id="edit-q-answer" class="form-textarea" style="min-height: 160px;" placeholder="輸入答案內容（支援多段落）..."></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label">🌱 學生本週節奏 (具體任務指引)：</label>
-          <textarea id="edit-q-student-task" class="form-textarea" placeholder="輸入學生節奏建議..."></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">☕ 家長陪伴心法 (家長引導指引)：</label>
-          <textarea id="edit-q-parent-task" class="form-textarea" placeholder="輸入家長陪伴心法..."></textarea>
-        </div>
-        <div style="display: flex; gap: 8px;">
-          <div class="form-group" style="flex: 1;">
-            <label class="form-label">🏷️ 階段標籤：</label>
-            <input type="text" id="edit-q-stage" class="form-input" placeholder="階段說明...">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label" style="margin-bottom: 0;">🔗 來源連結 (Sources，選填)：</label>
+            <button class="btn btn-sm btn-secondary" onclick="addSourceRow()">➕ 新增一筆來源</button>
           </div>
-          <div class="form-group" style="width: 100px;">
-            <label class="form-label">倒數週數：</label>
-            <input type="number" id="edit-q-countdown" class="form-input">
+          <div id="edit-sources-list">
+            <!-- 動態來源輸入列 -->
           </div>
         </div>
-        <div style="margin-top: 14px; display: flex; justify-content: flex-end; gap: 8px;">
-          <button class="btn btn-secondary" onclick="closeGuideModal()">取消</button>
-          <button class="btn btn-success" onclick="saveGuideModal()">套用變更</button>
+        <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px;">
+          <button class="btn btn-secondary" onclick="closeEditModal()">取消</button>
+          <button class="btn btn-success" onclick="saveEditModal()">套用變更</button>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== 彈窗 2：置換科系 Modal ==================== -->
-  <div id="replace-modal" class="modal-overlay">
-    <div class="modal-box">
-      <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #faf9f6;">
-        <h3 id="modal-title" style="font-size: 0.98rem; color: var(--primary);">置換科系</h3>
-        <button class="btn btn-sm btn-secondary" onclick="closeModal()">✖ 關閉</button>
-      </div>
-      <div style="padding: 12px 16px; flex: 1; overflow-y: auto;">
-        <input type="text" id="modal-dept-search" placeholder="輸入科系名稱關鍵字搜尋 (例如: 資訊, 醫學, 法律)..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.88rem; margin-bottom: 10px;" oninput="filterModalDepts()">
-        <div id="modal-dept-items" style="max-height: 320px; overflow-y: auto;"></div>
       </div>
     </div>
   </div>
 
   <script>
     const GITHUB_OWNER = 'Feiye0306';
-    const PRIVATE_REPO = 'kanban-flow';
     const PUBLIC_REPO = '2028-website';
-    const PRIVATE_SCHEDULE_PATH = 'handover/2028-website/master_schedule.json';
-    const PUBLIC_FEED_PATH = 'data/public_feed.json';
+    const FAQ_DATA_PATH = 'data/faq_data.json';
+    const BACKUP_REPO = 'kanban-flow';
+    const BACKUP_PATH = 'handover/2028-website/faq_data.json';
 
-    let masterData = null;
-    let allGroups = [];
-    let currentSlotIdx = -1;
-    let editingGuideIdx = -1;
+    let faqMasterData = null;
     let isDirty = false;
     let userToken = localStorage.getItem('gh_admin_token') || '';
 
-    // 自動偵測 URL Hash 或 Query 中的專屬 Token（一鍵直達免手動輸入）
+    // 自動偵測 URL Hash 或 Query 中的 Token
     const urlParams = new URLSearchParams(window.location.search);
     let autoToken = urlParams.get('token');
     if (!autoToken && window.location.hash) {
@@ -293,7 +271,7 @@
       }
     }
 
-    // 題目過濾輔助：徹底拔除開頭無效的 #號碼 與舊序號
+    // 題目過濾輔助：拔除題目開頭的 #號碼 與舊序號
     function stripNumberPrefix(str) {
       if (!str) return '';
       return str
@@ -311,499 +289,445 @@
       return decodeURIComponent(escape(window.atob(str)));
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      checkAuthStatus();
-      await loadData();
-      renderThursdays();
-      renderWeekends();
-    });
-
-    function checkAuthStatus() {
-      const statusText = document.getElementById('auth-status-text');
-      if (userToken) {
-        statusText.innerHTML = '<span style="color:#059669; font-weight:700;">✅ 已連線授權（隨時可雲端儲存）</span>';
-      } else {
-        statusText.innerHTML = '<span style="color:#dc2626; font-weight:700;">⚠️ 尚未輸入 Token（請點右側按鈕填入）</span>';
-      }
-    }
-
-    window.configureToken = async function() {
-      const token = prompt('請輸入您的 GitHub Personal Access Token (需有 repo 讀寫權限)：', userToken);
-      if (token !== null) {
-        userToken = token.trim();
-        localStorage.setItem('gh_admin_token', userToken);
-        checkAuthStatus();
-        if (userToken) {
-          await loadData();
-          renderThursdays();
-          renderWeekends();
-        }
-      }
-    };
-
+    // 標記未儲存狀態
     function markDirty() {
       isDirty = true;
       document.getElementById('dirty-status').style.display = 'inline-block';
     }
 
+    // 設定 Token
+    window.configureToken = function() {
+      const input = prompt('請輸入具備 repo 權限之 GitHub Personal Access Token (PAT)：', userToken);
+      if (input !== null) {
+        userToken = input.trim();
+        localStorage.setItem('gh_admin_token', userToken);
+        updateAuthDisplay();
+        loadData();
+      }
+    };
+
+    function updateAuthDisplay() {
+      const authText = document.getElementById('auth-status-text');
+      if (userToken) {
+        authText.innerHTML = '<span style="color: #059669; font-weight: 700;">✅ 已連線授權（隨時可雲端儲存）</span>';
+      } else {
+        authText.innerHTML = '<span style="color: #d97706; font-weight: 700;">⚠️ 尚未輸入 Token（請點右側按鈕填入）</span>';
+      }
+    }
+
+    // 載入 FAQ 資料庫（優先從 GitHub 線上庫讀取，本地備援）
     async function loadData() {
       try {
-        // 1. 載入科系庫（用於置換彈窗）
-        try {
-          const groupsRes = await fetch('./data/dept_draw_data.json');
-          if (groupsRes.ok) {
-            const gd = await groupsRes.json();
-            allGroups = gd.groups || [];
-          }
-        } catch(e) {
-          console.warn('無法載入 dept_draw_data', e);
-        }
-
-        // 2. 從私有庫 kanban-flow 讀取完整排程
         if (userToken) {
           try {
-            const apiRes = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${PRIVATE_REPO}/contents/${PRIVATE_SCHEDULE_PATH}?t=${Date.now()}`, {
+            const apiRes = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${PUBLIC_REPO}/contents/${FAQ_DATA_PATH}?t=${Date.now()}`, {
               headers: {
                 'Authorization': `token ${userToken}`,
                 'Accept': 'application/vnd.github.v3+json'
               }
             });
-
             if (apiRes.ok) {
               const fileData = await apiRes.json();
               const contentStr = base64ToUtf8(fileData.content.replace(/\s/g, ''));
-              masterData = JSON.parse(contentStr);
-              document.getElementById('sync-info').textContent = '已同步私密排程庫 (64週/126系)';
+              faqMasterData = JSON.parse(contentStr);
+              document.getElementById('sync-info').textContent = `已同步線上題庫 (${faqMasterData.weeks.length} 週)`;
+              renderAll();
               return;
             }
           } catch(err) {
-            console.error('GitHub API 載入失敗：', err);
+            console.warn('線上讀取失敗，改由本地備援載入：', err);
           }
         }
 
-        // 3. 備援讀取本地 master_schedule.json（完整 64 週/126系）
-        try {
-          const masterRes = await fetch("./data/master_schedule.json?t=" + Date.now());
-          if (masterRes.ok) {
-            masterData = await masterRes.json();
-            document.getElementById("sync-info").textContent = "已載入排程庫 (64週/126系)";
-            return;
-          }
-        } catch(e) {
-          console.warn("無法載入本地 master_schedule.json", e);
+        // 本地備援載入 ./data/faq_data.json
+        const localRes = await fetch('./data/faq_data.json?t=' + Date.now());
+        if (localRes.ok) {
+          faqMasterData = await localRes.json();
+          document.getElementById('sync-info').textContent = `已載入本地排程庫 (${faqMasterData.weeks.length} 週)`;
+          renderAll();
+        }
+      } catch (e) {
+        console.error('載入題庫失敗：', e);
+        document.getElementById('unreleased-weeks-container').innerHTML = '<div style="padding:20px; color:#DC2626;">載入失敗，請確認網路連線或 Token。</div>';
+      }
+    }
+
+    // 全域渲染函數
+    function renderAll() {
+      if (!faqMasterData || !faqMasterData.weeks) return;
+
+      const weeks = faqMasterData.weeks;
+      document.getElementById('stat-total-weeks').textContent = weeks.length;
+      let totalQ = 0;
+      weeks.forEach(w => totalQ += (w.questions ? w.questions.length : 0));
+      document.getElementById('stat-total-q').textContent = totalQ;
+
+      // 1. 渲染當週焦點（第 1 格，即第 1 週）
+      const curWeek = weeks[0];
+      if (curWeek) {
+        document.getElementById('current-week-meta').textContent = `第 ${curWeek.week} 週・${curWeek.release_date || ''}`;
+        const curContainer = document.getElementById('current-week-questions-list');
+        let curHtml = '';
+        (curWeek.questions || []).forEach((q, qIdx) => {
+          const cleanTitle = stripNumberPrefix(q.question);
+          const previewAns = (q.answer || '').replace(/\n/g, ' ');
+          const sourceCount = (q.sources && q.sources.length) ? `🔗 ${q.sources.length} 個來源` : '';
+
+          curHtml += `
+            <div class="q-item-card">
+              <span class="q-item-num">問題 ${qIdx + 1}</span>
+              <div class="q-item-body">
+                <div class="q-item-title">${cleanTitle}</div>
+                <div class="q-item-desc">${previewAns}</div>
+                ${sourceCount ? `<div class="q-item-sources">${sourceCount}</div>` : ''}
+              </div>
+              <div class="q-item-actions">
+                <button class="btn btn-sm btn-secondary" onclick="moveQuestionInWeek(0, ${qIdx}, -1)" ${qIdx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="向上移動">▲</button>
+                <button class="btn btn-sm btn-secondary" onclick="moveQuestionInWeek(0, ${qIdx}, 1)" ${qIdx === curWeek.questions.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="向下移動">▼</button>
+                <button class="btn btn-sm btn-accent" onclick="openEditModal(0, ${qIdx})">✏️ 編輯</button>
+                <button class="btn btn-sm btn-secondary" onclick="moveQuestionToOtherWeek(0, ${qIdx})">換週...</button>
+              </div>
+            </div>
+          `;
+        });
+        curContainer.innerHTML = curHtml;
+      }
+
+      // 2. 渲染未來週次列表（第 2 週起）
+      const filterStr = (document.getElementById('filter-search-input').value || '').trim().toLowerCase();
+      const unreleasedContainer = document.getElementById('unreleased-weeks-container');
+      const futureWeeks = weeks.slice(1);
+      document.getElementById('unreleased-weeks-count').textContent = futureWeeks.length;
+
+      let futureHtml = '';
+      futureWeeks.forEach((w, futureIdx) => {
+        const weekIdx = futureIdx + 1; // 在全域 weeks 中的真實 index
+        const questions = w.questions || [];
+
+        // 搜尋過濾：若有搜尋字詞，只顯示包含該關鍵字的週次與題目
+        if (filterStr) {
+          const matchWeek = `第 ${w.week} 週`.includes(filterStr);
+          const matchQuestions = questions.some(q => 
+            (q.question && q.question.toLowerCase().includes(filterStr)) || 
+            (q.answer && q.answer.toLowerCase().includes(filterStr))
+          );
+          if (!matchWeek && !matchQuestions) return;
         }
 
-        // 4. 最後備援 public_feed
-        const feedRes = await fetch('./data/public_feed.json?t=' + Date.now()).then(r => r.json());
-        masterData = {
-          thursday_releases: [feedRes.current_thursday, ...(feedRes.history_thursdays || [])].filter(Boolean),
-          weekend_releases: [feedRes.current_weekend, ...(feedRes.history_weekends || [])].filter(Boolean)
-        };
-      } catch (err) {
-        console.error('載入失敗：', err);
-      }
-    }
+        let qListHtml = '';
+        questions.forEach((q, qIdx) => {
+          const cleanTitle = stripNumberPrefix(q.question);
+          const previewAns = (q.answer || '').replace(/\n/g, ' ');
+          const sourceCount = (q.sources && q.sources.length) ? `🔗 ${q.sources.length} 個來源` : '';
 
-    function switchTab(type) {
-      document.getElementById('btn-tab-q').classList.toggle('active', type === 'q');
-      document.getElementById('btn-tab-w').classList.toggle('active', type === 'w');
-      document.getElementById('pane-q').style.display = type === 'q' ? 'block' : 'none';
-      document.getElementById('pane-w').style.display = type === 'w' ? 'block' : 'none';
-    }
-
-    // ==================== 渲染週四指引 (包含本週指引與未來週次) ====================
-    function renderThursdays() {
-      if (!masterData || !masterData.thursday_releases) return;
-      const list = masterData.thursday_releases;
-      
-      // 1. 渲染「本週指引焦點 (第 0 格)」
-      const cur = list[0];
-      if (cur) {
-        document.getElementById('cur-q-title').textContent = stripNumberPrefix(cur.question) || '尚未設定題目';
-        document.getElementById('cur-q-quote').textContent = `「${cur.sample_push || '無引言金句'}」`;
-        document.getElementById('cur-q-meta').textContent = `${cur.release_date || ''} (${cur.day || '四'}) ｜ 倒數 ${cur.countdown_weeks} 週 ｜ ${cur.stage || ''}`;
-        document.getElementById('cur-q-student').textContent = cur.student_task || '未設定';
-        document.getElementById('cur-q-parent').textContent = cur.parent_task || '未設定';
-      }
-
-      // 2. 渲染「未來預排週次指引 (第 1 格以後)」
-      const container = document.getElementById('unreleased-thurs-list');
-      const search = (document.getElementById('filter-thurs-input').value || '').trim().toLowerCase();
-      const unreleased = list.slice(1);
-      document.getElementById('unreleased-q-count').textContent = unreleased.length;
-
-      let html = '';
-      unreleased.forEach((it, unreleasedIdx) => {
-        const realIdx = unreleasedIdx + 1;
-        const qText = it.question || '';
-        const pushText = it.sample_push || '';
-        if (search && !qText.toLowerCase().includes(search) && !pushText.toLowerCase().includes(search)) return;
-
-        html += `
-          <div class="slot-item">
-            <div class="slot-num">第 ${it.index} 週</div>
-            <div class="slot-info">
-              <div class="slot-title">${stripNumberPrefix(it.question)}</div>
-              <div class="slot-sub">${it.release_date || ''} (${it.day || '四'}) ｜ 倒數 ${it.countdown_weeks} 週 ｜ ${it.stage || ''}</div>
-              <div style="font-size:0.75rem; color:#64748b; margin-top:2px;">「${it.sample_push || ''}」</div>
+          qListHtml += `
+            <div class="q-item-card">
+              <span class="q-item-num">第 ${qIdx + 1} 題</span>
+              <div class="q-item-body">
+                <div class="q-item-title">${cleanTitle}</div>
+                <div class="q-item-desc">${previewAns}</div>
+                ${sourceCount ? `<div class="q-item-sources">${sourceCount}</div>` : ''}
+              </div>
+              <div class="q-item-actions">
+                <button class="btn btn-sm btn-secondary" onclick="moveQuestionInWeek(${weekIdx}, ${qIdx}, -1)" ${qIdx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="向上移動">▲</button>
+                <button class="btn btn-sm btn-secondary" onclick="moveQuestionInWeek(${weekIdx}, ${qIdx}, 1)" ${qIdx === questions.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="向下移動">▼</button>
+                <button class="btn btn-sm btn-accent" onclick="openEditModal(${weekIdx}, ${qIdx})">✏️ 編輯</button>
+                <button class="btn btn-sm btn-secondary" onclick="moveQuestionToOtherWeek(${weekIdx}, ${qIdx})">換週...</button>
+              </div>
             </div>
-            <div class="slot-actions">
-              <button class="btn btn-sm btn-secondary" onclick="moveThursday(${realIdx}, -1)" ${unreleasedIdx === 0 ? 'disabled style="opacity:0.4;"' : ''} title="上移一週">▲</button>
-              <button class="btn btn-sm btn-secondary" onclick="moveThursday(${realIdx}, 1)" ${unreleasedIdx === unreleased.length - 1 ? 'disabled style="opacity:0.4;"' : ''} title="下移一週">▼</button>
-              <button class="btn btn-sm btn-secondary" onclick="jumpThursday(${realIdx})" title="直接調整到指定週次">移至...</button>
-              <button class="btn btn-sm btn-accent" onclick="promoteToCurrentThurs(${realIdx})">設為當週</button>
-              <button class="btn btn-sm btn-secondary" onclick="openEditGuideModal(${realIdx})">✏️ 編輯</button>
+          `;
+        });
+
+        futureHtml += `
+          <div class="week-block">
+            <div class="week-header">
+              <div class="week-info">
+                <span class="week-label">第 ${w.week} 週</span>
+                <span class="week-date">${w.release_date || ''} (${questions.length} 題)</span>
+              </div>
+              <div class="week-actions">
+                <button class="btn btn-sm btn-secondary" onclick="moveWholeWeek(${weekIdx}, -1)" ${futureIdx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="整週提早一週">▲ 整週上移</button>
+                <button class="btn btn-sm btn-secondary" onclick="moveWholeWeek(${weekIdx}, 1)" ${futureIdx === futureWeeks.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="整週延後一週">▼ 整週下移</button>
+                <button class="btn btn-sm btn-secondary" onclick="jumpWholeWeek(${weekIdx})">移至...</button>
+                <button class="btn btn-sm btn-success" onclick="promoteToCurrentWeek(${weekIdx})">設為當週</button>
+              </div>
+            </div>
+            <div class="week-questions">
+              ${qListHtml || '<div style="padding:10px; color:#94a3b8; font-size:0.85rem;">本週暫無題目</div>'}
             </div>
           </div>
         `;
       });
 
-      container.innerHTML = html || '<div style="padding:16px; text-align:center; color:#94a3b8;">無符合條件的題目</div>';
+      unreleasedContainer.innerHTML = futureHtml || '<div style="padding:24px; text-align:center; color:#94a3b8;">無符合搜尋條件的題目</div>';
     }
 
-    // ==================== 渲染週末科系 ====================
-    function renderWeekends() {
-      if (!masterData || !masterData.weekend_releases) return;
-      const list = masterData.weekend_releases;
+    // ==================== 排序與調換操作 ====================
 
-      // 1. 渲染「本週精選科系 (第 0 格)」
-      const cur = list[0];
-      if (cur) {
-        document.getElementById('cur-w-title').textContent = `${cur.group_name} (${cur.schools_count || 0} 所大學開設)`;
-        document.getElementById('cur-w-desc').textContent = cur.desc || '暫無描述';
-        document.getElementById('cur-w-meta').textContent = `${cur.release_date || ''} (${cur.day || '六'}) ｜ ${cur.tag || ''}`;
-      }
+    // 週內調整題目順序
+    window.moveQuestionInWeek = function(weekIdx, qIdx, dir) {
+      const questions = faqMasterData.weeks[weekIdx].questions;
+      const targetIdx = qIdx + dir;
+      if (targetIdx < 0 || targetIdx >= questions.length) return;
 
-      // 2. 渲染「未來預排科系 (第 1 格以後)」
-      const container = document.getElementById('unreleased-weekend-list');
-      const search = (document.getElementById('filter-dept-input').value || '').trim().toLowerCase();
-      const unreleased = list.slice(1);
-      document.getElementById('unreleased-w-count').textContent = unreleased.length;
+      const tmp = questions[qIdx];
+      questions[qIdx] = questions[targetIdx];
+      questions[targetIdx] = tmp;
 
-      let html = '';
-      unreleased.forEach((it, unreleasedIdx) => {
-        const realIdx = unreleasedIdx + 1;
-        if (search && !it.group_name.toLowerCase().includes(search)) return;
-
-        html += `
-          <div class="slot-item">
-            <div class="slot-num">第 ${it.slot_num} 格</div>
-            <div class="slot-info">
-              <div class="slot-title">${it.group_name}</div>
-              <div class="slot-sub">${it.release_date || '待定'} (${it.day || '六'}) ｜ ${it.schools_count || 0} 校開設 ｜ ${it.tag || '科系特色'}</div>
-            </div>
-            <div class="slot-actions">
-              <button class="btn btn-sm btn-secondary" onclick="moveWeekend(${realIdx}, -1)" ${unreleasedIdx === 0 ? 'disabled style="opacity:0.4;"' : ''} title="往前調移">▲</button>
-              <button class="btn btn-sm btn-secondary" onclick="moveWeekend(${realIdx}, 1)" ${unreleasedIdx === unreleased.length - 1 ? 'disabled style="opacity:0.4;"' : ''} title="往後調移">▼</button>
-              <button class="btn btn-sm btn-secondary" onclick="jumpWeekend(${realIdx})" title="直接調整到指定格數">移至...</button>
-              <button class="btn btn-sm btn-accent" onclick="promoteToCurrentWeekend(${realIdx})">設為當週</button>
-              <button class="btn btn-sm btn-secondary" onclick="openReplaceModal(${realIdx})">置換</button>
-            </div>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html || '<div style="padding:16px; text-align:center; color:#94a3b8;">無符合條件的科系</div>';
-    }
-
-    // ==================== 指引編輯彈窗操作 ====================
-    window.openEditGuideModal = function(realIdx) {
-      editingGuideIdx = realIdx;
-      const it = masterData.thursday_releases[realIdx];
-      const isCur = (realIdx === 0);
-      document.getElementById('guide-modal-title').textContent = isCur ? '✏️ 編輯【當前線上本週指引】' : `✏️ 編輯第 ${it.index} 週指引內容`;
-
-      document.getElementById('edit-q-question').value = it.question || '';
-      document.getElementById('edit-q-sample-push').value = it.sample_push || '';
-      document.getElementById('edit-q-student-task').value = it.student_task || '';
-      document.getElementById('edit-q-parent-task').value = it.parent_task || '';
-      document.getElementById('edit-q-stage').value = it.stage || '';
-      document.getElementById('edit-q-countdown').value = it.countdown_weeks || 60;
-
-      document.getElementById('edit-guide-modal').style.display = 'flex';
-    };
-
-    window.closeGuideModal = function() {
-      document.getElementById('edit-guide-modal').style.display = 'none';
-      editingGuideIdx = -1;
-    };
-
-    window.saveGuideModal = function() {
-      if (editingGuideIdx < 0 || !masterData || !masterData.thursday_releases) return;
-      const it = masterData.thursday_releases[editingGuideIdx];
-
-      it.question = stripNumberPrefix(document.getElementById('edit-q-question').value.trim());
-      it.sample_push = document.getElementById('edit-q-sample-push').value.trim();
-      it.student_task = document.getElementById('edit-q-student-task').value.trim();
-      it.parent_task = document.getElementById('edit-q-parent-task').value.trim();
-      it.stage = document.getElementById('edit-q-stage').value.trim();
-      it.countdown_weeks = parseInt(document.getElementById('edit-q-countdown').value, 10) || it.countdown_weeks;
-
-      closeGuideModal();
       markDirty();
-      renderThursdays();
+      renderAll();
     };
 
-    // 調換週四指引順序
-    window.moveThursday = function(realIdx, dir) {
-      const targetIdx = realIdx + dir;
-      const list = masterData.thursday_releases;
-      if (targetIdx <= 0 || targetIdx >= list.length) return;
-
-      // 交換內容但保留 index 與 release_date
-      swapThursContent(realIdx, targetIdx);
-      markDirty();
-      renderThursdays();
-    };
-
-    // 直接插隊/移動到指定週次
-    window.jumpThursday = function(realIdx) {
-      const list = masterData.thursday_releases;
-      const currentWeek = list[realIdx].index;
-      const targetInput = prompt(`目前為第 ${currentWeek} 週內容，請輸入欲移至的「週次編號」（範圍 1 ～ ${list.length}）：`, currentWeek);
+    // 跨週調換題目
+    window.moveQuestionToOtherWeek = function(fromWeekIdx, qIdx) {
+      const fromWeekNum = faqMasterData.weeks[fromWeekIdx].week;
+      const targetInput = prompt(`目前為第 ${fromWeekNum} 週題目，請輸入欲移至的「週次編號」（範圍 1 ～ ${faqMasterData.weeks.length}）：`, fromWeekNum);
       if (targetInput === null) return;
-      const targetWeek = parseInt(targetInput.trim(), 10);
-      if (isNaN(targetWeek) || targetWeek < 1 || targetWeek > list.length) {
-        alert(`請輸入有效的週次數字（1 ～ ${list.length}）`);
+      const targetWeekNum = parseInt(targetInput.trim(), 10);
+      if (isNaN(targetWeekNum) || targetWeekNum < 1 || targetWeekNum > faqMasterData.weeks.length) {
+        alert('請輸入有效的週次數字！');
         return;
       }
-      const targetIdx = list.findIndex(it => it.index === targetWeek);
-      if (targetIdx < 0 || targetIdx === realIdx) return;
+      const toWeekIdx = faqMasterData.weeks.findIndex(w => w.week === targetWeekNum);
+      if (toWeekIdx < 0 || toWeekIdx === fromWeekIdx) return;
 
-      // 執行移動
-      const movedItem = list.splice(realIdx, 1)[0];
-      list.splice(targetIdx, 0, movedItem);
+      const movingQ = faqMasterData.weeks[fromWeekIdx].questions.splice(qIdx, 1)[0];
+      faqMasterData.weeks[toWeekIdx].questions.push(movingQ);
 
-      // 重新依序校正 index
-      reindexThursdays();
       markDirty();
-      renderThursdays();
+      renderAll();
     };
 
-    function reindexThursdays() {
-      // 保持原本各週次的位置 index 與 release_date 節奏不變，僅調動內容
-      // 重新給定正確 index 序號
-      masterData.thursday_releases.forEach((it, idx) => {
-        it.index = idx + 1;
-      });
-    }
+    // 整週排程調動（交換題目內容但保留週次編號與發布日期節奏）
+    window.moveWholeWeek = function(weekIdx, dir) {
+      const targetIdx = weekIdx + dir;
+      const weeks = faqMasterData.weeks;
+      if (targetIdx <= 0 || targetIdx >= weeks.length) return;
 
-    // 設為本週指引（與第 0 格對調）
-    window.promoteToCurrentThurs = function(realIdx) {
-      if (!confirm(`確定要將此週題目設為「當前線上班發布的本週指引」嗎？`)) return;
-      swapThursContent(0, realIdx);
+      swapWeekContents(weekIdx, targetIdx);
       markDirty();
-      renderThursdays();
+      renderAll();
     };
 
-    function swapThursContent(idxA, idxB) {
-      const list = masterData.thursday_releases;
-      const fields = ['question', 'sample_push', 'student_task', 'parent_task', 'stage'];
-      fields.forEach(f => {
-        const tmp = list[idxA][f];
-        list[idxA][f] = list[idxB][f];
-        list[idxB][f] = tmp;
-      });
-    }
-
-    // 調換週末科系順序
-    window.moveWeekend = function(realIdx, dir) {
-      const targetIdx = realIdx + dir;
-      const list = masterData.weekend_releases;
-      if (targetIdx <= 0 || targetIdx >= list.length) return;
-
-      swapWeekendContent(realIdx, targetIdx);
-      markDirty();
-      renderWeekends();
-    };
-
-    // 直接插隊/移動科系到指定格數
-    window.jumpWeekend = function(realIdx) {
-      const list = masterData.weekend_releases;
-      const curSlot = list[realIdx].slot_num;
-      const targetInput = prompt(`目前為第 ${curSlot} 格 (${list[realIdx].group_name})，請輸入欲移至的「格數編號」（範圍 1 ～ ${list.length}）：`, curSlot);
+    // 插隊整週到指定週次
+    window.jumpWholeWeek = function(weekIdx) {
+      const currentWeekNum = faqMasterData.weeks[weekIdx].week;
+      const targetInput = prompt(`目前為第 ${currentWeekNum} 週排程，請輸入欲調動至的「週次編號」（範圍 1 ～ ${faqMasterData.weeks.length}）：`, currentWeekNum);
       if (targetInput === null) return;
-      const targetSlot = parseInt(targetInput.trim(), 10);
-      if (isNaN(targetSlot) || targetSlot < 2 || targetSlot > list.length) {
-        alert(`請輸入有效的格數數字（2 ～ ${list.length}）`);
+      const targetWeekNum = parseInt(targetInput.trim(), 10);
+      if (isNaN(targetWeekNum) || targetWeekNum < 1 || targetWeekNum > faqMasterData.weeks.length) {
+        alert('請輸入有效的週次數字！');
         return;
       }
-      const targetIdx = list.findIndex(it => it.slot_num === targetSlot);
-      if (targetIdx < 0 || targetIdx === realIdx) return;
+      const targetIdx = faqMasterData.weeks.findIndex(w => w.week === targetWeekNum);
+      if (targetIdx < 0 || targetIdx === weekIdx) return;
 
-      const movedItem = list.splice(realIdx, 1)[0];
-      list.splice(targetIdx, 0, movedItem);
+      // 提取並插入
+      const item = faqMasterData.weeks.splice(weekIdx, 1)[0];
+      faqMasterData.weeks.splice(targetIdx, 0, item);
 
-      masterData.weekend_releases.forEach((it, idx) => {
-        it.slot_num = idx + 1;
-      });
+      // 重新校正週次編號與發布日期順序
+      reindexWeeks();
       markDirty();
-      renderWeekends();
+      renderAll();
     };
 
-    window.promoteToCurrentWeekend = function(realIdx) {
-      if (!confirm(`確定要將此科系設為「本週末發布精選」嗎？`)) return;
-      swapWeekendContent(0, realIdx);
+    // 設為當前線上發布週（與第 0 格對調）
+    window.promoteToCurrentWeek = function(weekIdx) {
+      const wNum = faqMasterData.weeks[weekIdx].week;
+      if (!confirm(`確定要將「第 ${wNum} 週」的內容立即設為「線上當週焦點（第 1 週）」嗎？`)) return;
+
+      swapWeekContents(0, weekIdx);
       markDirty();
-      renderWeekends();
+      renderAll();
     };
 
-    function swapWeekendContent(idxA, idxB) {
-      const list = masterData.weekend_releases;
-      const fields = ['group_name', 'schools_count', 'programs_count', 'tag', 'desc'];
-      fields.forEach(f => {
-        const tmp = list[idxA][f];
-        list[idxA][f] = list[idxB][f];
-        list[idxB][f] = tmp;
+    function swapWeekContents(idxA, idxB) {
+      const weeks = faqMasterData.weeks;
+      const tmpQ = weeks[idxA].questions;
+      weeks[idxA].questions = weeks[idxB].questions;
+      weeks[idxB].questions = tmpQ;
+
+      const tmpStage = weeks[idxA].stage;
+      weeks[idxA].stage = weeks[idxB].stage;
+      weeks[idxB].stage = tmpStage;
+    }
+
+    function reindexWeeks() {
+      // 保持週次序號依序由 1 至 N，日期遞增
+      faqMasterData.weeks.forEach((w, idx) => {
+        w.week = idx + 1;
       });
     }
 
-    // 置換科系彈窗
-    window.openReplaceModal = function(realIdx) {
-      currentSlotIdx = realIdx;
-      const it = masterData.weekend_releases[realIdx];
-      document.getElementById('modal-title').textContent = realIdx === 0 ? '🔄 置換【當前本週末科系】' : `置換第 ${it.slot_num} 格 (${it.group_name})`;
-      document.getElementById('modal-dept-search').value = '';
-      filterModalDepts();
-      document.getElementById('replace-modal').style.display = 'flex';
+    // ==================== 題目與答案編輯彈窗 ====================
+    let editingWeekIdx = -1;
+    let editingQuestionIdx = -1;
+    let editingSources = [];
+
+    window.openEditModal = function(weekIdx, qIdx) {
+      editingWeekIdx = weekIdx;
+      editingQuestionIdx = qIdx;
+      const q = faqMasterData.weeks[weekIdx].questions[qIdx];
+      const weekNum = faqMasterData.weeks[weekIdx].week;
+
+      document.getElementById('modal-title').textContent = `✏️ 編輯第 ${weekNum} 週・第 ${qIdx + 1} 題問答內容`;
+      document.getElementById('edit-q-title').value = stripNumberPrefix(q.question);
+      document.getElementById('edit-q-answer').value = q.answer || '';
+
+      editingSources = JSON.parse(JSON.stringify(q.sources || []));
+      renderSourceInputs();
+
+      document.getElementById('edit-modal').style.display = 'flex';
     };
 
-    window.closeModal = function() {
-      document.getElementById('replace-modal').style.display = 'none';
-    };
-
-    window.filterModalDepts = function() {
-      const search = (document.getElementById('modal-dept-search').value || '').trim().toLowerCase();
-      const container = document.getElementById('modal-dept-items');
-      const filtered = allGroups.filter(g => g.name.toLowerCase().includes(search));
-
-      container.innerHTML = filtered.slice(0, 30).map(g => {
-        return `
-          <div style="padding: 10px 8px; border-bottom: 1px solid #f1f0eb; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="selectDept('${g.name}', ${g.schools}, ${g.programs})">
-            <div>
-              <strong style="color: var(--primary); font-size: 0.95rem;">${g.name}</strong>
-              <div style="font-size: 0.78rem; color: var(--muted);">${g.schools} 校開設 ｜ ${g.programs} 系組</div>
-            </div>
-            <button class="btn btn-sm btn-secondary">選用 ➔</button>
+    function renderSourceInputs() {
+      const container = document.getElementById('edit-sources-list');
+      if (editingSources.length === 0) {
+        container.innerHTML = '<div style="color:#94a3b8; font-size:0.8rem; padding:4px 0;">暫無來源連結</div>';
+        return;
+      }
+      let html = '';
+      editingSources.forEach((s, idx) => {
+        html += `
+          <div class="source-row">
+            <input type="text" class="form-input" style="flex:1;" placeholder="來源名稱（如：大考中心簡章）" value="${s.title || ''}" oninput="updateSource(${idx}, 'title', this.value)">
+            <input type="text" class="form-input" style="flex:2;" placeholder="網址 (https://...)" value="${s.url || ''}" oninput="updateSource(${idx}, 'url', this.value)">
+            <button class="btn btn-sm btn-danger" onclick="removeSourceRow(${idx})">✕</button>
           </div>
         `;
-      }).join('');
+      });
+      container.innerHTML = html;
+    }
+
+    window.addSourceRow = function() {
+      editingSources.push({ title: '', url: '' });
+      renderSourceInputs();
     };
 
-    window.selectDept = function(name, schools, programs) {
-      if (currentSlotIdx >= 0) {
-        const it = masterData.weekend_releases[currentSlotIdx];
-        it.group_name = name;
-        it.schools_count = schools;
-        it.programs_count = programs;
-        it.tag = `${schools}校開設・焦點特色`;
-        it.desc = `全國共 ${schools} 所大學開設，包含 ${programs} 個系組。`;
-        closeModal();
-        markDirty();
-        renderWeekends();
-      }
+    window.updateSource = function(idx, field, val) {
+      if (editingSources[idx]) editingSources[idx][field] = val.trim();
     };
 
-    // ==================== 純雲端儲存 (GitHub REST API 同步更新私密庫與前台) ====================
+    window.removeSourceRow = function(idx) {
+      editingSources.splice(idx, 1);
+      renderSourceInputs();
+    };
+
+    window.closeEditModal = function() {
+      document.getElementById('edit-modal').style.display = 'none';
+      editingWeekIdx = -1;
+      editingQuestionIdx = -1;
+    };
+
+    window.saveEditModal = function() {
+      if (editingWeekIdx < 0 || editingQuestionIdx < 0) return;
+      const q = faqMasterData.weeks[editingWeekIdx].questions[editingQuestionIdx];
+
+      q.question = document.getElementById('edit-q-title').value.trim();
+      q.answer = document.getElementById('edit-q-answer').value.trim();
+      q.sources = editingSources.filter(s => s.title || s.url);
+
+      closeEditModal();
+      markDirty();
+      renderAll();
+    };
+
+    // ==================== 雲端儲存並同步至前台 ====================
     window.saveToGitHubCloud = async function() {
       if (!userToken) {
-        alert('請先輸入 GitHub Token，即可開啟直接雲端儲存！');
+        alert('請先設定 GitHub Token，即可一鍵將排程儲存並同步至家長前台！');
         configureToken();
         if (!userToken) return;
       }
 
-      if (!masterData) {
-        alert('排程資料尚未載入完成，請稍候再試。');
+      if (!faqMasterData) {
+        alert('題庫尚未載入，請稍候重試。');
         return;
       }
 
       const saveBtn = document.getElementById('btn-cloud-save');
-      saveBtn.textContent = '⏳ 正在上傳至 GitHub 雲端...';
+      saveBtn.textContent = '⏳ 同步至 GitHub 中...';
       saveBtn.disabled = true;
 
       try {
-        // 1. 同步保存回私有庫 kanban-flow/handover/2028-website/master_schedule.json
-        masterData.updated_at = new Date().toISOString().split('T')[0];
-        
-        const masterGetUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${PRIVATE_REPO}/contents/${PRIVATE_SCHEDULE_PATH}`;
-        const masterGetRes = await fetch(masterGetUrl, {
+        const payloadStr = JSON.stringify(faqMasterData, null, 2);
+        const encodedContent = utf8ToBase64(payloadStr);
+
+        // 1. 取得線上檔案當前 SHA
+        const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${PUBLIC_REPO}/contents/${FAQ_DATA_PATH}`;
+        const getRes = await fetch(getUrl, {
           headers: { 'Authorization': 'token ' + userToken }
         });
-        if (!masterGetRes.ok) {
-          throw new Error('無法存取私密庫 kanban-flow，請確認 Token 權限！');
+
+        let currentSha = '';
+        if (getRes.ok) {
+          const getJson = await getRes.json();
+          currentSha = getJson.sha;
         }
-        const masterFileInfo = await masterGetRes.json();
-        
-        const masterBase64 = utf8ToBase64(JSON.stringify(masterData, null, 2));
-        const masterPutRes = await fetch(masterGetUrl, {
+
+        // 2. 寫入 2028-website/data/faq_data.json
+        const putRes = await fetch(getUrl, {
           method: 'PUT',
           headers: {
             'Authorization': 'token ' + userToken,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            message: 'chore: 負責人線上更新指引與排程 (master_schedule.json)',
-            content: masterBase64,
-            sha: masterFileInfo.sha
+            message: 'chore: 中控台同步更新學測常見問答排程 (data/faq_data.json)',
+            content: encodedContent,
+            sha: currentSha || undefined
           })
         });
 
-        if (!masterPutRes.ok) {
-          const errData = await masterPutRes.json();
-          throw new Error('更新私密庫排程失敗：' + (errData.message || ''));
+        if (!putRes.ok) {
+          const errData = await putRes.json();
+          throw new Error(errData.message || '寫入失敗');
         }
 
-        // 2. 脫敏組裝 public_feed.json（僅已發布內容，絕不洩密）
-        const published_w = masterData.weekend_releases[0];
-        const published_q = masterData.thursday_releases[0];
-        const publicFeedPayload = {
-          generated_at: new Date().toISOString(),
-          cutoff_date: "2026-10-31",
-          exam_date: "2028-01-14",
-          current_thursday: published_q,
-          history_thursdays: [],
-          current_weekend: published_w,
-          history_weekends: []
-        };
-
-        const feedGetUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${PUBLIC_REPO}/contents/${PUBLIC_FEED_PATH}`;
-        const feedGetRes = await fetch(feedGetUrl, {
-          headers: { 'Authorization': 'token ' + userToken }
-        });
-        if (!feedGetRes.ok) {
-          throw new Error('無法取得 2028-website 檔案資訊，請確認 Token 權限。');
-        }
-        const feedFileInfo = await feedGetRes.json();
-
-        const feedBase64 = utf8ToBase64(JSON.stringify(publicFeedPayload, null, 2));
-        const feedPutRes = await fetch(feedGetUrl, {
-          method: 'PUT',
-          headers: {
-            'Authorization': 'token ' + userToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            message: 'chore: 負責人雲端同步更新本週指引與前台 feed (public_feed.json)',
-            content: feedBase64,
-            sha: feedFileInfo.sha
-          })
-        });
-
-        if (!feedPutRes.ok) {
-          const errData = await feedPutRes.json();
-          throw new Error('更新前台 public_feed 失敗：' + (errData.message || ''));
+        // 3. 嘗試備份到 kanban-flow（若存在）
+        try {
+          const backupGetUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${BACKUP_REPO}/contents/${BACKUP_PATH}`;
+          const bGetRes = await fetch(backupGetUrl, {
+            headers: { 'Authorization': 'token ' + userToken }
+          });
+          let bSha = '';
+          if (bGetRes.ok) {
+            const bJson = await bGetRes.json();
+            bSha = bJson.sha;
+          }
+          await fetch(backupGetUrl, {
+            method: 'PUT',
+            headers: {
+              'Authorization': 'token ' + userToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: 'backup: 中控台同步備份 faq_data.json',
+              content: encodedContent,
+              sha: bSha || undefined
+            })
+          });
+        } catch(be) {
+          console.warn('備份倉庫同步略過：', be);
         }
 
         isDirty = false;
         document.getElementById('dirty-status').style.display = 'none';
-        alert('🎉 雲端儲存成功！\n\n1. 本週指引與排程修改已同步存入雲端庫。\n2. 前台公開資料已即時更新，家長前台將在 30 秒內全網生效！');
+        alert('🎉 雲端儲存成功！家長前台（index.html）已同步更新！');
       } catch (err) {
-        alert('⚠️ 雲端儲存失敗：\n' + err.message);
+        console.error('儲存失敗：', err);
+        alert('儲存失敗：' + err.message + '\n請檢查 Token 權限。');
       } finally {
         saveBtn.textContent = '☁️ 雲端儲存並發布';
         saveBtn.disabled = false;
       }
     };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateAuthDisplay();
+      loadData();
+    });
   </script>
 </body>
 </html>
