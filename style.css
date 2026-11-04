@@ -762,6 +762,13 @@ details[open] .folded-summary-btn::after {
   opacity: 0.9;
 }
 
+/* 隱藏桌機專用元素 (手機預設隱藏) */
+.desktop-stage-list,
+.desktop-main-right,
+.desktop-update-rhythm {
+  display: none;
+}
+
 /* ==================== 頁尾 ==================== */
 .page-footer {
   margin-top: 48px;
@@ -776,4 +783,154 @@ details[open] .folded-summary-btn::after {
 .page-footer p:last-child {
   margin-top: 4px;
   font-size: 0.78rem;
+}
+
+/* ==========================================================================
+   桌機版 (>= 1024px)
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .page-container {
+    max-width: 1240px;
+    padding: 0 32px;
+  }
+
+  /* 倒數區塊 */
+  .hero-countdown-card {
+    padding: 40px;
+  }
+
+  .glass-site-brand {
+    text-align: left;
+  }
+
+  .desktop-hero-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .desktop-hero-left {
+    text-align: left;
+  }
+
+  .countdown-headline {
+    white-space: nowrap;
+    text-align: center; /* keep numbers centered relative to its flex box, but the left block is text-align: left */
+  }
+
+  .countdown-main-num {
+    margin: 0 10px;
+  }
+
+  /* 階段清單 */
+  .desktop-stage-list {
+    display: block;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-main);
+    line-height: 2;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .desktop-stage-list li.is-active {
+    color: var(--accent-orange);
+    font-weight: 800;
+  }
+
+  /* 裸軸時間軸 */
+  .timeline-section {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 40px;
+  }
+
+  .timeline-line {
+    height: 10px;
+    border-radius: 5px;
+    background: var(--text-main);
+  }
+
+  .timeline-month {
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .now-pointer {
+    border-top-color: var(--accent-orange);
+  }
+
+  .now-tag-mini {
+    background: var(--accent-orange);
+    content: 'NOW';
+  }
+
+  /* 主內容雙欄 */
+  .desktop-main-layout {
+    display: grid;
+    grid-template-columns: minmax(640px, 1fr) 340px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .desktop-main-right {
+    display: block;
+  }
+
+  /* 「這一期」農民曆卡 */
+  .desktop-this-week-card {
+    padding: 20px;
+    margin-bottom: 20px;
+    display: none; /* 由 JS 控制顯示 */
+  }
+
+  .desktop-this-week-body {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: var(--text-main);
+    line-height: 1.6;
+  }
+
+  .desktop-this-week-yi {
+    color: var(--accent-orange);
+    font-weight: 800;
+    margin-bottom: 5px;
+  }
+
+  .desktop-this-week-ji {
+    color: var(--text-muted);
+    font-weight: 800;
+  }
+
+  /* 桌機版過往週次 */
+  #history-drawer-section {
+    display: none !important;
+  }
+
+  #desktop-history-list {
+    margin-bottom: 20px;
+  }
+
+  #desktop-history-list .history-week-item {
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  #desktop-history-list .history-week-tag-line {
+    font-size: 1.05rem;
+    padding: 10px 0;
+  }
+
+  .desktop-update-rhythm {
+    display: block;
+    padding: 15px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-top: 20px;
+  }
 }

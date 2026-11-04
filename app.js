@@ -170,6 +170,7 @@ function updateTimeline() {
 }
 
 let faqMasterData = null;
+let weeklyAdviceData = null;
 let currentActiveWeekNum = null;
 let isSearchMode = false;
 let isDualTabActive = false;
@@ -191,6 +192,15 @@ async function loadFaqData() {
     }
   } catch (err) {
     console.warn('無法從網路讀取 faq_data.json，回退到預設第一批資料：', err);
+  }
+
+  try {
+    const wRes = await fetch('./data/weekly_advice.json?v=' + Date.now());
+    if (wRes.ok) {
+      weeklyAdviceData = await wRes.json();
+    }
+  } catch (err) {
+    console.warn('無法從網路讀取 weekly_advice.json：', err);
   }
 
   if (!faqMasterData || !faqMasterData.weeks || faqMasterData.weeks.length === 0) {
@@ -254,6 +264,37 @@ function renderFaqView() {
   const weekTagEl = document.getElementById('cur-week-tag');
   if (weekTagEl) {
     weekTagEl.textContent = `第 ${targetWeek.week} 週・${formatDateDots(targetWeek.release_date)}`;
+  }
+
+  // 桌機版：更新左側階段清單 is-active
+  const desktopStageList = document.querySelectorAll('.desktop-stage-list li');
+  desktopStageList.forEach(li => {
+    if (li.getAttribute('data-stage') === targetWeek.stage) {
+      li.classList.add('is-active');
+    } else {
+      li.classList.remove('is-active');
+    }
+  });
+
+  // 桌機版：更新右側「這一期」卡片
+  const thisWeekCard = document.getElementById('desktop-this-week-card');
+  if (thisWeekCard) {
+    const weekStr = targetWeek.week.toString();
+    if (weeklyAdviceData && weeklyAdviceData.weeks && weeklyAdviceData.weeks[weekStr]) {
+      const advice = weeklyAdviceData.weeks[weekStr];
+      const yiList = (advice.yi || []).map(text => `<div>宜：${text}</div>`).join('');
+      const jiList = (advice.ji || []).map(text => `<div>忌：${text}</div>`).join('');
+
+      thisWeekCard.innerHTML = `
+        <div class="desktop-this-week-body">${advice.body || ''}</div>
+        ${yiList ? `<div class="desktop-this-week-yi">${yiList}</div>` : ''}
+        ${jiList ? `<div class="desktop-this-week-ji">${jiList}</div>` : ''}
+      `;
+      thisWeekCard.style.display = 'block';
+    } else {
+      thisWeekCard.innerHTML = '';
+      thisWeekCard.style.display = 'none';
+    }
   }
 
   const container = document.getElementById('faq-accordion-container');
@@ -338,12 +379,69 @@ function renderFaqView() {
           `;
         });
         historyListContainer.innerHTML = hHtml;
+
+        // 將同樣的 HTML 也渲染給桌機版右欄歷史列表
+        const desktopHistoryList = document.getElementById('desktop-history-list');
+        if (desktopHistoryList) {
+          desktopHistoryList.innerHTML = hHtml.replace(/history-week-q-/g, 'desktop-history-week-q-')
+                                              .replace(/toggleHistoryWeek\(/g, 'toggleHistoryWeekDesktop(')
+                                              .replace(/faq-item-hw/g, 'desktop-faq-item-hw')
+                                              .replace(/toggleHistoryAccordion\(/g, 'toggleHistoryAccordionDesktop(');
+        }
       }
     } else {
       drawerSection.style.display = 'none';
+      const desktopHistoryList = document.getElementById('desktop-history-list');
+      if (desktopHistoryList) desktopHistoryList.innerHTML = '';
     }
   }
 }
+
+// 桌機版歷史抽屜切換
+window.toggleHistoryWeekDesktop = function(weekNum) {
+  const allContainers = document.querySelectorAll('#desktop-history-list .history-week-questions');
+  const targetContainer = document.getElementById(`desktop-history-week-q-${weekNum}`);
+
+  let wasOpen = false;
+  if (targetContainer && targetContainer.style.display === 'block') {
+    wasOpen = true;
+  }
+
+  allContainers.forEach(el => {
+    el.style.display = 'none';
+  });
+
+  if (targetContainer && !wasOpen) {
+    targetContainer.style.display = 'block';
+  }
+};
+
+window.toggleHistoryAccordionDesktop = function(weekNum, itemIdx) {
+  const container = document.getElementById(`desktop-history-week-q-${weekNum}`);
+  if (!container) return;
+
+  const targetItem = document.getElementById(`desktop-faq-item-hw${weekNum}-${itemIdx}`);
+  if (!targetItem) return;
+
+  const isAlreadyActive = targetItem.classList.contains('is-active');
+  const targetTopBeforeToggle = targetItem.getBoundingClientRect().top;
+
+  const allItems = container.querySelectorAll('.faq-q-item');
+  allItems.forEach(item => {
+    item.classList.remove('is-active');
+  });
+
+  if (!isAlreadyActive) {
+    targetItem.classList.add('is-active');
+  }
+
+  if (isAlreadyActive && targetTopBeforeToggle < 0) {
+    window.scrollTo({
+      top: window.scrollY + targetTopBeforeToggle,
+      behavior: 'auto'
+    });
+  }
+};
 
 // 搜尋處理
 window.handleSearch = function(query) {
