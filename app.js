@@ -49,48 +49,6 @@ function renderDetailAccordion(detail) {
   `;
 }
 
-// 格式化附加資訊（詳細說明與來源）
-function renderExtras(detail, sources) {
-  const hasDetail = (detail && detail.trim() !== '');
-  const hasSources = (sources && Array.isArray(sources) && sources.length > 0);
-
-  if (!hasDetail && !hasSources) return '';
-
-  if (!hasDetail && hasSources) {
-    return renderSourcesAccordion(sources);
-  }
-
-  let html = `
-    <details class="source-accordion-box" style="margin-top: 8px;">
-      <summary class="source-summary-label">詳細說明</summary>
-      <div style="padding-top: 8px;">
-        ${formatAnswerParagraphs(detail)}
-  `;
-
-  if (hasSources) {
-    const items = sources.map(s => {
-      const title = s.title || s.url;
-      return `<li><a href="${s.url}" target="_blank" rel="noopener noreferrer">${title}</a></li>`;
-    }).join('');
-
-    html += `
-        <div class="source-in-detail-wrap">
-          <div class="source-in-detail-title">來源</div>
-          <ul class="source-url-list">
-            ${items}
-          </ul>
-        </div>
-    `;
-  }
-
-  html += `
-      </div>
-    </details>
-  `;
-
-  return html;
-}
-
 // 格式化來源收合清單（預設收合，只顯示小小的「來源」）
 function renderSourcesAccordion(sources) {
   if (!sources || !Array.isArray(sources) || sources.length === 0) return '';
@@ -262,7 +220,8 @@ function renderFaqView() {
     targetWeek.questions.forEach((q, idx) => {
       const cleanTitle = stripNumberPrefix(q.question);
       const answerHtml = formatAnswerParagraphs(q.answer);
-      const extrasHtml = renderExtras(q.detail, q.sources);
+      const sourceHtml = renderSourcesAccordion(q.sources);
+      const detailHtml = renderDetailAccordion(q.detail);
 
       let foldedHtml = '';
       if (q.folded && q.folded.length > 0) {
@@ -275,7 +234,8 @@ function renderFaqView() {
                 </summary>
                 <div class="folded-body-content">
                   ${formatAnswerParagraphs(f.answer)}
-                  ${renderExtras(f.detail, f.sources)}
+                  ${renderDetailAccordion(f.detail)}
+                  ${renderSourcesAccordion(f.sources)}
                 </div>
               </details>
             `).join('')}
@@ -292,7 +252,8 @@ function renderFaqView() {
           <!-- 答案以玻璃浮層卡打開 (套用 .glass 配方) -->
           <div class="faq-answer-floating-card glass">
             ${answerHtml}
-            ${extrasHtml}
+            ${detailHtml}
+            ${sourceHtml}
             ${foldedHtml}
           </div>
         </div>
@@ -329,7 +290,8 @@ function renderFaqView() {
                     </div>
                     <div class="faq-answer-floating-card glass">
                       ${formatAnswerParagraphs(hq.answer)}
-                      ${renderExtras(hq.detail, hq.sources)}
+                      ${renderDetailAccordion(hq.detail)}
+                      ${renderSourcesAccordion(hq.sources)}
                     </div>
                   </div>
                 `).join('')}
