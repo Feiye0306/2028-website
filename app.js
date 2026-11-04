@@ -49,6 +49,48 @@ function renderDetailAccordion(detail) {
   `;
 }
 
+// 格式化附加資訊（詳細說明與來源）
+function renderExtras(detail, sources) {
+  const hasDetail = (detail && detail.trim() !== '');
+  const hasSources = (sources && Array.isArray(sources) && sources.length > 0);
+
+  if (!hasDetail && !hasSources) return '';
+
+  if (!hasDetail && hasSources) {
+    return renderSourcesAccordion(sources);
+  }
+
+  let html = `
+    <details class="source-accordion-box" style="margin-top: 8px;">
+      <summary class="source-summary-label">詳細說明</summary>
+      <div style="padding-top: 8px;">
+        ${formatAnswerParagraphs(detail)}
+  `;
+
+  if (hasSources) {
+    const items = sources.map(s => {
+      const title = s.title || s.url;
+      return `<li><a href="${s.url}" target="_blank" rel="noopener noreferrer">${title}</a></li>`;
+    }).join('');
+
+    html += `
+        <div class="source-in-detail-wrap">
+          <div class="source-in-detail-title">來源</div>
+          <ul class="source-url-list">
+            ${items}
+          </ul>
+        </div>
+    `;
+  }
+
+  html += `
+      </div>
+    </details>
+  `;
+
+  return html;
+}
+
 // 格式化來源收合清單（預設收合，只顯示小小的「來源」）
 function renderSourcesAccordion(sources) {
   if (!sources || !Array.isArray(sources) || sources.length === 0) return '';
@@ -128,6 +170,7 @@ function updateTimeline() {
 }
 
 let faqMasterData = null;
+let weeklyAdviceData = null;
 let currentActiveWeekNum = null;
 let isSearchMode = false;
 let isDualTabActive = false;
@@ -143,12 +186,23 @@ function getTodayString() {
 // 載入題庫資料
 async function loadFaqData() {
   try {
-    const res = await fetch('./data/faq_data.json?v=' + Date.now());
-    if (res.ok) {
-      faqMasterData = await res.json();
+    const [faqRes, adviceRes] = await Promise.all([
+      fetch('./data/faq_data.json?v=' + Date.now()),
+      fetch('./data/weekly_advice.json?v=' + Date.now()).catch(() => null)
+    ]);
+
+    if (faqRes.ok) {
+      faqMasterData = await faqRes.json();
+    }
+
+    if (adviceRes && adviceRes.ok) {
+      weeklyAdviceData = await adviceRes.json();
+    } else {
+      weeklyAdviceData = { weeks: {} };
     }
   } catch (err) {
-    console.warn('無法從網路讀取 faq_data.json，回退到預設第一批資料：', err);
+    console.warn('無法從網路讀取資料，回退到預設第一批資料：', err);
+    weeklyAdviceData = { weeks: {} };
   }
 
   if (!faqMasterData || !faqMasterData.weeks || faqMasterData.weeks.length === 0) {
@@ -208,6 +262,19 @@ function renderFaqView() {
     currentActiveWeekNum = targetWeek.week;
   }
 
+  // 桌機：5階段清單目前所在階段標示
+  const stageListUl = document.getElementById('desktop-stage-ul');
+  if (stageListUl && targetWeek.stage) {
+    const stages = stageListUl.querySelectorAll('li');
+    stages.forEach(li => {
+      li.classList.remove('is-active');
+      // targetWeek.stage 可能長這樣："高二上起跑期（學測倒數準備）" 或包含階段名稱
+      if (targetWeek.stage.includes(li.getAttribute('data-stage'))) {
+        li.classList.add('is-active');
+      }
+    });
+  }
+
   // 標題列：左邊「爸媽最想問」、右邊「第 n 週・日期」
   const weekTagEl = document.getElementById('cur-week-tag');
   if (weekTagEl) {
@@ -220,8 +287,7 @@ function renderFaqView() {
     targetWeek.questions.forEach((q, idx) => {
       const cleanTitle = stripNumberPrefix(q.question);
       const answerHtml = formatAnswerParagraphs(q.answer);
-      const sourceHtml = renderSourcesAccordion(q.sources);
-      const detailHtml = renderDetailAccordion(q.detail);
+      const extrasHtml = renderExtras(q.detail, q.sources);
 
       let foldedHtml = '';
       if (q.folded && q.folded.length > 0) {
@@ -234,8 +300,7 @@ function renderFaqView() {
                 </summary>
                 <div class="folded-body-content">
                   ${formatAnswerParagraphs(f.answer)}
-                  ${renderDetailAccordion(f.detail)}
-                  ${renderSourcesAccordion(f.sources)}
+                  ${renderExtras(f.detail, f.sources)}
                 </div>
               </details>
             `).join('')}
@@ -252,8 +317,7 @@ function renderFaqView() {
           <!-- 答案以玻璃浮層卡打開 (套用 .glass 配方) -->
           <div class="faq-answer-floating-card glass">
             ${answerHtml}
-            ${detailHtml}
-            ${sourceHtml}
+            ${extrasHtml}
             ${foldedHtml}
           </div>
         </div>
@@ -263,11 +327,34 @@ function renderFaqView() {
     container.innerHTML = html;
   }
 
+  // 桌機：「這一期」卡
+  const desktopThisWeekCard = document.getElementById('desktop-this-week-card');
+  if (desktopThisWeekCard) {
+    let adviceFound = false;
+    if (weeklyAdviceData && weeklyAdviceData.weeks && weeklyAdviceData.weeks[targetWeek.week]) {
+      const advice = weeklyAdviceData.weeks[targetWeek.week];
+      if (advice && Object.keys(advice).length > 0) {
+        desktopThisWeekCard.innerHTML = `
+          <div class="desktop-this-week-body">${advice.body || ''}</div>
+          ${advice.yi && advice.yi.length ? `<div class="desktop-this-week-yi">宜：${advice.yi.join('、')}</div>` : ''}
+          ${advice.ji && advice.ji.length ? `<div class="desktop-this-week-ji">忌：${advice.ji.join('、')}</div>` : ''}
+        `;
+        desktopThisWeekCard.style.display = 'block';
+        adviceFound = true;
+      }
+    }
+    if (!adviceFound) {
+      desktopThisWeekCard.style.display = 'none';
+      desktopThisWeekCard.innerHTML = '';
+    }
+  }
+
   // 歷史抽屜：同一個收合區
   const historyWeeks = publishedWeeks.filter(w => w.week !== targetWeek.week);
   const drawerSection = document.getElementById('history-drawer-section');
   const historyCountEl = document.getElementById('history-count');
   const historyListContainer = document.getElementById('history-list-container');
+  const desktopHistoryList = document.getElementById('desktop-history-list');
 
   if (drawerSection) {
     if (historyWeeks.length > 0) {
@@ -290,8 +377,7 @@ function renderFaqView() {
                     </div>
                     <div class="faq-answer-floating-card glass">
                       ${formatAnswerParagraphs(hq.answer)}
-                      ${renderDetailAccordion(hq.detail)}
-                      ${renderSourcesAccordion(hq.sources)}
+                      ${renderExtras(hq.detail, hq.sources)}
                     </div>
                   </div>
                 `).join('')}
@@ -300,9 +386,13 @@ function renderFaqView() {
           `;
         });
         historyListContainer.innerHTML = hHtml;
+        if (desktopHistoryList) {
+          desktopHistoryList.innerHTML = hHtml;
+        }
       }
     } else {
       drawerSection.style.display = 'none';
+      if (desktopHistoryList) desktopHistoryList.innerHTML = '';
     }
   }
 }

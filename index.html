@@ -24,22 +24,35 @@
 
     <!-- 1. 倒數卡（頁面主角，套用 .glass 清透透鏡配方） -->
     <header class="hero-countdown-card glass">
-      <!-- 站名縮在最上一行 -->
-      <div class="glass-site-brand">學測作戰地圖</div>
-      
-      <!-- 上行小字 -->
-      <div class="countdown-sub-intro">距離 2028 學測</div>
-      
-      <!-- 主角大字置中 -->
-      <div class="countdown-headline">
-        <span class="countdown-txt">倒數</span>
-        <span class="countdown-main-num" id="weeks-num">-</span>
-        <span class="countdown-txt">週</span>
-      </div>
+      <div class="desktop-hero-layout">
+        <div class="desktop-hero-countdown">
+          <!-- 站名縮在最上一行 -->
+          <div class="glass-site-brand">學測作戰地圖</div>
 
-      <!-- 預估學測日：一行純橘字印在玻璃上，無底塊、無膠囊、無框影 -->
-      <div class="exam-target-date-line">
-        預估學測日 2028.01.14
+          <!-- 上行小字 -->
+          <div class="countdown-sub-intro">距離 2028 學測</div>
+
+          <!-- 主角大字置中 -->
+          <div class="countdown-headline">
+            <span class="countdown-txt">倒數</span>
+            <span class="countdown-main-num" id="weeks-num">-</span>
+            <span class="countdown-txt">週</span>
+          </div>
+
+          <!-- 預估學測日：一行純橘字印在玻璃上，無底塊、無膠囊、無框影 -->
+          <div class="exam-target-date-line">
+            預估學測日 2028.01.14
+          </div>
+        </div>
+        <div class="desktop-stage-list">
+          <ul id="desktop-stage-ul">
+            <li data-stage="起跑期">起跑期 2026.11–2027.01</li>
+            <li data-stage="打底期">打底期 2027.02–06</li>
+            <li data-stage="總複習">總複習 2027.07–08</li>
+            <li data-stage="衝刺期">衝刺期 2027.09–2028.01</li>
+            <li data-stage="落點期">落點期 2028.01 之後</li>
+          </ul>
+        </div>
       </div>
     </header>
 
@@ -89,46 +102,55 @@
 
     <!-- 主內容區：問答視圖 -->
     <main id="view-faq-section">
-      <!-- 3. 問答區標題列：「爸媽最想問」直接坐標題位置，右邊「第 n 週・日期」，底下一條粗線 -->
-      <div class="faq-header-block">
-        <div class="faq-title-row">
-          <h1 class="faq-main-title">爸媽最想問</h1>
-          <span class="faq-week-date-pill" id="cur-week-tag">第 2 週・2026.11.04</span>
+      <div class="desktop-main-layout">
+        <div class="desktop-main-left">
+          <!-- 3. 問答區標題列：「爸媽最想問」直接坐標題位置，右邊「第 n 週・日期」，底下一條粗線 -->
+          <div class="faq-header-block">
+            <div class="faq-title-row">
+              <h1 class="faq-main-title">爸媽最想問</h1>
+              <span class="faq-week-date-pill" id="cur-week-tag">第 2 週・2026.11.04</span>
+            </div>
+            <div class="faq-thick-divider"></div>
+          </div>
+
+          <!-- 搜尋框 (即時檢索已發布內容) -->
+          <section class="search-container">
+            <div class="search-input-shell">
+              <input
+                type="text"
+                id="faq-search-input"
+                class="search-box"
+                placeholder="搜尋升學問題（如：繁星、英聽、選系、分科...）"
+                oninput="handleSearch(this.value)"
+                autocomplete="off"
+              />
+              <button id="search-clear-btn" class="search-clear-cross" onclick="clearSearch()" style="display: none;">✕</button>
+            </div>
+            <div id="search-feedback" class="search-count-feedback" style="display: none;"></div>
+          </section>
+
+          <!-- 4. 本週問答手風琴（一題一行大字，點題目以玻璃浮層卡打開，點新題收上一題） -->
+          <section class="faq-accordion-group" id="faq-accordion-container">
+            <p style="padding: 20px 0; color: var(--text-muted); text-align: center;">載入問答內容中...</p>
+          </section>
+
+          <!-- 歷史已發布週次回看抽屜（收在同一個收合區） -->
+          <section class="history-section-drawer" id="history-drawer-section" style="display: none;">
+            <div class="history-drawer-bar" onclick="toggleHistoryDrawer()">
+              <h2 class="history-drawer-title">已發布週次回看 (<span id="history-count">0</span> 週)</h2>
+              <button class="history-action-toggle" id="drawer-toggle-btn">開啟</button>
+            </div>
+            <div class="history-content-flow" id="history-drawer-panel">
+              <div id="history-list-container"></div>
+            </div>
+          </section>
         </div>
-        <div class="faq-thick-divider"></div>
+        <div class="desktop-main-right">
+          <div id="desktop-this-week-card" class="glass desktop-this-week-card"></div>
+          <div id="desktop-history-list"></div>
+          <div class="desktop-update-rhythm glass">每週四更新</div>
+        </div>
       </div>
-
-      <!-- 搜尋框 (即時檢索已發布內容) -->
-      <section class="search-container">
-        <div class="search-input-shell">
-          <input 
-            type="text" 
-            id="faq-search-input" 
-            class="search-box" 
-            placeholder="搜尋升學問題（如：繁星、英聽、選系、分科...）" 
-            oninput="handleSearch(this.value)"
-            autocomplete="off"
-          />
-          <button id="search-clear-btn" class="search-clear-cross" onclick="clearSearch()" style="display: none;">✕</button>
-        </div>
-        <div id="search-feedback" class="search-count-feedback" style="display: none;"></div>
-      </section>
-
-      <!-- 4. 本週問答手風琴（一題一行大字，點題目以玻璃浮層卡打開，點新題收上一題） -->
-      <section class="faq-accordion-group" id="faq-accordion-container">
-        <p style="padding: 20px 0; color: var(--text-muted); text-align: center;">載入問答內容中...</p>
-      </section>
-
-      <!-- 歷史已發布週次回看抽屜（收在同一個收合區） -->
-      <section class="history-section-drawer" id="history-drawer-section" style="display: none;">
-        <div class="history-drawer-bar" onclick="toggleHistoryDrawer()">
-          <h2 class="history-drawer-title">已發布週次回看 (<span id="history-count">0</span> 週)</h2>
-          <button class="history-action-toggle" id="drawer-toggle-btn">開啟</button>
-        </div>
-        <div class="history-content-flow" id="history-drawer-panel">
-          <div id="history-list-container"></div>
-        </div>
-      </section>
     </main>
 
     <!-- 6. 科系分頁（占位展示，點擊底部膠囊切換） -->
@@ -187,6 +209,8 @@
 
     <!-- 頁尾 -->
     <footer class="page-footer">
+      <p>台北市信義區松德路 10 號 | (02) 8786-9817</p>
+      <p>贏家升大中心</p>
     </footer>
 
   </div>

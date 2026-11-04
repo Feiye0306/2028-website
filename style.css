@@ -476,6 +476,20 @@ body {
   border-top: 1px dashed rgba(13, 34, 66, 0.12);
 }
 
+/* 將來源併入詳細說明的樣式 */
+.source-in-detail-wrap {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-line);
+}
+
+.source-in-detail-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
 .source-summary-label {
   font-size: 0.85rem;
   font-weight: 600;
@@ -762,4 +776,124 @@ details[open] .folded-summary-btn::after {
 .page-footer p:last-child {
   margin-top: 4px;
   font-size: 0.78rem;
+}
+
+.mobile-only-stage-caption {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  /* Header adjustments */
+  .hero-countdown-card {
+    text-align: left;
+    padding: 40px;
+  }
+  .desktop-hero-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .glass-site-brand {
+    text-align: left;
+  }
+  .desktop-stage-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .desktop-stage-list li {
+    font-size: 1.1rem;
+    color: var(--text-main);
+    line-height: 2;
+    text-align: left;
+    transition: all 0.2s ease;
+  }
+  .desktop-stage-list li.is-active {
+    color: var(--accent-orange);
+    font-weight: 800;
+  }
+
+  /* Timeline adjustments */
+  .timeline-section {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 40px;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .timeline-line {
+    height: 10px;
+    background-color: var(--text-main);
+    border-radius: 5px;
+  }
+  .timeline-month {
+    font-size: 16px;
+    font-weight: 800;
+  }
+  .now-pointer {
+    border-top-color: var(--accent-orange);
+  }
+  .now-tag-mini {
+    background: var(--accent-orange);
+    content: 'NOW';
+  }
+
+  /* Main Layout adjustments */
+  .desktop-main-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  .faq-title-row h1, .faq-title-row span {
+    text-align: left;
+  }
+
+  /* Right Column Components */
+  .desktop-this-week-card {
+    padding: 20px;
+    margin-bottom: 20px;
+    display: none; /* Controlled by JS */
+  }
+  .desktop-this-week-body {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: var(--text-main);
+    line-height: 1.6;
+  }
+  .desktop-this-week-yi {
+    color: var(--accent-orange);
+    font-weight: 800;
+    margin-bottom: 5px;
+  }
+  .desktop-this-week-ji {
+    color: var(--text-muted);
+    font-weight: 800;
+  }
+
+  /* Desktop history list overrides */
+  #history-drawer-section {
+    display: none !important;
+  }
+  #desktop-history-list {
+    margin-bottom: 20px;
+  }
+  #desktop-history-list .history-week-item {
+    border-bottom: 1px solid var(--border-light);
+  }
+  #desktop-history-list .history-week-tag-line {
+    font-size: 1.05rem;
+    padding: 10px 0;
+  }
+
+  /* Update rhythm card */
+  .desktop-update-rhythm {
+    padding: 15px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
 }
