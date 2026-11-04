@@ -313,7 +313,9 @@ window.handleSearch = function(query) {
   if (!faqMasterData || !faqMasterData.weeks) return;
 
   const results = [];
+  const today = getTodayString();
   faqMasterData.weeks.forEach(w => {
+    if (w.week !== 1 && today < w.release_date) return;
     w.questions.forEach(q => {
       const qText = (q.question || '').toLowerCase();
       const aText = (q.answer || '').toLowerCase();
