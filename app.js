@@ -261,23 +261,23 @@ function renderFaqView() {
         historyWeeks.slice().reverse().forEach(hw => {
           hHtml += `
             <div class="history-week-item">
-              <div class="history-week-tag-line">
+              <div class="history-week-tag-line" onclick="toggleHistoryWeek(${hw.week})">
                 <span>第 ${hw.week} 週・${formatDateDots(hw.release_date)}</span>
-                <button onclick="selectWeek(${hw.week})" class="history-load-btn">
-                  查看此週
-                </button>
               </div>
-              ${hw.questions.map(hq => `
-                <div style="padding: 6px 0;">
-                  <div style="font-size: 0.96rem; cursor: pointer; color: var(--text-main);" onclick="toggleHistoryAnswer(this)">
-                    ${stripNumberPrefix(hq.question)}
+              <div class="history-week-questions" id="history-week-q-${hw.week}" style="display: none; padding-top: 8px;">
+                ${hw.questions.map((hq, idx) => `
+                  <div class="faq-q-item" id="faq-item-hw${hw.week}-${idx}">
+                    <div class="faq-q-header" onclick="toggleHistoryAccordion(${hw.week}, ${idx})">
+                      <h2 class="faq-q-text">${stripNumberPrefix(hq.question)}</h2>
+                      <span class="faq-q-arrow">＋</span>
+                    </div>
+                    <div class="faq-answer-floating-card glass">
+                      ${formatAnswerParagraphs(hq.answer)}
+                      ${renderSourcesAccordion(hq.sources)}
+                    </div>
                   </div>
-                  <div style="display: none; margin-top: 8px; padding: 12px 14px;" class="glass">
-                    ${formatAnswerParagraphs(hq.answer)}
-                    ${renderSourcesAccordion(hq.sources)}
-                  </div>
-                </div>
-              `).join('')}
+                `).join('')}
+              </div>
             </div>
           `;
         });
@@ -407,10 +407,49 @@ window.toggleHistoryDrawer = function() {
   btn.textContent = isOpen ? '收起' : '開啟';
 };
 
-window.toggleHistoryAnswer = function(el) {
-  const ansEl = el.nextElementSibling;
-  if (ansEl) {
-    ansEl.style.display = ansEl.style.display === 'block' ? 'none' : 'block';
+window.toggleHistoryWeek = function(weekNum) {
+  const allContainers = document.querySelectorAll('.history-week-questions');
+  const targetContainer = document.getElementById(`history-week-q-${weekNum}`);
+
+  let wasOpen = false;
+  if (targetContainer && targetContainer.style.display === 'block') {
+    wasOpen = true;
+  }
+
+  allContainers.forEach(el => {
+    el.style.display = 'none';
+  });
+
+  if (targetContainer && !wasOpen) {
+    targetContainer.style.display = 'block';
+  }
+};
+
+window.toggleHistoryAccordion = function(weekNum, itemIdx) {
+  const container = document.getElementById(`history-week-q-${weekNum}`);
+  if (!container) return;
+
+  const targetItem = document.getElementById(`faq-item-hw${weekNum}-${itemIdx}`);
+  if (!targetItem) return;
+
+  const isAlreadyActive = targetItem.classList.contains('is-active');
+  const targetTopBeforeToggle = targetItem.getBoundingClientRect().top;
+
+  const allItems = container.querySelectorAll('.faq-q-item');
+  allItems.forEach(item => {
+    item.classList.remove('is-active');
+  });
+
+  if (!isAlreadyActive) {
+    targetItem.classList.add('is-active');
+  }
+
+  // 若收合該題，且該題已被捲動到視窗頂端之上（被 sticky 卡住或更上方），則捲回該題位置
+  if (isAlreadyActive && targetTopBeforeToggle < 0) {
+    window.scrollTo({
+      top: window.scrollY + targetTopBeforeToggle,
+      behavior: 'auto'
+    });
   }
 };
 
