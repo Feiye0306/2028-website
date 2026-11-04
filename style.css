@@ -476,6 +476,20 @@ body {
   border-top: 1px dashed rgba(13, 34, 66, 0.12);
 }
 
+/* 將來源併入詳細說明的樣式 */
+.source-in-detail-wrap {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-line);
+}
+
+.source-in-detail-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
 .source-summary-label {
   font-size: 0.85rem;
   font-weight: 600;
