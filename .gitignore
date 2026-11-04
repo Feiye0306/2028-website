@@ -3,3 +3,4 @@
 *.key
 *.token
 API_KEYS_MASTER.md
+node_modules/

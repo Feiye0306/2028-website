@@ -429,6 +429,16 @@ body {
   display: block;
 }
 
+.faq-q-item.is-active .faq-q-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(250, 247, 239, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 14px;
+}
+
 .faq-q-item.is-active .faq-q-arrow {
   transform: rotate(45deg);
   color: var(--accent-orange);
@@ -439,15 +449,6 @@ body {
 }
 
 /* 浮層卡內部題目與大字答案 */
-.floating-card-question-title {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--text-main);
-  margin-bottom: 14px;
-  padding-bottom: 8px;
-  border-bottom: 1px dashed rgba(13, 34, 66, 0.12);
-}
-
 .faq-rich-paragraphs {
   font-size: 1.05rem;
   color: var(--text-main);

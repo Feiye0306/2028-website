@@ -235,7 +235,6 @@ function renderFaqView() {
           </div>
           <!-- 答案以玻璃浮層卡打開 (套用 .glass 配方) -->
           <div class="faq-answer-floating-card glass">
-            <div class="floating-card-question-title">${cleanTitle}</div>
             ${answerHtml}
             ${sourceHtml}
             ${foldedHtml}
@@ -351,7 +350,6 @@ window.handleSearch = function(query) {
             <div style="font-size: 0.85rem; color: var(--accent-orange); margin-bottom: 8px; font-weight: 700;">
               收錄於第 ${q.week} 週
             </div>
-            <div class="floating-card-question-title">${cleanTitle}</div>
             ${formatAnswerParagraphs(q.answer)}
             ${renderSourcesAccordion(q.sources)}
           </div>
@@ -377,6 +375,7 @@ window.toggleAccordion = function(itemIdx) {
   if (!targetItem) return;
 
   const isAlreadyActive = targetItem.classList.contains('is-active');
+  const targetTopBeforeToggle = targetItem.getBoundingClientRect().top;
 
   const allItems = container.querySelectorAll('.faq-q-item');
   allItems.forEach(item => {
@@ -385,6 +384,14 @@ window.toggleAccordion = function(itemIdx) {
 
   if (!isAlreadyActive) {
     targetItem.classList.add('is-active');
+  }
+
+  // 若收合該題，且該題已被捲動到視窗頂端之上（被 sticky 卡住或更上方），則捲回該題位置
+  if (isAlreadyActive && targetTopBeforeToggle < 0) {
+    window.scrollTo({
+      top: window.scrollY + targetTopBeforeToggle,
+      behavior: 'auto'
+    });
   }
 };
 
