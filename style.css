@@ -610,15 +610,6 @@ details[open] .folded-summary-btn::after {
   font-weight: 800;
   color: var(--accent-orange);
   margin-bottom: 8px;
-}
-
-.history-load-btn {
-  background: transparent;
-  border: 1px solid var(--accent-orange);
-  color: var(--accent-orange);
-  font-size: 0.78rem;
-  padding: 2px 8px;
-  border-radius: 4px;
   cursor: pointer;
 }
 
