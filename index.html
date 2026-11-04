@@ -25,7 +25,7 @@
     <!-- 1. 倒數卡（頁面主角，套用 .glass 清透透鏡配方） -->
     <header class="hero-countdown-card glass">
       <div class="desktop-hero-layout">
-        <div class="desktop-hero-countdown">
+        <div class="desktop-hero-left">
           <!-- 站名縮在最上一行 -->
           <div class="glass-site-brand">學測作戰地圖</div>
 
@@ -44,15 +44,14 @@
             預估學測日 2028.01.14
           </div>
         </div>
-        <div class="desktop-stage-list">
-          <ul id="desktop-stage-ul">
-            <li data-stage="起跑期">起跑期 2026.11–2027.01</li>
-            <li data-stage="打底期">打底期 2027.02–06</li>
-            <li data-stage="總複習">總複習 2027.07–08</li>
-            <li data-stage="衝刺期">衝刺期 2027.09–2028.01</li>
-            <li data-stage="落點期">落點期 2028.01 之後</li>
-          </ul>
-        </div>
+
+        <ul class="desktop-stage-list">
+          <li data-stage="高二上起跑期">起跑期 (2026.11-2027.01)</li>
+          <li data-stage="高二下打底期">打底期 (2027.02-2027.06)</li>
+          <li data-stage="高三暑假總複習">總複習 (2027.07-2027.08)</li>
+          <li data-stage="高三上衝刺期">衝刺期 (2027.09-2028.01)</li>
+          <li data-stage="高三下落點期">落點期 (2028.01以後)</li>
+        </ul>
       </div>
     </header>
 
@@ -145,9 +144,15 @@
             </div>
           </section>
         </div>
+
         <div class="desktop-main-right">
+          <!-- 這一期卡片 (農民曆式) -->
           <div id="desktop-this-week-card" class="glass desktop-this-week-card"></div>
+
+          <!-- 桌機版過去的週次 -->
           <div id="desktop-history-list"></div>
+
+          <!-- 更新節奏小卡 -->
           <div class="desktop-update-rhythm glass">每週四更新</div>
         </div>
       </div>
