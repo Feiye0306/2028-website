@@ -114,7 +114,7 @@ function updateTimeline() {
 }
 
 let faqMasterData = null;
-let currentActiveWeekNum = 1;
+let currentActiveWeekNum = null;
 let isSearchMode = false;
 let isDualTabActive = false;
 
@@ -142,7 +142,7 @@ async function loadFaqData() {
       weeks: [
         {
           week: 1,
-          release_date: "2027-02-04",
+          release_date: "2026-10-29",
           stage: "高二下打底",
           questions: [
             {
