@@ -35,6 +35,20 @@ function formatAnswerParagraphs(text) {
   return `<div class="faq-rich-paragraphs">${paragraphs}</div>`;
 }
 
+// 格式化詳細說明收合區（預設收合，只顯示小小的「詳細說明」）
+function renderDetailAccordion(detail) {
+  if (!detail || detail.trim() === '') return '';
+
+  return `
+    <details class="source-accordion-box" style="margin-top: 8px;">
+      <summary class="source-summary-label">詳細說明</summary>
+      <div style="padding-top: 8px;">
+        ${formatAnswerParagraphs(detail)}
+      </div>
+    </details>
+  `;
+}
+
 // 格式化來源收合清單（預設收合，只顯示小小的「來源」）
 function renderSourcesAccordion(sources) {
   if (!sources || !Array.isArray(sources) || sources.length === 0) return '';
@@ -207,6 +221,7 @@ function renderFaqView() {
       const cleanTitle = stripNumberPrefix(q.question);
       const answerHtml = formatAnswerParagraphs(q.answer);
       const sourceHtml = renderSourcesAccordion(q.sources);
+      const detailHtml = renderDetailAccordion(q.detail);
 
       let foldedHtml = '';
       if (q.folded && q.folded.length > 0) {
@@ -219,6 +234,7 @@ function renderFaqView() {
                 </summary>
                 <div class="folded-body-content">
                   ${formatAnswerParagraphs(f.answer)}
+                  ${renderDetailAccordion(f.detail)}
                   ${renderSourcesAccordion(f.sources)}
                 </div>
               </details>
@@ -236,6 +252,7 @@ function renderFaqView() {
           <!-- 答案以玻璃浮層卡打開 (套用 .glass 配方) -->
           <div class="faq-answer-floating-card glass">
             ${answerHtml}
+            ${detailHtml}
             ${sourceHtml}
             ${foldedHtml}
           </div>
@@ -273,6 +290,7 @@ function renderFaqView() {
                     </div>
                     <div class="faq-answer-floating-card glass">
                       ${formatAnswerParagraphs(hq.answer)}
+                      ${renderDetailAccordion(hq.detail)}
                       ${renderSourcesAccordion(hq.sources)}
                     </div>
                   </div>
