@@ -1,0 +1,24 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "> 專為 2028 學測家長設計之考程時序關鍵問答導航系統。   > 預估學測日：**2028 年 1 月 14 日**",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Feiye0306/2028-website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Feiye0306/2028-website/issues"
+  },
+  "homepage": "https://github.com/Feiye0306/2028-website#readme",
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  }
+}
