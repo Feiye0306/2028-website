@@ -7,12 +7,12 @@
   "theme_color": "#0d2242",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d2242'/><text x='50%' y='62%' font-size='50' font-weight='bold' text-anchor='middle' fill='%23FAF6EF'>28</text></svg>",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'><rect width='300' height='300' fill='%230d2242'/><path d='M150 102 H250 V146' fill='none' stroke='%23D9A62E' stroke-width='9' stroke-linecap='round'/><circle cx='250' cy='160' r='12' fill='%23D9A62E'/><path d='M102 124 Q150 154 198 124 L198 158 Q150 186 102 158 Z' fill='%23D9A62E'/><polygon points='150,44 260,100 150,156 40,100' fill='%23FAF6EF'/><polygon points='150,156 260,100 150,122 40,100' fill='%23C9D4E4'/><circle cx='150' cy='100' r='9' fill='%23D9A62E'/><text x='150' y='264' font-size='57' font-weight='900' fill='%23D9A62E' text-anchor='middle' letter-spacing='7' font-family='Arial, Helvetica, sans-serif'>2028</text></svg>",
       "sizes": "192x192",
       "type": "image/svg+xml"
     },
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d2242'/><text x='50%' y='62%' font-size='50' font-weight='bold' text-anchor='middle' fill='%23FAF6EF'>28</text></svg>",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'><rect width='300' height='300' fill='%230d2242'/><path d='M150 102 H250 V146' fill='none' stroke='%23D9A62E' stroke-width='9' stroke-linecap='round'/><circle cx='250' cy='160' r='12' fill='%23D9A62E'/><path d='M102 124 Q150 154 198 124 L198 158 Q150 186 102 158 Z' fill='%23D9A62E'/><polygon points='150,44 260,100 150,156 40,100' fill='%23FAF6EF'/><polygon points='150,156 260,100 150,122 40,100' fill='%23C9D4E4'/><circle cx='150' cy='100' r='9' fill='%23D9A62E'/><text x='150' y='264' font-size='57' font-weight='900' fill='%23D9A62E' text-anchor='middle' letter-spacing='7' font-family='Arial, Helvetica, sans-serif'>2028</text></svg>",
       "sizes": "512x512",
       "type": "image/svg+xml"
     }
