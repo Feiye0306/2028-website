@@ -1,4 +1,4 @@
-const CACHE_NAME = 'roadmap-2028-v9-network-first';
+const CACHE_NAME = 'roadmap-2028-v10-network-first';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

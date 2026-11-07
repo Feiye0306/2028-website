@@ -41,7 +41,7 @@ function renderDetailAccordion(detail) {
 
   return `
     <details class="source-accordion-box" style="margin-top: 8px;">
-      <summary class="source-summary-label">詳細說明</summary>
+      <summary class="source-summary-label">核心公式</summary>
       <div style="padding-top: 8px;">
         ${formatAnswerParagraphs(detail)}
       </div>
@@ -62,7 +62,7 @@ function renderExtras(detail, sources) {
 
   let html = `
     <details class="source-accordion-box" style="margin-top: 8px;">
-      <summary class="source-summary-label">詳細說明</summary>
+      <summary class="source-summary-label">核心公式</summary>
       <div style="padding-top: 8px;">
         ${formatAnswerParagraphs(detail)}
   `;
@@ -174,6 +174,7 @@ let weeklyAdviceData = null;
 let currentActiveWeekNum = null;
 let isSearchMode = false;
 let isDualTabActive = false;
+let isGateOpen = false;
 
 // 取得台灣當前日期字串 (YYYY-MM-DD)
 function getTodayString() {
@@ -185,22 +186,33 @@ function getTodayString() {
 
 // 載入題庫資料
 async function loadFaqData() {
-  try {
-    const res = await fetch('./data/faq_data.json?v=' + Date.now());
-    if (res.ok) {
-      faqMasterData = await res.json();
-    }
-  } catch (err) {
+  const gatePromise = fetch('./data/gate.json?v=' + Date.now()).then(res => res.json()).catch(err => {
+    console.warn('無法讀取 gate.json', err);
+    return null;
+  });
+
+  const faqPromise = fetch('./data/faq_data.json?v=' + Date.now()).then(res => res.json()).catch(err => {
     console.warn('無法從網路讀取 faq_data.json，回退到預設第一批資料：', err);
+    return null;
+  });
+
+  const advicePromise = fetch('./data/weekly_advice.json?v=' + Date.now()).then(res => res.json()).catch(err => {
+    console.warn('無法從網路讀取 weekly_advice.json：', err);
+    return null;
+  });
+
+  const [gateData, faqData, adviceData] = await Promise.all([gatePromise, faqPromise, advicePromise]);
+
+  if (gateData && gateData.open) {
+    isGateOpen = true;
+  }
+  
+  if (faqData) {
+    faqMasterData = faqData;
   }
 
-  try {
-    const wRes = await fetch('./data/weekly_advice.json?v=' + Date.now());
-    if (wRes.ok) {
-      weeklyAdviceData = await wRes.json();
-    }
-  } catch (err) {
-    console.warn('無法從網路讀取 weekly_advice.json：', err);
+  if (adviceData) {
+    weeklyAdviceData = adviceData;
   }
 
   if (!faqMasterData || !faqMasterData.weeks || faqMasterData.weeks.length === 0) {
@@ -248,6 +260,7 @@ function renderFaqView() {
   const allWeeks = faqMasterData.weeks;
 
   const publishedWeeks = allWeeks.filter(w => {
+    if (isGateOpen) return true;
     if (w.week === 1) return true;
     return today >= w.release_date;
   });
@@ -468,7 +481,7 @@ window.handleSearch = function(query) {
   const results = [];
   const today = getTodayString();
   faqMasterData.weeks.forEach(w => {
-    if (w.week !== 1 && today < w.release_date) return;
+    if (!isGateOpen && w.week !== 1 && today < w.release_date) return;
     w.questions.forEach(q => {
       const qText = (q.question || '').toLowerCase();
       const aText = (q.answer || '').toLowerCase();
