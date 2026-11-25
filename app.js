@@ -129,6 +129,9 @@ function updateCountdown() {
 }
 
 // 動態更新時間軸 NOW 標記位置與目前階段名
+// NOW 位置：按週階梯前進（darry 2026-11-25 裁決：既然按週算，至少每週要跳一次）
+// 起點＝第 1 週發布日 2026-10-29（0%），終點＝學測日 2028-01-14（100%），
+// 每過一週（週四換週）往前跳一格；階段文字仍照月份規則切換，不跟著改。
 function updateTimeline() {
   const now = new Date();
   const year = now.getFullYear();
@@ -136,35 +139,33 @@ function updateTimeline() {
 
   const indicator = document.getElementById('timeline-now-indicator');
   const caption = document.getElementById('timeline-stage-caption');
+  const fill = document.getElementById('timeline-progress-fill');
 
-  // 時間範圍：2026年11月 ~ 2028年1月
-  // 6 個主要刻度點：
-  // 1. 2026.11 (0%): 高二上起跑期
-  // 2. 2027.02 (20%): 高二下打底期
-  // 3. 2027.05 (40%): 高二下打底期
-  // 4. 2027.08 (60%): 暑假總複習
-  // 5. 2027.11 (80%): 高三上衝刺
-  // 6. 2028.01 (100%): 考前收尾
+  // --- NOW 位置（按週階梯） ---
+  const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+  const startTime = new Date('2026-10-29T00:00:00+08:00').getTime();
+  const endTime = new Date(EXAM_DATE_STR + 'T00:00:00+08:00').getTime();
+  const totalWeeks = Math.max(1, Math.round((endTime - startTime) / WEEK_MS)); // 共 63 週
+  const elapsedWeeks = Math.min(totalWeeks, Math.max(0, Math.floor((now.getTime() - startTime) / WEEK_MS)));
+  const pct = (elapsedWeeks / totalWeeks) * 100;
+  if (indicator) indicator.style.left = pct + '%';
+  if (fill) fill.style.width = pct + '%';
+
+  // --- 階段文字（照月份，規則不變） ---
+  // 刻度對照：2026.11 起跑期 / 2027.02 打底期 / 2027.05 打底期 / 2027.08 暑假總複習 / 2027.11 高三上衝刺 / 2028.01 考前收尾
   if (year < 2026 || (year === 2026 && month <= 11)) {
-    if (indicator) indicator.style.left = '0%';
     if (caption) caption.textContent = '高二上起跑期（學測倒數準備）';
   } else if (year === 2026 && month === 12) {
-    if (indicator) indicator.style.left = '7%';
     if (caption) caption.textContent = '高二上起跑期（打穩基本盤）';
   } else if (year === 2027 && month <= 2) {
-    if (indicator) indicator.style.left = '20%';
     if (caption) caption.textContent = '高二下打底期（學測國數開始複習）';
   } else if (year === 2027 && month <= 5) {
-    if (indicator) indicator.style.left = '40%';
     if (caption) caption.textContent = '高二下打底期（弱科補強）';
   } else if (year === 2027 && month <= 8) {
-    if (indicator) indicator.style.left = '60%';
     if (caption) caption.textContent = '暑假總複習・五科全面補強';
   } else if (year === 2027 && month <= 11) {
-    if (indicator) indicator.style.left = '80%';
     if (caption) caption.textContent = '高三上衝刺・跟上模考刷題';
   } else {
-    if (indicator) indicator.style.left = '100%';
     if (caption) caption.textContent = '考前收尾・倒數衝刺';
   }
 }

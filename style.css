@@ -207,6 +207,19 @@ body {
   border-radius: 2px;
 }
 
+/* 已過進度填色（NOW 左側，寬度由 updateTimeline 按週設定） */
+.timeline-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 4px;
+  width: 0%;
+  background: var(--accent-orange);
+  border-radius: 2px;
+  z-index: 1;
+}
+
 /* 黑點＝月份刻度 */
 .timeline-dots-row {
   position: relative;
@@ -853,6 +866,11 @@ details[open] .folded-summary-btn::after {
     height: 10px;
     border-radius: 5px;
     background: var(--text-main);
+  }
+
+  .timeline-progress-fill {
+    height: 10px;
+    border-radius: 5px;
   }
 
   .timeline-month {
